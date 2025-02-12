@@ -1,4 +1,5 @@
-import { Signal, useSignal } from "@preact/signals-react";
+import { JSX, VNode } from "preact";
+import { Signal, signal } from "@preact/signals";
 
 interface ITextInputProps {
     binding: Signal<string|number|undefined>;
@@ -7,14 +8,13 @@ interface ITextInputProps {
     options?: Array<string>;
     onChange?: () => void;
 }
-export default (props: ITextInputProps & React.InputHTMLAttributes<HTMLInputElement>) => {
-    const { binding, num, options, maxSuggest, className, onChange, ...rest} = props;
+export default (props: ITextInputProps & JSX.InputHTMLAttributes<HTMLInputElement>): VNode<HTMLDivElement> => {
+    const { binding, num, options, maxSuggest, class: className, onChange, ...rest} = props;
     const max = maxSuggest ?? 12;
-    const suggestions = useSignal<Array<string>>([]);
+    const suggestions = signal<Array<string>>([]);
     const handleBlur = () => setTimeout(() => suggestions.value = [], 200);
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) =>
-        e.key == 'Enter' && handleBlur() && onChange && onChange();
-    const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleKeyPress = (e: KeyboardEvent) => e.key == 'Enter' && handleBlur() && onChange && onChange();
+    const handleInput = (e: InputEvent) => {
         const text = (e.target as HTMLInputElement).value;
         binding.value = num ? +text : text;
         if (options) if (text) {
@@ -28,12 +28,12 @@ export default (props: ITextInputProps & React.InputHTMLAttributes<HTMLInputElem
             suggestions.value = first.concat(second.slice(0, max - first.length));
         } else suggestions.value = [];
     };
-    const suggestionClicked = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const suggestionClicked = (e: Event) => {
         binding.value = (e.target as HTMLDivElement).textContent ?? '';
         onChange && onChange();
     }
-    return <div className={`input_4Xa52 ${className ?? ''}`} >
-        <input {...rest} value={binding.value?.toString()} onChange={handleInput} onBlur={handleBlur} onKeyUp={handleKeyPress}/>
+    return <div class={`input_4Xa52 ${className ?? ''}`} >
+        <input {...rest} value={binding.value?.toString()} onInput={handleInput} onBlur={handleBlur} onKeyUp={handleKeyPress}/>
         {suggestions.value.length ? <div>{suggestions.value.map((s: string) => <div onClick={suggestionClicked}>{s}</div>)}</div> : ''}
     </div>;
 }

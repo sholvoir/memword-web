@@ -1,7 +1,7 @@
-import { closeDialog } from '../lib/signals.ts'
+import { closeDialog } from '../lib/app.ts'
 import SButton from './button-base.tsx';
-import { FaChevronLeft } from "react-icons/fa"
-import { BsThreeDots } from "react-icons/bs";
+import { FaChevronLeft, FaEllipsisH } from "@preact-icons/fa";
+import { JSX } from "preact/jsx-runtime";
 
 interface IDialogProps {
     noback?: boolean;
@@ -9,7 +9,7 @@ interface IDialogProps {
     onMenuClick?: () => void;
 }
 export default ({title, children, onCancel, noback, onMenuClick, className, ...rest }:
-    IDialogProps & React.HTMLAttributes<HTMLDivElement>) =>
+    IDialogProps & JSX.HTMLAttributes<HTMLDivElement>) =>
     <div className={`fixed inset-0 flex flex-col ${className}`} {...rest}>
         <div className="title shrink-0 px-2 flex justify-between items-center">
             <div className="w-6">
@@ -20,7 +20,7 @@ export default ({title, children, onCancel, noback, onMenuClick, className, ...r
             <div className="grow font-bold text-center [app-region:drag]">{title}</div>
             <div className="w-6">
                 {onMenuClick && <SButton className="[app-region:no-drag]" onClick={onMenuClick}>
-                    <BsThreeDots className="w-6 h-6"/>
+                    <FaEllipsisH className="w-6 h-6"/>
                 </SButton>}
             </div>
         </div>

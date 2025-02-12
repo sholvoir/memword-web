@@ -1,53 +1,65 @@
-import { useSignal } from "@preact/signals-react";
-import { signup, login } from '../lib/mem.ts';
-import { showTips, signals } from "../lib/signals.ts";
+import { signal } from "@preact/signals";
+import { STATUS_CODE } from "@sholvoir/generic/http";
+import * as mem from '../lib/mem.ts';
+import * as app from "../lib/app.ts";
 import Button from './button-ripple.tsx';
 import AButton from './button-base.tsx';
 import TInput from './input-text.tsx';
 import Dialog from './dialog.tsx';
+import { name } from './signup.tsx';
 
-const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-export default () => {
-    const email = useSignal(signals.user.value ?? '');
-    const password = useSignal('');
-    const counter = useSignal(0);
-    const canSendEmail = useSignal(true);
-    let timer: number|undefined;
-    const handleSend = async () => {
-        if (!emailPattern.test(email.value)) showTips('Invalid email address!');
-        else {
-            canSendEmail.value = false;
-            counter.value = 60;
-            timer = setInterval(() => {
-                if (--counter.value <= 0) {
-                    clearInterval(timer);
-                    timer = undefined;
-                    canSendEmail.value = true;
-                }
-            }, 1000);
-            const resp = await signup(email.value);
-            if (!resp.ok) showTips('网络错误!');
-            else showTips('临时密码已发送!');
+const code = signal('');
+const counter = signal(0);
+const canSendOTP = signal(true);
+
+let timer: number|undefined;
+const handleSend = async () => {
+    canSendOTP.value = false;
+    counter.value = 60;
+    timer = setInterval(() => {
+        if (--counter.value <= 0) {
+            clearInterval(timer);
+            timer = undefined;
+            canSendOTP.value = true;
         }
-    };
-    const handleClickLogin = async () => {
-        const resp = await login(email.value, password.value);
-        if (!resp.ok) showTips('Email或密码验证错误');
-        else {
+    }, 1000);
+    switch (await mem.otp(name.value)) {
+        case STATUS_CODE.BadRequest:
+            return app.showTips('请输入用户名');
+        case STATUS_CODE.NotFound:
+            return app.showTips('未找到用户');
+        case STATUS_CODE.FailedDependency:
+            return app.showTips('此用户未注册手机号码');
+        case STATUS_CODE.TooEarly:
+            return app.showTips('请求OTP过于频繁');
+        case STATUS_CODE.OK:
+            return app.showTips('OTP已发送');
+        default: return app.showTips('未知服务器错误');
+    }
+};
+
+const handleClickLogin = async () => {
+    switch (await mem.signin(name.value, code.value)) {
+        case STATUS_CODE.BadRequest:
+            return app.showTips('请输入用户名和密码');
+        case STATUS_CODE.NotFound:
+            return app.showTips('未找到用户');
+        case STATUS_CODE.Unauthorized:
+            return app.showTips('错误的密码');
+        case STATUS_CODE.OK:
+            app.showTips('已登录');
             if (timer) clearInterval(timer);
             location.reload();
-        }
-    };
-    return <Dialog title="登录">
-        <div className="p-2 h-full w-64 mx-auto flex flex-col gap-4">
-            <div className="flex flex-col">
-                <TInput name="email" placeholder="Email" autoCapitalize="none" binding={email} />
-                <AButton className="btn-anchor block text-right" onClick={handleSend} disabled={!canSendEmail.value}>
-                    Send One-Time Passcode {counter.value > 0 ? `(${counter.value})` : ''}
-                </AButton>
-            </div>
-            <TInput name="password" placeholder="Password" autoCapitalize="none" binding={password} />
-            <Button className="button btn-prime" onClick={handleClickLogin}>确定</Button>
-        </div>
-    </Dialog>
-}
+    }
+};
+
+export default () => <Dialog title="登录">
+    <div className="p-2 h-full w-64 mx-auto flex flex-col gap-4">
+        <TInput name="name" placeholder="name" autoCapitalize="none" binding={name} />
+        <AButton className="btn-anchor block text-right" onClick={handleSend} disabled={!canSendOTP.value}>
+            Send One-Time Passcode {counter.value > 0 ? `(${counter.value})` : ''}
+        </AButton>
+        <TInput name="code" placeholder="code" autoCapitalize="none" binding={code} />
+        <Button className="button btn-prime" onClick={handleClickLogin}>登录</Button>
+    </div>
+</Dialog>;

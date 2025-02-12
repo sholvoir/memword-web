@@ -1,12 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
 import { IStat, addTaskToStat, isBLevelIncludesLevel, initStat } from "./istat.ts";
-import { IDict } from "./idict.ts";
-import { ITask } from "./itask.ts";
-import { IItem, itemMergeDict, itemMergeTask, MAX_NEXT, neverItem, } from "./iitem.ts";
-import { now } from "./common.ts";
-import { IWordList } from "./wordlist.ts";
+import { IItem, itemMergeDict, itemMergeTask, neverItem } from "./iitem.ts";
+import { ITask, studyTask } from "../../memword-server/lib/itask.ts";
+import { IWordList } from "../../memword-server/lib/iwordlist.ts";
+import { IDict } from "../../memword-server/lib/idict.ts";
+import { now } from "../../memword-server/lib/common.ts";
 
-type kvKey = '_vocabulary-version'|'_sync-time'|'_setting';
+export const tempItems = new Map<string, IItem>();
+type kvKey = '_vocabulary-version'|'_sync-time'|'_setting'|'_auth';
 let db: IDBDatabase;
 
 const run = (reject: (reason?: any) => void, func: (db: IDBDatabase) => void) => {
@@ -17,8 +18,8 @@ const run = (reject: (reason?: any) => void, func: (db: IDBDatabase) => void) =>
     request.onupgradeneeded = () => {
         const d = request.result;
         d.createObjectStore('mata', { keyPath: 'key' });
+        d.createObjectStore('wordlist', { keyPath: 'wlid'});
         d.createObjectStore('issue', { keyPath: 'id', autoIncrement: true });
-        d.createObjectStore('wordlist', { keyPath: ['user', 'name']})
         const iStore = d.createObjectStore('item', { keyPath: 'word' });
         iStore.createIndex('last', 'last');
         iStore.createIndex('next', 'next');
@@ -62,8 +63,8 @@ export const deleteIssue = (id: number) => new Promise<void>((resolve, reject) =
     request.onsuccess = () => resolve();
 }));
 
-export const getWordlistVersion = (user: string, name: string) => new Promise<string|undefined>((resolve, reject) => run(reject, db => {
-    const request = db.transaction('wordlist', 'readonly').objectStore('wordlist').get([user, name]);
+export const getWordlistVersion = (wlid: string) => new Promise<string|undefined>((resolve, reject) => run(reject, db => {
+    const request = db.transaction('wordlist', 'readonly').objectStore('wordlist').get(wlid);
     request.onerror = reject;
     request.onsuccess = (e) => {
         const wordlist = (e.target as IDBRequest<IWordList>).result;
@@ -71,13 +72,13 @@ export const getWordlistVersion = (user: string, name: string) => new Promise<st
     }
 }));
 
-export const setWordlistVersion = (wordlist: IWordList) => new Promise<void>((resolve, reject) => run(reject, db => {
-    const request = db.transaction('wordlist', 'readwrite').objectStore('wordlist').put(wordlist);
+export const setWordlistVersion = (wlid: string, version: string) => new Promise<void>((resolve, reject) => run(reject, db => {
+    const request = db.transaction('wordlist', 'readwrite').objectStore('wordlist').put({wlid, version});
     request.onerror = reject;
     request.onsuccess = () => resolve();
 }))
 
-export const getItem = (word: string) => new Promise<IItem>((resolve, reject) => run(reject, db => {
+export const getItem = (word: string) => new Promise<IItem|undefined>((resolve, reject) => run(reject, db => {
     const request = db.transaction('item', 'readonly').objectStore('item').get(word);
     request.onerror = reject;
     request.onsuccess = () => resolve(request.result);
@@ -150,33 +151,33 @@ export const getEpisode = (wordList?: Set<string>, blevel?: number) => new Promi
     }
 }));
 
-export const getStats = (words?: Iterable<string>) => new Promise<IStat>((resolve, reject) => run(reject, db => {
-    const stat: IStat = initStat();
+export const getStats = (wls: Array<Set<string>>) => new Promise<[IStat, Array<IStat>]>((resolve, reject) => run(reject, db => {
+    const time = now();
+    const tstat = initStat(time);
+    const stats: Array<IStat> = wls.map(() => initStat(time));
     const transaction = db.transaction('item', 'readonly');
     transaction.onerror = reject;
-    transaction.oncomplete = () => resolve(stat);
-    const iStore = transaction.objectStore('item');
-    if (words) for (const word of words) iStore.get(word).onsuccess = (e) =>
-        addTaskToStat(stat, (e.target as IDBRequest<IItem>).result);
-    else iStore.openCursor().onsuccess = e => {
+    transaction.oncomplete = () => resolve([tstat, stats]);
+    transaction.objectStore('item').openCursor().onsuccess = e => {
         const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
-        if (!cursor) return;
-        addTaskToStat(stat, cursor.value);
+        if (!cursor) return stats.forEach((stat, i) => stat.total[0] += wls[i].size);
+        const item = cursor.value as IItem;
+        addTaskToStat(tstat, item);
+        stats.forEach((stat, i) => wls[i].has(item.word) && (addTaskToStat(stat, item), wls[i].delete(item.word)));
         cursor.continue();
     }
 }));
 
-export const studied = (word: string, level: number) => new Promise<void>((resolve, reject) => run(reject, db => {
+export const studied = (word: string, level?: number) => new Promise<void>((resolve, reject) => run(reject, db => {
     const transaction = db.transaction('item', 'readwrite');
     transaction.onerror = reject;
     transaction.oncomplete = () => resolve();
     const iStore = transaction.objectStore('item');
-    iStore.get(word).onsuccess = (e2) => {
+    if (tempItems.has(word)) {
+        iStore.put(studyTask(tempItems.get(word)!, level));
+        tempItems.delete(word);
+    } else iStore.get(word).onsuccess = (e2) => {
         const item = (e2.target as IDBRequest<IItem>).result;
-        if (!item) return;
-        item.level = level >= 15 ? 15 : ++level;
-        item.last = now();
-        item.next = level >= 15 ? MAX_NEXT : item.last + Math.round(39 * level ** 3 * 1.5 ** level);
-        iStore.put(item);
+        if (item) iStore.put(studyTask(item, level));
     }
 }));

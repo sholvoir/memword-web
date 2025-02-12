@@ -1,4 +1,4 @@
-import { showDialog, startStudy } from "../lib/signals.ts";
+import { showDialog, startStudy } from "../lib/app.ts";
 import Dialog from './dialog.tsx';
 import Button from './button-ripple.tsx';
 import Stats from './stats.tsx';

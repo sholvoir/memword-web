@@ -1,47 +1,107 @@
-import Cookies from "js-cookie";
-import { IStat, initStat, statsFormat } from './istat.ts';
+import { IStats, initStats, statsFormat } from './istat.ts';
 import { requestInit } from '@sholvoir/generic/http';
-import { JWT } from '@sholvoir/generic/jwt';
-import { ISetting } from "./isetting.ts";
+import { ISetting } from "../../memword-server/lib/isetting.ts";
+import { IItem } from "./iitem.ts";
 
-export const getUser = () => {
-    const token = Cookies.get('auth');
-    return token ? (JWT.decode(token)[1].aud as string) : '';
-};
+export const setStats = (stats: IStats) =>
+    localStorage.setItem('_stats', JSON.stringify(stats));
 
-export const setStats = (stats: IStat) => localStorage.setItem('_stats', JSON.stringify(stats));
 export const getStats = () => {
     const result = localStorage.getItem('_stats');
     if (result) {
-        const stats = JSON.parse(result) as IStat;
+        const stats = JSON.parse(result) as IStats;
         if (stats.format == statsFormat) return stats;
     }
-    return initStat();
+    return initStats(0);
 };
 
-export const getEpisode = (wordListId?: string, blevel?: number) => {
-    const url = new URL('/wkr/get-episode', location.href);
-    if (wordListId) url.searchParams.append('wordListid', wordListId);
+export const getUser = async () => {
+    const res = await fetch('/user');
+    if (!res.ok) return undefined;
+    return (await res.json()) as {name: string}
+};
+
+export const getWorkerVersion = async () => {
+    const res = await fetch(`/version`);
+    if (!res.ok) return undefined;
+    return (await res.json())?.version as string;
+};
+
+export const getSetting = async () => {
+    const res = await fetch(`/setting`);
+    if (!res.ok) return undefined;
+    return (await res.json()) as ISetting;
+};
+
+export const setSetting = async (setting: ISetting) =>
+    (await fetch(`/setting`, requestInit(setting))).ok;
+
+export const search = async (word: string) => {
+    const res = await fetch(`/search?word=${encodeURIComponent(word)}`);
+    if (!res.ok) return undefined;
+    return (await res.json()) as IItem;
+};
+
+export const getUpdatedDict = async (word: string) => {
+    const res = await fetch(`/updict?word=${encodeURIComponent(word)}`);
+    if (!res.ok) return undefined;
+    return (await res.json()) as IItem;
+};
+
+export const getEpisode = async (wlid?: string, blevel?: number) => {
+    const url = new URL(`/episode`, location.href);
+    if (wlid) url.searchParams.append('wlid', wlid);
     if (blevel) url.searchParams.append('blevel', `${blevel}`);
-    return fetch(url);
+    const res = await fetch(url);
+    if (!res.ok) return undefined;
+    return (await res.json()) as IItem;
 };
 
-export const updateDict = (word: string) => fetch(`/wkr/update-dict?word=${encodeURIComponent(word)}`);
-export const getWorkerVersion = () => fetch('/wkr/version');
-export const cacheDict = () => fetch('/wkr/cache-dict');
-export const addTasks = (user: string, name: string) =>
-    fetch(`/wkr/add-tasks?user=${encodeURIComponent(user)}&name=${encodeURIComponent(name)}`);
-export const syncTasks = () => fetch('/wkr/sync-tasks');
-export const downTasks = () => fetch('/wkr/down-tasks');
-export const studied = (word: string, level: number) => fetch(`/wkr/studied?word=${word}&level=${level}`);
-export const submitIssue = (issue: string) => fetch(`/wkr/submit-issue`, requestInit({issue}));
-export const search = (text: string) => fetch(`/wkr/search?word=${encodeURIComponent(text)}`);
-export const totalStats = () => fetch('/wkr/get-stats');
-export const getVocabulary = () => fetch('/wkr/get-vocabulary');
-export const updateVocabulary = () => fetch('/wkr/update-vocabulary');
-export const logout = () => (localStorage.clear(), Cookies.remove('auth'), fetch('/wkr/logout'));
+export const studied = async (word: string, level?: number) => {
+    const url = new URL('/studied', location.href);
+    url.searchParams.append('word', word);
+    if (level !== undefined) url.searchParams.append('level', `${level}`);
+    return (await fetch(url)).ok;
+};
 
-export const getSetting = () => fetch('/wkr/setting');
-export const setSetting = (setting: ISetting) => fetch('/wkr/setting', requestInit(setting));
-export const signup = (email: string) => fetch(`/signup?email=${encodeURIComponent(email)}`);
-export const login = (email: string, password: string) => fetch('/login', requestInit({ email, password }));
+export const addTasks = async (wlid: string) =>
+    (await fetch(`/add-task?wlid=${encodeURIComponent(wlid)}`)).ok;
+
+export const syncTasks = async () => (await fetch(`/sync-tasks`)).ok;
+
+export const downTasks = async () => (await fetch(`/down-tasks`)).ok;
+
+export const submitIssue = async (issue: string) =>
+    (await fetch(`/issue`, requestInit({issue}))).ok;
+
+export const totalStats = async () => {
+    const res = await fetch(`/stats`);
+    if (!res.ok) return undefined;
+    return (await res.json()) as IStats;
+};
+
+export const getVocabulary = async () => {
+    const res = await fetch(`/vocabulary`);
+    if (!res.ok) return undefined;
+    return (await res.json()) as Array<string>;
+};
+
+export const signup = async (phone: string, name: string) => {
+    const url = new URL('/signup', location.href);
+    url.searchParams.append('phone', phone);
+    url.searchParams.append('name', name);
+    return (await fetch(url)).status;
+};
+
+export const otp = async (name: string) =>
+    (await fetch(`/otp?name=${encodeURIComponent(name)}`)).status;
+
+export const signin = async (name: string, code: string) => {
+    const url = new URL('/signin', location.href);
+    url.searchParams.append('name', name);
+    url.searchParams.append('code', code);
+    return (await fetch(url)).status;
+}
+
+export const signout = async () =>
+    (localStorage.clear(), (await fetch(`/signout`)).ok);

@@ -1,10 +1,5 @@
 import Dialog from './dialog.tsx';
-import { IoMdRefresh } from "react-icons/io";
-import { IoMdAlert } from "react-icons/io";
-import { FaPlay } from "react-icons/fa";
-import { TbCircleLetterF } from "react-icons/tb";
-import { FaRegCheckCircle } from "react-icons/fa";
-import { RxCrossCircled } from "react-icons/rx";
+import { FaRedoAlt,FaExclamationCircle,FaPlay,FaRegDotCircle,FaRegCheckCircle,FaRegTimesCircle } from "@preact-icons/fa";
 
 export default () => <Dialog title="帮助"><ol className="list-decimal py-2 pr-2 pl-8 [&>li]:mx-2">
     <li>如何使用本软件？
@@ -18,11 +13,11 @@ export default () => <Dialog title="帮助"><ol className="list-decimal py-2 pr-
     </li>
     <li>界面上的按钮是什么意思？
         <br/><FaRegCheckCircle className="w-6 h-6 inline-block"/>我认识这个词；
-        <br/><RxCrossCircled className="w-6 h-6 inline-block"/>我不认识这个词；
+        <br/><FaRegTimesCircle className="w-6 h-6 inline-block"/>我不认识这个词；
         <br/><FaPlay className="w-6 h-6 inline-block"/>: 再播一遍声音；
-        <br/><TbCircleLetterF className="w-6 h-6 inline-block"/>: 这个词我已经掌握，直接标记为「已完成」；
-        <br/><IoMdAlert className="w-6 h-6 inline-block"/>: 这个词的翻译/声音/音标，有问题/错误，请人工处理。
-        <br/><IoMdRefresh className="w-6 h-6 inline-block"/>: 忽略本地词典缓冲，从服务器重新下载这个词的翻译/声音/音标。
+        <br/><FaRegDotCircle className="w-6 h-6 inline-block"/>: 这个词我已经掌握，直接标记为「已完成」；
+        <br/><FaExclamationCircle className="w-6 h-6 inline-block"/>: 这个词的翻译/声音/音标，有问题/错误，请人工处理。
+        <br/><FaRedoAlt className="w-6 h-6 inline-block"/>: 忽略本地词典缓冲，从服务器重新下载这个词的翻译/声音/音标。
     </li>
     <li>关于「学习词书」
         <br/>答：学习词书将一本词书的全部词添加进我的学习任务。但我们通常并不会直接开始学这些新词，而是优先复习旧词，掌握巩固一个旧词比学习一批新词更重要，这些新加的任务将会成为优先级最低的任务。

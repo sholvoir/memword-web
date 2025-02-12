@@ -1,0 +1,63 @@
+@import url(https://raw.esm.sh/gh/sholvoir/preact-components@0.0.7/static/button-ripple.css);
+@import url(https://raw.esm.sh/gh/sholvoir/preact-components@0.0.7/static/input-text.css);
+@import url(https://raw.esm.sh/gh/sholvoir/preact-components@0.0.7/static/checkbox.css);
+@import url(https://raw.esm.sh/gh/sholvoir/preact-components@0.0.7/static/select.css);
+@import "tailwindcss";
+
+@layer base {
+    input, textarea {
+        border-color: #78716C;
+        border-width: 1px;
+        padding: 3px 6px;
+        background-color: transparent;
+        outline: none;
+    }
+    textarea {
+        scrollbar-width: thin;
+        scrollbar-color: #78716C transparent;
+    }
+    @media (prefers-color-scheme: dark) {
+        input:-webkit-autofill {
+            box-shadow: 0 0 0 1000px #292524 inset;
+            -webkit-text-fill-color: #E7E5E4;
+        }
+    }
+    .input_4Xa52>div {
+        @apply bg-slate-200 dark:bg-slate-800
+    }
+}
+@layer components {
+    .tip {
+        @apply fixed top-0 left-[calc(env(titlebar-area-x,0px)_+_32px)] bg-slate-300 dark:bg-slate-900 w-[calc(env(titlebar-area-width,100%)_-_64px)] h-[env(titlebar-area-height,38px)] flex justify-center items-center font-bold
+    }
+    .title {
+        @apply bg-slate-300 dark:bg-slate-900 w-[env(titlebar-area-width,100%)] ml-[env(titlebar-area-x,0)] h-[env(titlebar-area-height,38px)] flex justify-center items-center font-bold
+    }
+    .body {
+        @apply bg-slate-200 dark:bg-slate-800
+    }
+    .study-translucent {
+        @apply bg-[#E2E8F0B0] dark:bg-[#1E293BB0]
+    }
+    .tail {
+        @apply bg-slate-300 dark:bg-slate-700 fill-slate-800 dark:fill-slate-300
+    }
+    .bg-round-6 {
+        @apply bg-slate-200 dark:bg-slate-800 rounded-md w-6 h-6;
+    }
+    .button {
+        @apply rounded-md p-2 border border-slate-500
+    }
+    .btn-anchor {
+        @apply text-slate-800 dark:text-slate-300 hover:underline disabled:opacity-50 active:bg-orange-800
+    }
+    .btn-normal {
+        @apply bg-slate-400 hover:bg-slate-500 disabled:hover:bg-slate-400 dark:bg-slate-700 disabled:hover:dark:bg-slate-700
+    }
+    .btn-prime {
+        @apply bg-orange-400 disabled:hover:bg-orange-400 dark:bg-orange-700 dark:disabled:hover:bg-orange-700 hover:bg-orange-500
+    }
+    .select {
+        @apply border border-solid border-slate-500 p-2 fill-slate-800 dark:fill-slate-300 [scrollbar-color:#64748B_transparent] hover:[&>div]:bg-slate-300 dark:hover:[&>div]:bg-slate-700 overflow-y-auto
+    }
+}

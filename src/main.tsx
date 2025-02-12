@@ -1,10 +1,4 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './style.css';
+import { render } from 'preact'
 import Root from './root.tsx';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Root />
-  </StrictMode>
-)
+render(<Root />, document.getElementById('root') as HTMLElement);

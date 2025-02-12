@@ -1,24 +1,23 @@
-import { useSignal } from "@preact/signals-react";
-import { signals, showDialog, showTips } from "../lib/signals.ts";
-import { search } from "../lib/mem.ts";
+import { signal } from "@preact/signals";
+import * as app from "../lib/app.ts";
+import * as mem from "../lib/mem.ts";
 import TInput from './input-text.tsx';
 import Dialog from './dialog.tsx';
 
 export default () => {
-    const word = useSignal('');
+    const word = signal('');
     const handleSearchClick = async () => {
-        const text = word.value.trim();
+        const text = word.peek().trim();
         if (!text) return;
-        const res = await search(text);
-        if (!res.ok) return showTips('Not Found!');
-        const item = await res.json();
-        signals.item.value = item;
-        signals.isPhaseAnswer.value = true;
-        signals.sprint.value = -1;
-        showDialog('study');
+        const item = await mem.search(text);
+        if (!item) return app.showTips('Not Found!');
+        app.citem.value = item;
+        app.isPhaseAnswer.value = true;
+        app.sprint.value = -1;
+        app.showDialog('study');
     }
     return <Dialog title="词典">
         <TInput autoCapitalize="none" type="search" name="word" placeholder="word" className="m-2 w-[calc(100%-16px)]"
-            binding={word} onChange={handleSearchClick} options={signals.vocabulary.value}/>
+            binding={word} onChange={handleSearchClick} options={app.vocabulary.value}/>
     </Dialog>;
 }

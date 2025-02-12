@@ -1,9 +1,8 @@
 // deno-lint-ignore-file no-cond-assign
-import { IDict } from "../lib/idict.ts";
-import { useEffect, useRef } from "react";
-import { useSignal } from "@preact/signals-react";
+import { IDict } from "../../memword-server/lib/idict.ts";
+import { useEffect, useRef } from "preact/hooks"
+import { signal } from "@preact/signals";
 import { requestInit } from "@sholvoir/generic/http";
-import Cookies from "js-cookie";
 import TextInput from "./input-text.tsx";
 import TextareaInput from "./input-textarea.tsx";
 import ButtonBase from "./button-base.tsx";
@@ -12,14 +11,14 @@ import Button from "./button-ripple.tsx";
 const vocabulary: Array<string> = [];
 
 export default function Lookup() {
-    const auth = Cookies.get('auth');
-    const ini = useSignal(false);
-    const word = useSignal('');
-    const def = useSignal('');
-    const trans = useSignal('');
-    const sound = useSignal('');
-    const phonetic = useSignal('');
-    const tips = useSignal('');
+    const auth = false;
+    const ini = signal(false);
+    const word = signal('');
+    const def = signal('');
+    const trans = signal('');
+    const sound = signal('');
+    const phonetic = signal('');
+    const tips = signal('');
     const player = useRef<HTMLAudioElement>(null);
     const showTips = (content: string) => {
         tips.value = content;
@@ -27,7 +26,7 @@ export default function Lookup() {
     };
     const hideTips = () => tips.value = '';
     const handleSearchClick = async () => {
-        const res = await fetch(`/pub/word?q=${encodeURIComponent(word.value)}`);
+        const res = await fetch(`/dict?q=${encodeURIComponent(word.value)}`);
         if (res.ok) {
             const dic = await res.json() as IDict;
             def.value = dic.def ?? '';

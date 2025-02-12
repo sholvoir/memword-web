@@ -1,12 +1,12 @@
-import { signals, showDialog, version } from '../lib/signals.ts';
+import * as app from '../lib/app.ts';
 import Dialog from './dialog.tsx';
 import RButton from './button-ripple.tsx';
 
-export default () => <Dialog title="快乐背单词" noback={!signals.user.value}>
+export default () => <Dialog title="快乐背单词" noback={!app.user.value}>
     <div className="[&>div]:w-full [&>div]:min-h-80 [&>div]:p-5 [&>div]:flex [&>div]:flex-col [&>div]:justify-center [&>div>h1]:mb-4 [&>div>h1]:text-5xl [&>div>p]:text-2xl font-extrabold odd:[&>div]:bg-slate-200 odd:[&>div]:text-slate-800 even:[&>div]:bg-slate-800 even:[&>div]:text-slate-300 [&>div:nth-child(even)]:text-right [&>div:nth-child(odd)_b]:text-orange-600 [&>div:nth-child(even)_b]:text-orange-400">
         <div>
             <h1>快乐背单词</h1>
-            <p>版本：{version}</p>
+            <p>版本：{app.version}</p>
         </div>
         <div>
             <h1>语言基础</h1>
@@ -26,7 +26,10 @@ export default () => <Dialog title="快乐背单词" noback={!signals.user.value
         </div>
         <div>
             <h1>开始学习</h1>
-            <p>使用你的电子邮件，单击 <RButton className="w-32 text-slate-800 bg-orange-400 hover:bg-orange-500" title="login" onClick={() => showDialog('login')}>登录</RButton> 开始免费学习吧。</p>
+            <p>使用你的电子邮件，单击
+                <RButton className="w-32 text-slate-800 bg-orange-400 hover:bg-orange-500" 
+                    title="login" onClick={() => app.showDialog('signup')}>登录
+                </RButton> 开始免费学习吧。</p>
         </div>
         <div>
             <h1>微信</h1>

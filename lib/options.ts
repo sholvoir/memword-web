@@ -1,4 +1,4 @@
-import { Signal } from "@preact/signals-react";
+import type { Signal } from "@preact/signals";
 
 export interface Option {
     value: string | number;

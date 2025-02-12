@@ -1,19 +1,20 @@
+import { JSX } from "preact/jsx-runtime";
 import { aggrToBAggr } from "../lib/istat.ts";
-import { signals, startStudy } from "../lib/signals.ts";
+import * as app from "../lib/app.ts";
 import Stat from './stat.tsx';
 
 const sum = (s: number, b: number) => s + b;
 const max = (a: number, b: number) => a > b ? a : b
 
-export default (props: React.HTMLAttributes<HTMLDivElement>) => {
+export default (props: JSX.HTMLAttributes<HTMLDivElement>) => {
     const getResult = () => {
         const result = [] as Array<JSX.Element>;
-        for (const stat of signals.stats.value) {
+        for (const stat of app.stats.value) {
             const width = stat.total.reduce(max) * 1.2;
             const totalSum = stat.total.reduce(sum);
             const taskSum = stat.task.reduce(sum);
-            result.push(<Stat onTitleClick={() => startStudy(stat.wlid)}
-                onItemClick={(blevel) => startStudy(stat.wlid, blevel)}
+            result.push(<Stat onTitleClick={() => app.startStudy(stat.wlid)}
+                onItemClick={(blevel) => app.startStudy(stat.wlid, blevel)}
                 title={`${stat.disc} - ${taskSum}|${totalSum}`} width={width}
                 total={aggrToBAggr(stat.total)}
                 task={aggrToBAggr(stat.task)} />)

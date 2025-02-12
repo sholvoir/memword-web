@@ -1,15 +1,15 @@
-import { useSignal } from "@preact/signals-react";
+import { signal } from "@preact/signals";
 import { submitIssue } from '../lib/mem.ts';
-import { closeDialog, showTips } from "../lib/signals.ts";
+import { closeDialog, showTips } from "../lib/app.ts";
 import Button from './button-ripple.tsx';
 import TAInput from './input-textarea.tsx';
 import Dialog from './dialog.tsx';
 
 export default () => {
-    const issue = useSignal('');
+    const issue = signal('');
     const handleSubmitClick = async () => {
-        const resp = await submitIssue(issue.value);
-        if (!resp.ok) return showTips('网络错误，未提交成功!');
+        if (!(await submitIssue(issue.value)))
+            return showTips('网络错误，未提交成功!');
         showTips('提交成功!');
         closeDialog();
     }

@@ -1,5 +1,4 @@
-import { now } from "./common.ts";
-import { ITask } from "./itask.ts";
+import { ITask } from "../../memword-server/lib/itask.ts";
 
 export const statsFormat = '0.2.0';
 
@@ -8,25 +7,33 @@ export type TAggr = [number, number, number, number, number, number, number,
 const newAggr = (): TAggr => [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 export interface IStat {
-    format: string;
     time: number;
     total: TAggr;
     task: TAggr;
     wlid?: string;
     disc?: string;
 }
-export const initStat = (): IStat => ({
-    format: statsFormat,
-    time: now(),
+export const initStat = (time: number): IStat => ({
+    time,
     total: newAggr(),
     task: newAggr()
 });
 
-export const addTaskToStat = (stat: IStat, item?: ITask ) => {
-    if (!item) stat.total[0]++; else {
-        stat.total[item.level]++;
-        if (item.next < stat.time) stat.task[item.level]++;
-    }
+export interface IStats {
+    format: string;
+    total: IStat;
+    wlStats: Array<IStat>;
+};
+
+export const initStats = (time: number): IStats => ({
+    format: statsFormat,
+    total: initStat(time),
+    wlStats: []
+})
+
+export const addTaskToStat = (stat: IStat, item: ITask ) => {
+    stat.total[item.level]++;
+    if (item.next < stat.time) stat.task[item.level]++;
 };
 
 export type TBAggr = [number, number, number, number, number, number];
