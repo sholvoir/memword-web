@@ -1,9 +1,9 @@
 import { JSX, VNode } from "preact";
-import { signal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 
 export default (props: JSX.ButtonHTMLAttributes<HTMLButtonElement>): VNode<HTMLButtonElement> => {
     const { children, disabled, onClick, ...rest} = props;
-    const enabled = signal(true);
+    const enabled = useSignal(true);
     const handleClick = async (e: JSX.TargetedMouseEvent<HTMLButtonElement>) => {
         enabled.value = false;
         if (onClick) await onClick(e);

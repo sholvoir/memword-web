@@ -1,38 +1,37 @@
 // deno-lint-ignore-file
 import { JSX } from "preact";
 import { useEffect } from "preact/hooks";
-import * as app from "../lib/app.ts";
+import * as app from "./app.tsx";
 import Home from "./home.tsx";
-import Add from './add.tsx';
-import About from './about.tsx';
+import Waiting from './waiting.tsx';
 import Help from './help.tsx';
+import About from './about.tsx';
+import Menu from './menu.tsx';
+import Issue from './issue.tsx';
+import Setting from './setting.tsx';
+import Add from './add.tsx';
+import Signup from './signup.tsx';
 import Signin from './signin.tsx';
 import Signout from './signout.tsx';
 import Study from './study.tsx';
-import Setting from './setting.tsx';
-import Issue from './issue.tsx';
 import Dict from './dict.tsx';
-import Waiting from './waiting.tsx';
-import Menu from './menu.tsx';
-
-const dialog = new Map<app.TDial, JSX.Element>();
-dialog.set('home', <Home/>);
-dialog.set("wait", <Waiting/>);
-dialog.set('add', <Add/>);
-dialog.set('issue', <Issue/>);
-dialog.set('study', <Study/>);
-dialog.set('setting', <Setting/>);
-dialog.set('signin', <Signin/>);
-dialog.set('signout', <Signout/>);
-dialog.set('about', <About/>);
-dialog.set('help', <Help/>);
-dialog.set('dict', <Dict/>);
-dialog.set('menu', <Menu/>);
 
 export default () => {
-    useEffect(() => {app.init()}, []);
-    return <div className="h-[100dvh]">
-        {app.dialog.value ? dialog.get(app.dialog.value) : dialog.get('about')}
-        {app.tips.value && <div className="tip" onClick={app.hideTips}>{app.tips.value}</div>}
-    </div>;
+    const dialogs = new Map<app.TDial, JSX.Element>();
+    dialogs.set('home', <Home />);
+    dialogs.set("wait", <Waiting />);
+    dialogs.set('help', <Help />);
+    dialogs.set('about', <About />);
+    dialogs.set('menu', <Menu />);
+    dialogs.set('issue', <Issue />);
+    dialogs.set('add', <Add />);
+    dialogs.set('dict', <Dict />);
+    dialogs.set('study', <Study />);
+    dialogs.set('setting', <Setting  />);
+    dialogs.set('signup', <Signup />);
+    dialogs.set('signin', <Signin />);
+    dialogs.set('signout', <Signout />);
+
+    useEffect(() => { app.init() }, []);
+    return dialogs.get(app.dial.value);
 }

@@ -1,22 +1,21 @@
 import { JSX } from "preact/jsx-runtime";
 import { useRef } from "preact/hooks";
-import { signal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import { wait } from "@sholvoir/generic/wait";
-import { FaExclamationCircle, FaPlay, FaDotCircle, FaRedoAlt, FaRegCheckCircle, FaRegTimesCircle } from "@preact-icons/fa";
-import * as app from "../lib/app.ts";
+import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
 import SButton from './button-base.tsx';
 import Dialog from './dialog.tsx';
 
 export default () => {
-    const finish = () => {
-        app.closeDialog();
-        mem.syncTasks();
+    const finish = async () => {
+        app.go();
+        await mem.syncTasks();
         app.totalStats();
     }
-    if (!app.citem.value) return (app.closeDialog(), <div />);
-    const startY = signal(0);
-    const endY = signal(0);
+    if (!app.citem.value) return (app.go(), <div />);
+    const startY = useSignal(0);
+    const endY = useSignal(0);
     const player = useRef<HTMLAudioElement>(null);
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level ?? app.citem.value!.level);
     const studyNext = async () => {
@@ -37,7 +36,6 @@ export default () => {
     const handleRefresh = async () => {
         app.showTips("Get Server Data...");
         const item = await mem.getUpdatedDict(app.citem.value!.word);
-        app.hideTips();
         if (!item) return app.showTips(`Not Found ${app.citem.value!.word}`);
         app.citem.value = item;
     };
@@ -49,7 +47,7 @@ export default () => {
     };
     const handleKeyPress = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
         if (e.ctrlKey || e.altKey) return;
-        if (app.dialogs.value.slice(-1)[0] == 'study') switch (e.key) {
+        switch (e.key) {
             case ' ': handleClick(); break;
             case 'N': case 'X': case 'n': case 'x': if (app.isPhaseAnswer.value) handleIKnown().then(studyNext); break;
             case 'M': case 'Z': case 'm': case 'z': if (app.isPhaseAnswer.value) handleIKnown(0).then(studyNext); break;
@@ -89,45 +87,47 @@ export default () => {
     }
     const splite = (w: string) => {
         const [word, n] = w.split('_');
-        return <div className="text-4xl font-bold">{word}<sup className="text-lg">{n}</sup></div>;
+        return <div class="text-4xl font-bold">{word}<sup class="text-lg">{n}</sup></div>;
     }
-    return <Dialog title="学习" onCancel={finish}>
-        <div className={`relative h-full flex flex-col outline-none`} tabIndex={-1} onKeyUp={handleKeyPress}
+    return <Dialog title="学习" onBackClick={finish}>
+        <div class={`relative h-full flex flex-col outline-none`} tabIndex={-1} onKeyUp={handleKeyPress}
             style={{ top: `${endY.value - startY.value}px` }}>
-            <div className="p-2 flex gap-2 text-lg">
+            <div class="p-2 flex gap-2 text-lg">
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown().then(studyNext)} title="X/N">
-                    <FaRegCheckCircle className="bg-round-6" />
+                &#9745;
                 </SButton>
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(0).then(studyNext)} title="Z/M">
-                    <FaRegTimesCircle className="bg-round-6" />
+                &#9746;
                 </SButton>
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={() => player.current?.play()}>
-                    <FaPlay className="bg-round-6" />
+                &#9654;
                 </SButton>
-                <div className="grow text-center">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
+                <div class="grow text-center">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(13).then(studyNext)}>
-                    <FaDotCircle className="bg-round-6" />
+                &#9737;
                 </SButton>
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}>
-                    <FaExclamationCircle className="bg-round-6" />
+                &#9888;
                 </SButton>
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}>
-                    <FaRedoAlt className="bg-round-6" />
+                &curarr;
                 </SButton>
                 <div>{app.citem.value.level}</div>
             </div>
-            <div className="grow px-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
+            <div class="grow px-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>
-                <div className="pb-2 flex gap-2 flex-wrap justify-between">
+                <div class="pb-2 flex gap-2 flex-wrap justify-between">
                     {splite(app.citem.value.word)}
-                    {app.isPhaseAnswer.value && <div className="text-2xl flex items-center">{app.citem.value.phonetic}</div>}
                 </div>
-                {app.isPhaseAnswer.value && <div className="grow h-0 overflow-y-auto [scrollbar-width:none]">
-                    {app.citem.value.trans?.split('\n').map((t: string) => <p className="text-2xl">{t}</p>)}
-                    {app.citem.value.def?.split('\n').map((t: string) => t.startsWith(' ') ? <p className="text-lg">&ensp;&bull;{t}</p> : <p className="text-xl font-bold">{t}</p>)}
+                {app.isPhaseAnswer.value && <div class="grow h-0 overflow-y-auto [scrollbar-width:none]">
                 </div>}
             </div>
         </div>
-        <audio ref={player} src={app.citem.value?.sound} />
+        
     </Dialog>;
 }
+
+//{app.isPhaseAnswer.value && <div class="text-2xl flex items-center">{app.citem.value.phonetic}</div>}
+//{app.citem.value.trans?.split('\n').map((t: string) => <p class="text-2xl">{t}</p>)}
+//{app.citem.value.def?.split('\n').map((t: string) => t.startsWith(' ') ? <p class="text-lg">&ensp;&bull;{t}</p> : <p class="text-xl font-bold">{t}</p>)}
+//<audio ref={player} src={app.citem.value?.sound} />

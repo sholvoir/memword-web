@@ -1,6 +1,6 @@
 import { JSX } from "preact/jsx-runtime";
 import { aggrToBAggr } from "../lib/istat.ts";
-import * as app from "../lib/app.ts";
+import * as app from './app.tsx';
 import Stat from './stat.tsx';
 
 const sum = (s: number, b: number) => s + b;
@@ -9,7 +9,7 @@ const max = (a: number, b: number) => a > b ? a : b
 export default (props: JSX.HTMLAttributes<HTMLDivElement>) => {
     const getResult = () => {
         const result = [] as Array<JSX.Element>;
-        for (const stat of app.stats.value) {
+        for (const stat of app.stats.value.wlStats) {
             const width = stat.total.reduce(max) * 1.2;
             const totalSum = stat.total.reduce(sum);
             const taskSum = stat.task.reduce(sum);
@@ -21,5 +21,5 @@ export default (props: JSX.HTMLAttributes<HTMLDivElement>) => {
         }
         return result;
     }
-    return <div {...props}><div className="p-2 flex flex-wrap justify-between gap-4">{getResult()}</div></div>;
+    return <div {...props}><div class="p-2 flex flex-wrap justify-between gap-4">{getResult()}</div></div>;
 }

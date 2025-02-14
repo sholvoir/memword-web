@@ -2,6 +2,9 @@ import { IStats, initStats, statsFormat } from './istat.ts';
 import { requestInit } from '@sholvoir/generic/http';
 import { ISetting } from "../../memword-server/lib/isetting.ts";
 import { IItem } from "./iitem.ts";
+import { version } from "../deno.json" with { type: "json" };
+
+export { version };
 
 export const setStats = (stats: IStats) =>
     localStorage.setItem('_stats', JSON.stringify(stats));

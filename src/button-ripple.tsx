@@ -1,11 +1,11 @@
 import { JSX, VNode } from "preact";
-import { signal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import ButtonBase from './button-base.tsx';
 
-export default (props: JSX.ButtonHTMLAttributes<HTMLButtonElement>): VNode<HTMLButtonElement> => {
-    const { class: className, children, onClick, ...rest} = props;
-    const showRipple = signal(false);
-    const rippleStyle = signal('');
+export default ({ class: className, children, onClick, ...rest}:
+    JSX.ButtonHTMLAttributes<HTMLButtonElement>): VNode<HTMLButtonElement> => {
+    const showRipple = useSignal(false);
+    const rippleStyle = useSignal('');
     const handleClick = (e: JSX.TargetedMouseEvent<HTMLButtonElement>) => {
         const btn = e.currentTarget;
         const diameter = Math.max(btn.clientWidth, btn.clientHeight);

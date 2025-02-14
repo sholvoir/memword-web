@@ -1,33 +1,32 @@
-import { signal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { Options } from "../lib/options.ts";
 import { addTasks } from "../lib/mem.ts";
-import { closeDialog, showDialog, totalStats } from "../lib/app.ts";
+import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
 import Select from './select-single.tsx';
 import Button from './button-ripple.tsx';
 
 export default () => {
-    const search = signal('');
-    const wlid = signal('');
-    const wordLists = signal<Options>([]);
+    const search = useSignal('');
+    const wlid = useSignal('');
+    const wordLists = useSignal<Options>([]);
     const handleOkClick = async () => {
-        closeDialog();
-        showDialog('wait');
+        app.go('wait');
         await addTasks(wlid.peek());
-        await totalStats();
-        closeDialog();
+        await app.totalStats();
+        app.go('home');
     }
     const init = async () => {}; //todo: load system wlids.
     useEffect(() => {init()}, []);
     return <Dialog title="添加任务">
-        <div className="p-2 h-full flex flex-col gap-2">
+        <div class="p-2 h-full flex flex-col gap-2">
             <input value={search.value} onChange={(e)=>search.value=e.currentTarget.value}/>
-            <Select className="shrink select" title="让我们选择一本词书开始学习吧"
+            <Select class="shrink select" title="让我们选择一本词书开始学习吧"
                 binding={wlid} options={wordLists.value}/>
-            <div className="flex gap-2 pb-2 justify-end">
-                <Button className="button btn-normal w-32" onClick={closeDialog}>取消</Button>
-                <Button className="button btn-prime w-32" onClick={handleOkClick}>确定</Button>
+            <div class="flex gap-2 pb-2 justify-end">
+                <Button class="button btn-normal w-32" onClick={()=>app.go('home')}>取消</Button>
+                <Button class="button btn-prime w-32" onClick={handleOkClick}>确定</Button>
             </div>
         </div>
     </Dialog>;

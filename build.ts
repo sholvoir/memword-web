@@ -12,7 +12,8 @@ const run = async () => {
     bundle: true,
     format: "esm",
     jsx: "automatic",
-    jsxImportSource: "preact"
+    jsxImportSource: "preact",
+    sourcemap: true,
     //minify: true
   });
   esbuild.stop();

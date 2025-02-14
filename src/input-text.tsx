@@ -1,5 +1,5 @@
 import { JSX, VNode } from "preact";
-import { Signal, signal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
 
 interface ITextInputProps {
     binding: Signal<string|number|undefined>;
@@ -11,7 +11,7 @@ interface ITextInputProps {
 export default (props: ITextInputProps & JSX.InputHTMLAttributes<HTMLInputElement>): VNode<HTMLDivElement> => {
     const { binding, num, options, maxSuggest, class: className, onChange, ...rest} = props;
     const max = maxSuggest ?? 12;
-    const suggestions = signal<Array<string>>([]);
+    const suggestions = useSignal<Array<string>>([]);
     const handleBlur = () => setTimeout(() => suggestions.value = [], 200);
     const handleKeyPress = (e: KeyboardEvent) => e.key == 'Enter' && handleBlur() && onChange && onChange();
     const handleInput = (e: InputEvent) => {

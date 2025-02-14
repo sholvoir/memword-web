@@ -27,20 +27,20 @@ const handleActivate = async () => {
     await self.clients.claim();
 };
 
-const putInCache = async (request: Request, response: Response) => {
-    await (await caches.open(cacheName)).put(request, response);
-};
+// const putInCache = async (request: Request, response: Response) => {
+//     await (await caches.open(cacheName)).put(request, response);
+// };
 
 const handleFetch = async (req: Request) => {
     const handlerKey = `${req.method.toUpperCase()} ${new URL(req.url).pathname.toLowerCase()}`;
     console.log(handlerKey);
     const handler = route.get(handlerKey);
     if (handler) return handler(req);
-    const respFromCache = await caches.match(req);
-    if (respFromCache) return respFromCache;
+    //const respFromCache = await caches.match(req);
+    //if (respFromCache) return respFromCache;
     const respFromNetwork = await fetch(req);
-    if (respFromNetwork.ok)
-        putInCache(req, respFromNetwork.clone());
+    //if (respFromNetwork.ok)
+        //putInCache(req, respFromNetwork.clone());
     return respFromNetwork;
 };
 

@@ -4,60 +4,81 @@
 @import url(https://raw.esm.sh/gh/sholvoir/preact-components@0.0.7/static/select.css);
 @import "tailwindcss";
 
-@layer base {
-    input, textarea {
-        border-color: #78716C;
-        border-width: 1px;
-        padding: 3px 6px;
-        background-color: transparent;
-        outline: none;
-    }
-    textarea {
-        scrollbar-width: thin;
-        scrollbar-color: #78716C transparent;
-    }
-    @media (prefers-color-scheme: dark) {
-        input:-webkit-autofill {
-            box-shadow: 0 0 0 1000px #292524 inset;
-            -webkit-text-fill-color: #E7E5E4;
-        }
-    }
-    .input_4Xa52>div {
-        @apply bg-slate-200 dark:bg-slate-800
+input {
+    @apply border px-2;
+}
+body {
+    @apply text-slate-800 dark:text-slate-300;
+}
+.input_4Xa52 {
+    &>div {
+        @apply bg-slate-200 dark:bg-slate-800;
     }
 }
-@layer components {
-    .tip {
-        @apply fixed top-0 left-[calc(env(titlebar-area-x,0px)_+_32px)] bg-slate-300 dark:bg-slate-900 w-[calc(env(titlebar-area-width,100%)_-_64px)] h-[env(titlebar-area-height,38px)] flex justify-center items-center font-bold
+.title {
+    width: env(titlebar-area-width,100%);
+    height: env(titlebar-area-height,38px);
+    margin-left: env(titlebar-area-x,0);
+    @apply bg-slate-300 dark:bg-slate-900 flex justify-center items-center font-bold;
+}
+.tip {
+    left: calc(env(titlebar-area-x,0px)_+_32px);
+    width: calc(env(titlebar-area-width,100%)_-_64px);
+    height: env(titlebar-area-height,38px);
+    @apply fixed top-0 bg-slate-300 dark:bg-slate-900 flex justify-center items-center font-bold;
+}
+.body {
+    @apply bg-slate-200 dark:bg-slate-800;
+}
+.tail {
+    @apply bg-slate-300 dark:bg-slate-700 fill-slate-800 dark:fill-slate-300;
+}
+.bg-round-6 {
+    @apply bg-slate-200 dark:bg-slate-800 rounded-md w-6 h-6;
+}
+.button {
+    @apply rounded-md px-2 border border-slate-500;
+}
+.btn-anchor {
+    @apply text-slate-800 dark:text-slate-300 hover:underline disabled:opacity-50 active:bg-orange-800;
+}
+.btn-normal {
+    @apply bg-slate-300 hover:bg-slate-400 disabled:hover:bg-slate-300
+        dark:bg-slate-700 dark:hover:bg-slate-800 disabled:hover:dark:bg-slate-700;
+}
+.btn-prime {
+    @apply bg-orange-400 text-slate-800 hover:bg-orange-500 disabled:hover:bg-orange-400
+}
+/* .btn-prime-dark {
+    @apply bg-orange-800 text-slate-300 hover:bg-orange-700 disabled:hover:bg-orange-800;
+}
+.btn-prime {
+    @apply bg-orange-400 hover:bg-orange-500 disabled:hover:bg-orange-400 dark:bg-orange-800
+        dark:hover:bg-orange-700 dark:disabled:hover:bg-orange-800;
+} */
+.select {
+    scrollbar-color: #64748B transparent;
+    @apply border border-solid border-slate-500 p-2 fill-slate-800 dark:fill-slate-300 overflow-y-auto;
+    &>div {
+        @apply hover:bg-slate-300 dark:hover:bg-slate-700;
     }
-    .title {
-        @apply bg-slate-300 dark:bg-slate-900 w-[env(titlebar-area-width,100%)] ml-[env(titlebar-area-x,0)] h-[env(titlebar-area-height,38px)] flex justify-center items-center font-bold
+}
+.about {
+    @apply font-extrabold;
+    &>div {
+        @apply w-full min-h-80 p-5 flex flex-col justify-center odd:bg-slate-200
+            odd:text-slate-800 even:bg-slate-800 even:text-slate-300 even:text-right;
     }
-    .body {
-        @apply bg-slate-200 dark:bg-slate-800
+    &>div>h1 {
+        @apply mb-4 text-5xl;
     }
-    .study-translucent {
-        @apply bg-[#E2E8F0B0] dark:bg-[#1E293BB0]
+    &>div>p {
+        @apply text-2xl;
     }
-    .tail {
-        @apply bg-slate-300 dark:bg-slate-700 fill-slate-800 dark:fill-slate-300
-    }
-    .bg-round-6 {
-        @apply bg-slate-200 dark:bg-slate-800 rounded-md w-6 h-6;
-    }
-    .button {
-        @apply rounded-md p-2 border border-slate-500
-    }
-    .btn-anchor {
-        @apply text-slate-800 dark:text-slate-300 hover:underline disabled:opacity-50 active:bg-orange-800
-    }
-    .btn-normal {
-        @apply bg-slate-400 hover:bg-slate-500 disabled:hover:bg-slate-400 dark:bg-slate-700 disabled:hover:dark:bg-slate-700
-    }
-    .btn-prime {
-        @apply bg-orange-400 disabled:hover:bg-orange-400 dark:bg-orange-700 dark:disabled:hover:bg-orange-700 hover:bg-orange-500
-    }
-    .select {
-        @apply border border-solid border-slate-500 p-2 fill-slate-800 dark:fill-slate-300 [scrollbar-color:#64748B_transparent] hover:[&>div]:bg-slate-300 dark:hover:[&>div]:bg-slate-700 overflow-y-auto
+}
+.menu {
+    @apply p-2;
+    &>menu {
+        @apply p-2 cursor-pointer h-px bg-slate-500;
     }
 }
