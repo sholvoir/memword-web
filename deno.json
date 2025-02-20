@@ -1,15 +1,16 @@
 {
    "lock": false,
-   "version": "0.6.2",
+   "version": "0.6.3",
    "tasks": {
-      "static": "cp static/* -R ../sholvoir.github.io/memword/",
-      "build": "deno -A build.ts && tailwindcss -i ./styles.css -o ../sholvoir.github.io/memword/styles.css",
-      "serve": "deno -A jsr:@std/http/file-server ../sholvoir.github.io/memword/"
+      "build": "deno -A main.ts build",
+      "release": "deno -A main.ts release",
+      "start": "deno -A main.ts start"
    },
    "imports": {
       "@preact/signals": "npm:@preact/signals@^2.0.1",
       "@sholvoir/components/": "https://raw.esm.sh/gh/sholvoir/preact-components@0.0.9/islands/",
       "@sholvoir/generic": "jsr:@sholvoir/generic@^0.2.5",
+      "@std/fs": "jsr:@std/fs@^1.0.13",
       "esbuild": "npm:esbuild@^0.25.0",
       "esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@^0.11.1",
       "preact": "npm:preact@^10.25.4"
