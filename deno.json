@@ -1,6 +1,6 @@
 {
    "lock": false,
-   "version": "0.6.0",
+   "version": "0.6.2",
    "tasks": {
       "static": "cp static/* -R ../sholvoir.github.io/memword/",
       "build": "deno -A build.ts && tailwindcss -i ./styles.css -o ../sholvoir.github.io/memword/styles.css",

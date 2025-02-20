@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { JSX } from "preact/jsx-runtime";
 import { useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
@@ -106,7 +107,7 @@ export default () => {
                     {(console.log(app.citem.value), app.citem.value.word)}
                 </div>
                 {app.isPhaseAnswer.value && <div class="grow h-0 overflow-y-auto [scrollbar-width:none]">
-                    <Tab className="grow" cindex={cindex} titles={app.citem.value.cards!.map((_, i)=>`${i}`)}>
+                    <Tab className="grow" cindex={cindex} titles={app.citem.value.cards?.map((_: any, i: number)=>`${i}`)}>
                         <Scard card={app.citem.value.cards!.at(0)}/>
                     </Tab>
                     <audio ref={player} src={app.citem.value.cards?.at(cindex.value)?.sound} />
