@@ -11,20 +11,18 @@ const handleActivate = async () => {
     await self.clients.claim();
 };
 
-// const putInCache = async (request: Request, response: Response) => {
-//     await (await caches.open(cacheName)).put(request, response);
-// };
+const putInCache = async (request: Request, response: Response) => {
+    await (await caches.open(cacheName)).put(request, response);
+};
 
 const handleFetch = async (req: Request) => {
-    if (apiServerRegex.test(req.url)) {
-        console.log(req.url);
-        return fetch(req)
-    }
-    //const respFromCache = await caches.match(req);
-    //if (respFromCache) return respFromCache;
+    console.log(req.url);
+    if (apiServerRegex.test(req.url)) return await fetch(req)
+    const respFromCache = await caches.match(req);
+    if (respFromCache) return respFromCache;
     const respFromNetwork = await fetch(req);
-    //if (respFromNetwork.ok)
-    //putInCache(req, respFromNetwork.clone());
+    if (respFromNetwork.ok)
+    putInCache(req, respFromNetwork.clone());
     return respFromNetwork;
 };
 

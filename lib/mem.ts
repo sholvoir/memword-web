@@ -39,7 +39,7 @@ const getServerDict = (word: string) => {
 const updateLocalDict = async (dict: IDict): Promise<IItem | undefined> => {
     if (dict.cards) {
         for (const card of dict.cards) if (card.sound) {
-            const resp = await fetch(`${API_URL}/pub/sound?q=${encodeURIComponent(card.sound)}`, { cache: 'force-cache' });
+            const resp = await fetch(`${API_URL}/sound?q=${encodeURIComponent(card.sound)}`, { cache: 'force-cache' });
             if (resp.ok) card.sound = await blobToBase64(await resp.blob());
         }
         return await idb.updateDict(dict);
