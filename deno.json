@@ -1,6 +1,6 @@
 {
    "lock": false,
-   "version": "0.6.3",
+   "version": "0.6.5",
    "tasks": {
       "build": "deno -A main.ts build",
       "release": "deno -A main.ts release",

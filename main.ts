@@ -3,7 +3,7 @@ import { copy } from '@std/fs/copy';
 import * as esbuild from "esbuild";
 import { denoPlugins } from "esbuild-deno-loader";
 
-const outdir = '../memword-server/static';
+const outdir = '../sholvoir.github.io/memword';
 let release = false;
 
 const tail = new Deno.Command('tailwindcss', {

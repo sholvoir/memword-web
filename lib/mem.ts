@@ -1,6 +1,5 @@
 // deno-lint-ignore-file no-empty
 import { requestInit, getRes, getJson } from '@sholvoir/generic/http';
-import { blobToBase64 } from "@sholvoir/generic/blob";
 import { JWT } from "@sholvoir/generic/jwt";
 import { defaultSetting, ISetting } from "../../memword-server/lib/isetting.ts";
 import { IWordList } from "../../memword-server/lib/iwordlist.ts";
@@ -36,18 +35,9 @@ const getAuth = async () => auth ?? (auth = await idb.getMeta('_auth'));
 const getServerDict = (word: string) => {
     return getJson<IDict>(`${API_URL}/pub/dict?q=${encodeURIComponent(word)}`, undefined, { cache: 'reload' });
 }
-const updateLocalDict = async (dict: IDict): Promise<IItem | undefined> => {
-    if (dict.cards) {
-        for (const card of dict.cards) if (card.sound) {
-            const resp = await fetch(`${API_URL}/sound?q=${encodeURIComponent(card.sound)}`, { cache: 'force-cache' });
-            if (resp.ok) card.sound = await blobToBase64(await resp.blob());
-        }
-        return await idb.updateDict(dict);
-    }
-}
 const getServerAndUpdateLocalDict = async (word: string) => {
     const dict = await getServerDict(word);
-    if (dict) return await updateLocalDict(dict);
+    if (dict) return await idb.updateDict(dict);
 }
 const itemUpdateDict = async (item: IItem) => {
     if (!item.dversion) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
@@ -70,14 +60,16 @@ export const getUser = async () => {
 }
 
 export const getDict = async (word: string) => {
-    const dict = await getServerDict(word);
-    if (!dict) return;
-    updateLocalDict(dict);
-    return dict;
+    try {
+        const dict = await getServerDict(word);
+        if (!dict) return;
+        idb.updateDict(dict);
+        return dict;
+    } catch { return }
 }
 
 export const putDict = async (dict: IDict) => {
-    updateLocalDict(dict);
+    idb.updateDict(dict);
     try {
         const res = await fetch(`${API_URL}/admin/dict`, requestInit(dict, 'PUT', authHead()));
         return res.ok;
