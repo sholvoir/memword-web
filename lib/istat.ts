@@ -1,6 +1,6 @@
 import { ITask } from "../../memword-server/lib/itask.ts";
 
-export const statsFormat = '0.2.0';
+export const statsFormat = '0.2.1';
 
 export type TAggr = [number, number, number, number, number, number, number,
     number, number, number, number, number, number, number, number, number];
@@ -13,22 +13,22 @@ export interface IStat {
     wlid?: string;
     disc?: string;
 }
-export const initStat = (time: number): IStat => ({
+export const initStat = (time: number, wlid?: string, disc?: string): IStat => ({
     time,
     total: newAggr(),
-    task: newAggr()
+    task: newAggr(),
+    wlid,
+    disc
 });
 
 export interface IStats {
     format: string;
-    total: IStat;
-    wlStats: Array<IStat>;
+    stats: Array<IStat>;
 };
 
-export const initStats = (time: number): IStats => ({
+export const initStats = (): IStats => ({
     format: statsFormat,
-    total: initStat(time),
-    wlStats: []
+    stats: []
 })
 
 export const addTaskToStat = (stat: IStat, item: ITask ) => {
@@ -56,5 +56,6 @@ export const isBLevelIncludesLevel = (blevel: number, level: number) => {
         case 3: return level >= 10 && level <= 12;
         case 4: return level >= 13 && level <= 14;
         case 5: return level >= 15;
+        default: return true;
     }
 };

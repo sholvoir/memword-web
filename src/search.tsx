@@ -18,6 +18,6 @@ export default () => {
     }
     return <Dialog title="词典" onBackClick={()=>app.go()}>
         <TInput autoCapitalize="none" type="search" name="word" placeholder="word" class="m-2 w-[calc(100%-16px)]"
-            binding={word} onChange={handleSearchClick} options={app.vocabulary.value}/>
+            binding={word} onChange={handleSearchClick} options={app.vocabulary}/>
     </Dialog>;
 }

@@ -54,13 +54,14 @@ export default () => {
         }
     };
     return <Dialog title="登录" onBackClick={()=>app.go()}>
-        <div class="p-2 h-full w-64 mx-auto flex flex-col gap-4">
+        <div class="p-2 h-full w-64 mx-auto flex flex-col">
             <label for="name">用户名</label>
-            <TInput name="name" placeholder="name" autoCapitalize="none" binding={app.name} />
-            <AButton class="btn-anchor block text-right" onClick={handleSend} disabled={!canSendOTP.value}>
+            <TInput name="name" class="mb-3" placeholder="name" autoCapitalize="none" binding={app.name} />
+            <label for="code">临时密码</label>
+            <TInput name="code" placeholder="code" autoCapitalize="none" binding={code} />
+            <AButton class="btn-anchor block text-right mb-3" onClick={handleSend} disabled={!canSendOTP.value}>
                 Send One-Time Passcode {counter.value > 0 ? `(${counter.value})` : ''}
             </AButton>
-            <TInput name="code" placeholder="code" autoCapitalize="none" binding={code} />
             <Button class="button btn-prime" onClick={handleClickLogin}>登录</Button>
         </div>
     </Dialog>;

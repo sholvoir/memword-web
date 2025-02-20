@@ -5,6 +5,7 @@ import { ITask, studyTask } from "../../memword-server/lib/itask.ts";
 import { IWordList } from "../../memword-server/lib/iwordlist.ts";
 import { IDict } from "../../memword-server/lib/idict.ts";
 import { now } from "../../memword-server/lib/common.ts";
+import { IClientWordlist } from "./wordlists.ts";
 
 export const tempItems = new Map<string, IItem>();
 type kvKey = '_vocabulary-version'|'_sync-time'|'_setting'|'_auth';
@@ -63,20 +64,25 @@ export const deleteIssue = (id: number) => new Promise<void>((resolve, reject) =
     request.onsuccess = () => resolve();
 }));
 
-export const getWordlistVersion = (wlid: string) => new Promise<string|undefined>((resolve, reject) => run(reject, db => {
+export const getWordlist = (wlid: string) => new Promise<IWordList|undefined>((resolve, reject) => run(reject, db => {
     const request = db.transaction('wordlist', 'readonly').objectStore('wordlist').get(wlid);
     request.onerror = reject;
-    request.onsuccess = (e) => {
-        const wordlist = (e.target as IDBRequest<IWordList>).result;
-        resolve(wordlist && wordlist.version);
-    }
+    request.onsuccess = () => resolve(request.result);
 }));
 
-export const setWordlistVersion = (wlid: string, version: string) => new Promise<void>((resolve, reject) => run(reject, db => {
-    const request = db.transaction('wordlist', 'readwrite').objectStore('wordlist').put({wlid, version});
+export const putWordlist = (wls: Array<IWordList>) => new Promise<void>((resolve, reject) => run(reject, db => {
+    const transaction = db.transaction('wordlist', 'readwrite');
+    transaction.onerror = reject;
+    transaction.oncomplete = () => resolve();
+    const wStore = transaction.objectStore('wordlist');
+    for (const wl of wls) wStore.put(wl);
+}));
+
+export const deleteWordlist = (wlid: string) => new Promise<void>((resolve, reject) => run(reject, db => {
+    const request = db.transaction('wordlist', 'readwrite').objectStore('wordlist').delete(wlid);
     request.onerror = reject;
     request.onsuccess = () => resolve();
-}))
+}));
 
 export const getItem = (word: string) => new Promise<IItem|undefined>((resolve, reject) => run(reject, db => {
     const request = db.transaction('item', 'readonly').objectStore('item').get(word);
@@ -89,6 +95,12 @@ export const putItem = (item: IItem) => new Promise<void>((resolve, reject) => r
     request.onerror = reject;
     request.onsuccess = () => resolve();
 }));
+
+export const deleteItem = (word: string) => new Promise<void>((resolve, reject) => run(reject, db => {
+    const request = db.transaction('item', 'readwrite').objectStore('item').delete(word);
+    request.onerror = reject;
+    request.onsuccess = () => resolve();
+}))
 
 export const getItems = (last: number) => new Promise<Array<IItem>>((resolve, reject) => run(reject, db => {
     const request = db.transaction('item', 'readonly').objectStore('item').index('last').getAll(IDBKeyRange.lowerBound(last));
@@ -120,13 +132,13 @@ export const mergeTasks = (tasks: Array<ITask>) => new Promise<void>((resolve, r
     };
 }));
 
-export const updateDict = (word: string, dict: IDict) => new Promise<IItem|undefined>((resolve, reject) => run(reject, db => {
+export const updateDict = (dict: IDict) => new Promise<IItem|undefined>((resolve, reject) => run(reject, db => {
     let item: IItem;
     const transaction = db.transaction('item', 'readwrite');
     transaction.onerror = reject;
     transaction.oncomplete = () => resolve(item);
     const iStore = transaction.objectStore('item');
-    iStore.get(word).onsuccess = (e1) => {
+    iStore.get(dict.word).onsuccess = (e1) => {
         item = (e1.target as IDBRequest<IItem>).result;
         if (item) {
             itemMergeDict(item, dict);
@@ -145,25 +157,26 @@ export const getEpisode = (wordList?: Set<string>, blevel?: number) => new Promi
         const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
         if (!cursor) return;
         const item = cursor.value as IItem;
-        if ((!wordList || wordList.has(item.word)) && (!blevel || isBLevelIncludesLevel(blevel, item.level)))
+        if ((!wordList || wordList.has(item.word)) && ((blevel === undefined) || isBLevelIncludesLevel(blevel, item.level)))
             return result = item;
         cursor.continue();
     }
 }));
 
-export const getStats = (wls: Array<Set<string>>) => new Promise<[IStat, Array<IStat>]>((resolve, reject) => run(reject, db => {
+export const getStats = (wls: Array<IClientWordlist|undefined>) => new Promise<Array<IStat>>((resolve, reject) => run(reject, db => {
     const time = now();
-    const tstat = initStat(time);
-    const stats: Array<IStat> = wls.map(() => initStat(time));
+    const tstat = initStat(time, undefined, '全部词汇');
+    const stats: Array<IStat> = wls.map((wl) => initStat(time, wl?.wlid, wl?.disc));
+    const wordSets = wls.map(wl => new Set<string>(wl?.wordSet));
     const transaction = db.transaction('item', 'readonly');
     transaction.onerror = reject;
-    transaction.oncomplete = () => resolve([tstat, stats]);
+    transaction.oncomplete = () => resolve([tstat, ...stats]);
     transaction.objectStore('item').openCursor().onsuccess = e => {
         const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
-        if (!cursor) return stats.forEach((stat, i) => stat.total[0] += wls[i].size);
+        if (!cursor) return stats.forEach((stat, i) => stat.total[0] += wordSets[i].size);
         const item = cursor.value as IItem;
         addTaskToStat(tstat, item);
-        stats.forEach((stat, i) => wls[i].has(item.word) && (addTaskToStat(stat, item), wls[i].delete(item.word)));
+        stats.forEach((stat, i) => wordSets[i].has(item.word) && (addTaskToStat(stat, item), wordSets[i].delete(item.word)));
         cursor.continue();
     }
 }));

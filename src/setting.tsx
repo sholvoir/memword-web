@@ -1,23 +1,23 @@
 import type { Options } from "../lib/options.ts";
 import { useEffect } from "preact/hooks";
 import { useSignal } from "@preact/signals";
+import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
-import { getSetting, setSetting } from "../lib/mem.ts";
 import { settingFormat } from "../../memword-server/lib/isetting.ts";
 import { now } from "../../memword-server/lib/common.ts";
+import Dialog from './dialog.tsx';
 import Button from './button-ripple.tsx';
 import MSelect from './select-multi.tsx';
-import Dialog from './dialog.tsx';
 
 export default () => {
     const books = useSignal<Array<string>>([]);
     const handleOKClick = () => {
-        setSetting({format: settingFormat, version: now(), books: books.value});
+        mem.setSetting({format: settingFormat, version: now(), books: books.value});
         app.go();
     }
     const options: Options = [];
     const init = async () => {
-        const setting = await getSetting();
+        const setting = await mem.getSetting();
         if (!setting) return app.showTips('ServiceWorker Error!');
         books.value = setting.books;
     }

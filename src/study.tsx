@@ -6,6 +6,8 @@ import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
 import SButton from './button-base.tsx';
 import Dialog from './dialog.tsx';
+import Tab from './tab.tsx';
+import Scard from './scard.tsx';
 
 export default () => {
     const finish = async () => {
@@ -14,10 +16,11 @@ export default () => {
         app.totalStats();
     }
     if (!app.citem.value) return (app.go(), <div />);
+    const cindex = useSignal(0);
     const startY = useSignal(0);
     const endY = useSignal(0);
     const player = useRef<HTMLAudioElement>(null);
-    const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level ?? app.citem.value!.level);
+    const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
         if (++app.sprint.value <= 0) return finish();
         const item = await mem.getEpisode(app.wlid.value, app.blevel.value);
@@ -35,15 +38,14 @@ export default () => {
     };
     const handleRefresh = async () => {
         app.showTips("Get Server Data...");
-        const item = await mem.getUpdatedDict(app.citem.value!.word);
+        const item = await mem.getUpdatedItem(app.citem.value!.word);
         if (!item) return app.showTips(`Not Found ${app.citem.value!.word}`);
         app.citem.value = item;
     };
     const handleReportIssue = async () => {
         app.showTips('Submiting...', false);
-        if (!(await mem.submitIssue(app.citem.value!.word)))
-            app.showTips('Submit Failed!');
-        else app.showTips('Submit Success!');
+        await mem.submitIssue(app.citem.value!.word);
+        app.showTips('Submit Success!')
     };
     const handleKeyPress = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
         if (e.ctrlKey || e.altKey) return;
@@ -85,49 +87,32 @@ export default () => {
         if (!app.isPhaseAnswer.value) app.isPhaseAnswer.value = true;
         player.current?.play();
     }
-    const splite = (w: string) => {
-        const [word, n] = w.split('_');
-        return <div class="text-4xl font-bold">{word}<sup class="text-lg">{n}</sup></div>;
-    }
     return <Dialog title="学习" onBackClick={finish}>
         <div class={`relative h-full flex flex-col outline-none`} tabIndex={-1} onKeyUp={handleKeyPress}
             style={{ top: `${endY.value - startY.value}px` }}>
             <div class="p-2 flex gap-2 text-lg">
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown().then(studyNext)} title="X/N">
-                &#9745;
-                </SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(0).then(studyNext)} title="Z/M">
-                &#9746;
-                </SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => player.current?.play()}>
-                &#9654;
-                </SButton>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown().then(studyNext)} title="X/N">&#9989;</SButton>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(0).then(studyNext)} title="Z/M">&#10062;</SButton>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => player.current?.play()}>&#128266;</SButton>
                 <div class="grow text-center">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(13).then(studyNext)}>
-                &#9737;
-                </SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}>
-                &#9888;
-                </SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}>
-                &curarr;
-                </SButton>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(13).then(studyNext)}>&#127775;</SButton>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}>&#10071;</SButton>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}>&#10227;</SButton>
                 <div>{app.citem.value.level}</div>
             </div>
             <div class="grow px-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>
-                <div class="pb-2 flex gap-2 flex-wrap justify-between">
-                    {splite(app.citem.value.word)}
+                <div class="pb-2 flex gap-2 flex-wrap justify-between text-4xl font-bold">
+                    {(console.log(app.citem.value), app.citem.value.word)}
                 </div>
                 {app.isPhaseAnswer.value && <div class="grow h-0 overflow-y-auto [scrollbar-width:none]">
+                    <Tab className="grow" cindex={cindex} titles={app.citem.value.cards!.map((_, i)=>`${i}`)}>
+                        <Scard card={app.citem.value.cards!.at(0)}/>
+                    </Tab>
+                    <audio ref={player} src={app.citem.value.cards?.at(cindex.value)?.sound} />
                 </div>}
             </div>
         </div>
         
     </Dialog>;
 }
-
-//{app.isPhaseAnswer.value && <div class="text-2xl flex items-center">{app.citem.value.phonetic}</div>}
-//{app.citem.value.trans?.split('\n').map((t: string) => <p class="text-2xl">{t}</p>)}
-//{app.citem.value.def?.split('\n').map((t: string) => t.startsWith(' ') ? <p class="text-lg">&ensp;&bull;{t}</p> : <p class="text-xl font-bold">{t}</p>)}
-//<audio ref={player} src={app.citem.value?.sound} />

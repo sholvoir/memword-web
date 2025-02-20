@@ -7,13 +7,15 @@ export default ({
     children,
     leftElem,
     rightElem,
+    className,
     onBackClick,
-    onMenuClick,
+    onMenuClick
 }: {
     title: string;
     children: ComponentChildren;
     leftElem?: VNode<HTMLElement>;
     rightElem?: VNode<HTMLElement>;
+    className?: string
     onBackClick?: () => void;
     onMenuClick?: () => void;
 }) => <>
@@ -23,8 +25,8 @@ export default ({
             </div>
             <div class="grow font-bold text-center [app-region:drag]">{app.tips.value || title}</div>
             <div class="w-6 [app-region:no-drag]">
-                {rightElem ?? (onMenuClick && <BButton class="w-6 h-6" onClick={onMenuClick}>...</BButton>)}
+                {rightElem ?? (onMenuClick && <BButton class="w-6 h-6" onClick={onMenuClick}>&ctdot;</BButton>)}
             </div>
         </div>
-        <div class="body grow overflow-y-auto">{children}</div>
+        <div class={`body grow overflow-y-auto flex flex-col ${className ?? ''}`}>{children}</div>
     </>;

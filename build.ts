@@ -8,13 +8,13 @@ const run = async () => {
       { out: 'worker', in: "./lib/worker.ts" },
       { out: 'index', in: './src/main.tsx' }
     ],
-    outdir: './dist',
+    outdir: '../sholvoir.github.io/memword',
     bundle: true,
     format: "esm",
     jsx: "automatic",
     jsxImportSource: "preact",
     sourcemap: true,
-    //minify: true
+    minify: true
   });
   esbuild.stop();
 };
