@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import { API_URL } from "./common.ts";
-import { version } from "../deno.json" with { type: "json" };
+import { version } from "../package.json";
 
 const cacheName = `MemWord-V${version}`;
 const apiServerRegex = new RegExp(`^${API_URL}/(pub|api|admin)/`);

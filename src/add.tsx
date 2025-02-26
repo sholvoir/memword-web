@@ -1,11 +1,11 @@
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import { Options } from "../lib/options.ts";
+import { Options } from "@sholvoir/components/options";
 import { addTasks } from "../lib/mem.ts";
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import Select from './select-single.tsx';
-import Button from './button-ripple.tsx';
+import Select from '@sholvoir/components/select-single';
+import Button from '@sholvoir/components/button-ripple';
 
 export default () => {
     const search = useSignal('');

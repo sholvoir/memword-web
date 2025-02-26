@@ -9,7 +9,7 @@ import { IClientWordlist, getClientWordlist } from "./wordlists.ts";
 import { IStats, initStats, statsFormat } from './istat.ts';
 import { IItem, item2task, newItem } from "./iitem.ts";
 import { API_URL } from "./common.ts";
-import { version } from '../deno.json' with { type: "json" };
+import { version } from '../package.json';
 import * as idb from './indexdb.ts';
 import { ITask } from "../../memword-server/lib/itask.ts";
 
@@ -194,13 +194,8 @@ export const postSysWordList = async (name: string, words: string, disc?: string
     } catch { return false }
 }
 
-export const postMyWordList = async (name: string, words: string, disc?: string) => {
-    try {
-        const res = await getRes(`${API_URL}/api/wordlist`, { name, disc },
-            { body: words, method: 'POST', headers: authHead() });
-        return res.ok
-    } catch { return false }
-}
+export const postMyWordList = (name: string, words: string, disc?: string) =>
+    getRes(`${API_URL}/api/wordlist`, { name, disc }, { body: words, method: 'POST', headers: authHead() });
 
 export const getMyWordLists = async () => {
     try {

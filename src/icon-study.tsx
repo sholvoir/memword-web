@@ -1,4 +1,4 @@
-import { JSX } from "preact/jsx-runtime";
+import type { JSX } from "preact";
 
 export default (props: JSX.HTMLAttributes<SVGSVGElement>) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
     <path d="M63.99 45.64c11.482 0 20.83-9.347 20.83-20.83C84.82 13.328 75.473 4 63.99 4c-11.482 0-20.83 9.347-20.83 20.83 0 11.483 9.347 20.81 20.83 20.81zm0-34.98c7.826 0 14.17 6.364 14.17 14.17C78.16 32.638 71.796 39 63.99 39c-7.807 0-14.17-6.362-14.17-14.168 0-7.807 6.345-14.171 14.17-14.171z" />

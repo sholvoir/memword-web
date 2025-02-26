@@ -2,7 +2,7 @@ import { useSignal } from "@preact/signals";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import Button from "./button-ripple.tsx";
+import Button from "@sholvoir/components/button-ripple";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 
 export default () => {

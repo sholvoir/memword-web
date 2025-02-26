@@ -2,8 +2,8 @@ import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import RButton from './button-ripple.tsx';
-import TInput from './input-text.tsx';
+import RButton from '@sholvoir/components/button-ripple';
+import TInput from '@sholvoir/components/input-text';
 import Dialog from './dialog.tsx';
 
 const namePattern = /^[_\w-]+$/;

@@ -1,15 +1,14 @@
 import { useSignal } from "@preact/signals";
 import { submitIssue } from '../lib/mem.ts';
-import Button from './button-ripple.tsx';
-import TAInput from './input-textarea.tsx';
+import Button from '@sholvoir/components/button-ripple';
+import TAInput from '@sholvoir/components/input-textarea';
 import Dialog from './dialog.tsx';
 import * as app from "./app.tsx";
 
 export default () => {
     const issue = useSignal('');
     const handleSubmitClick = async () => {
-        if (!(await submitIssue(issue.value)))
-            return app.showTips('网络错误，未提交成功!');
+        await submitIssue(issue.value);
         app.showTips('提交成功!');
         app.go();
     }

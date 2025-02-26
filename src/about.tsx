@@ -1,8 +1,7 @@
 import * as mem from '../lib/mem.ts';
 import * as app from './app.tsx';
 import Dialog from './dialog.tsx';
-import RButton from './button-ripple.tsx';
-
+import RButton from '@sholvoir/components/button-ripple';
 
 export default () =>
     <Dialog title="快乐背单词" onBackClick={app.user.value?()=>app.go('home'):undefined}>

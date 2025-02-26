@@ -1,16 +1,15 @@
 // deno-lint-ignore-file no-explicit-any
-import { JSX } from "preact/jsx-runtime";
+import type { JSX } from "preact";
 import { useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { wait } from "@sholvoir/generic/wait";
 import { API_URL } from "../lib/common.ts";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import SButton from './button-base.tsx';
+import Tab from '@sholvoir/components/tab';
+import SButton from '@sholvoir/components/button-base';
 import Dialog from './dialog.tsx';
-import Tab from './tab.tsx';
 import Scard from './scard.tsx';
-import IconRefresh from "./icon-refresh.tsx";
 
 export default () => {
     const finish = async () => {
@@ -58,10 +57,20 @@ export default () => {
             case 'M': case 'Z': case 'm': case 'z': if (app.isPhaseAnswer.value) handleIKnown(0).then(studyNext); break;
         }
     };
-    const handleTouchStart = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => app.isPhaseAnswer.value && (endY.value = startY.value = e.touches[0].clientY);
-    const handleTouchMove = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => app.isPhaseAnswer.value && (endY.value = e.touches[0].clientY);
-    const handleTouchCancel = () => app.isPhaseAnswer.value && (endY.value = startY.value = 0);
+    const handleTouchStart = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        app.isPhaseAnswer.value && (endY.value = startY.value = e.touches[0].clientY);
+    }
+    const handleTouchMove = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        app.isPhaseAnswer.value && (endY.value = e.touches[0].clientY);
+    }
+    const handleTouchCancel = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        app.isPhaseAnswer.value && (endY.value = startY.value = 0);
+    }
     const handleTouchEnd = async (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
+        e.stopPropagation();
         if (app.isPhaseAnswer.value) {
             const h = e.currentTarget.scrollHeight + 60;
             const diff = endY.value - startY.value;
@@ -101,7 +110,7 @@ export default () => {
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(13).then(studyNext)}>&#127775;</SButton>
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}>&#10071;</SButton>
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}>
-                    <IconRefresh class="w-5 h-5 fill-slate-400 stroke-slate-600 stoke-2"/></SButton>
+                    <span class="i-material-symbols-refresh"/></SButton>
                 <div>{app.citem.value.level}</div>
             </div>
             <div class="grow px-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
@@ -110,14 +119,13 @@ export default () => {
                     {(console.log(app.citem.value), app.citem.value.word)}
                 </div>
                 {app.isPhaseAnswer.value && <div class="grow h-0 overflow-y-auto [scrollbar-width:none]">
-                    <Tab className="grow" cindex={cindex} titles={app.citem.value.cards?.map((_: any, i: number)=>`${i}`)}>
-                        <Scard card={app.citem.value.cards!.at(0)}/>
+                    <Tab className="grow" cindex={cindex}>
+                        {app.citem.value.cards?.map((card, i)=><Scard key={i} card={card}/>)}
                     </Tab>
                     <audio ref={player} src={app.citem.value.cards?.at(cindex.value)?.sound?
-                        `${API_URL}/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound)}`:''} />
+                        `${API_URL}/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound!)}`:''} />
                 </div>}
             </div>
         </div>
-        
     </Dialog>;
 }

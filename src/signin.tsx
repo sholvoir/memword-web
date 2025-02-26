@@ -2,9 +2,9 @@ import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import Button from './button-ripple.tsx';
-import AButton from './button-base.tsx';
-import TInput from './input-text.tsx';
+import Button from '@sholvoir/components/button-ripple';
+import AButton from '@sholvoir/components/button-base';
+import TInput from '@sholvoir/components/input-text';
 import Dialog from './dialog.tsx';
 
 let timer: number | undefined;

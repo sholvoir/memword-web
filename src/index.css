@@ -1,0 +1,85 @@
+:root, :host {
+  --slate-200: oklch(0.929 0.013 255.508);
+  --slate-300: oklch(0.869 0.022 252.894);
+  --slate-400: oklch(0.704 0.04 256.788);
+  --slate-500: oklch(0.554 0.046 257.417);
+  --slate-700: oklch(0.372 0.044 257.287);
+  --slate-800: oklch(0.279 0.041 260.031);
+  --slate-900: oklch(0.208 0.042 265.755);
+  --orange-300: oklch(0.837 0.128 66.29);
+  --orange-400: oklch(0.75 0.183 55.934);
+  --orange-500: oklch(0.705 0.213 47.604);
+  --orange-600: oklch(0.646 0.222 41.116);
+  --orange-700: oklch(0.646 0.222 41.116);
+  --border-color: var(--slate-500);
+  --bg-ripple: oklch(from var(--slate-300), L, C, H, / .8);
+  --bg-title: var(--slate-300);
+  --bg-body: var(--slate-200);
+  --bg-tail: var(--slate-300);
+  --bg-button: var(--slate-300);
+  --bg-btn-hover: var(--slate-400);
+  --bg-btn-active: var(--slate-200);
+  --bg-button-prime: var(--orange-400);
+  --bg-btn-prime-hover: var(--orange-300);
+  --bg-btn-prime-active: var(--orange-500);
+  --text-color: var(--slate-800);
+  --accent-color: var(--orange-700);
+}
+@media (prefers-color-scheme: dark) {
+  :root, :host {
+    --bg-ripple: oklch(from var(--slate-800), L, C, H, / .8);
+    --bg-title: var(--slate-900);
+    --bg-body: var(--slate-800);
+    --bg-tail: var(--slate-700);
+    --bg-button: var(--slate-800);
+    --bg-btn-hover: var(--slate-700);
+    --bg-btn-active: var(--slate-900);
+    --bg-button-prime: var(--orange-700);
+    --bg-btn-prime-hover: var(--orange-600);
+    --bg-btn-prime-active: var(--orange-500);
+    --text-color: var(--slate-300);
+    --accent-color: var(--orange-300);
+  }
+}
+body {
+  color: var(--text-color);
+  background-color: var(--bg-body);
+}
+.title {
+  width: env(titlebar-area-width, 100%);
+  height: env(titlebar-area-height, 38px);
+  margin-left: env(titlebar-area-x, 0);
+  background-color: var(--bg-title);
+}
+.tail {
+  background-color: var(--bg-tail);
+}
+.button {
+  border-color: var(--border-color);
+}
+.btn-anchor {
+  &:hover {
+    text-decoration-line: underline;
+  }
+  &:active {
+    color: var(--accent-color);
+  }
+}
+.btn-normal {
+  background-color: var(--bg-button);
+  &:hover {
+    background-color: var(--bg-btn-hover);
+  }
+  &:active {
+    background-color: var(--bg-btn-active);
+  }
+}
+.btn-prime {
+  background-color: var(--bg-button-prime);
+  &:hover {
+    background-color: var(--bg-btn-prime-hover);
+  }
+  &:active {
+    background-color: var(--bg-btn-prime-active);
+  }
+}

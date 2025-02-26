@@ -3,9 +3,9 @@ import { useSignal } from "@preact/signals";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import TextInput from "./input-text.tsx";
-import Button from "./button-ripple.tsx";
-import Tab from "./tab.tsx";
+import TextInput from "@sholvoir/components/input-text";
+import Button from "@sholvoir/components/button-ripple";
+import Tab from "@sholvoir/components/tab";
 import Ecard from "./ecard.tsx";
 
 export default function Lookup() {
@@ -38,7 +38,7 @@ export default function Lookup() {
             <Button class="button btn-normal"
                 disabled={!word.value} onClick={handleSearchClick}>Search</Button>
         </div>
-        <Tab className="grow" titles={cards.value.map((_, i)=>`${i}`)} cindex={cindex}>
+        <Tab className="grow" cindex={cindex}>
             <Ecard card={cards.value[cindex.value]} />
         </Tab>
         {app.isAdmin() && <div class="flex gap-2">

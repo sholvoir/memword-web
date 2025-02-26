@@ -1,7 +1,7 @@
 import { useRef } from "preact/hooks";
 import { ICard } from "../../memword-server/lib/idict.ts";
 import * as app from "./app.tsx";
-import BButton from "./button-base.tsx";
+import BButton from "@sholvoir/components/button-base";
 
 export default ({ card }: { card?: ICard }) => {
     const player = useRef<HTMLAudioElement>(null);
