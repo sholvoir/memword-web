@@ -13,9 +13,9 @@ export default () => <Dialog title="学习进度">
             {app.stats.value.stats.map((stat: IStat, i: number)=><Stat key={i} stat={stat}/>)}
         </div>
     </div>
-    <div class="tail shrink-0 px-4 pt-2 pb-4 flex gap-3 justify-between [&>button]:grow">
-        <Button onClick={()=>app.go('search')}><IconDict class="w-9 h-9 inline-block"/>词典</Button>
-        <Button onClick={()=>app.startStudy()}><IconStudy  class="w-9 h-9 inline-block stroke-1"/>学习</Button>
-        <Button onClick={()=>app.go('menu')}><IconMe class="w-9 h-9 inline-block stroke-[4] fill-none stroke-slate-800 dark:stroke-slate-300"/>我</Button>
+    <div class="tail shrink-0 px-4 pt-2 pb-4 flex gap-3 justify-between [&>button]:grow font-bold">
+        <Button onClick={()=>app.go('#search')}><IconDict class="w-9 h-9 inline-block"/>词典</Button>
+        <Button onClick={()=>app.startStudy()}><IconStudy  class="w-9 h-9 inline-block"/>学习</Button>
+        <Button onClick={()=>app.go('#menu')}><IconMe class="w-9 h-9 inline-block"/>我</Button>
     </div>
 </Dialog>

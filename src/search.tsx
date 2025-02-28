@@ -14,7 +14,7 @@ export default () => {
         app.citem.value = item;
         app.isPhaseAnswer.value = true;
         app.sprint.value = -1;
-        app.go('study');
+        app.go('#study');
     }
     return <Dialog title="词典" onBackClick={()=>app.go()}>
         <TInput autoCapitalize="none" type="search" name="word" placeholder="word" class="m-2 w-[calc(100%-16px)]"

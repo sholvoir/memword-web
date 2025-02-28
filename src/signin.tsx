@@ -4,7 +4,7 @@ import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
 import Button from '@sholvoir/components/button-ripple';
 import AButton from '@sholvoir/components/button-base';
-import TInput from '@sholvoir/components/input-text';
+import SInput from '@sholvoir/components/input-simple';
 import Dialog from './dialog.tsx';
 
 let timer: number | undefined;
@@ -56,9 +56,9 @@ export default () => {
     return <Dialog title="登录" onBackClick={()=>app.go()}>
         <div class="p-2 h-full w-64 mx-auto flex flex-col">
             <label for="name">用户名</label>
-            <TInput name="name" class="mb-3" placeholder="name" autoCapitalize="none" binding={app.name} />
+            <SInput name="name" class="mb-3" placeholder="name" autoCapitalize="none" binding={app.name} />
             <label for="code">临时密码</label>
-            <TInput name="code" placeholder="code" autoCapitalize="none" binding={code} />
+            <SInput name="code" placeholder="code" autoCapitalize="none" binding={code} />
             <AButton class="btn-anchor block text-right mb-3" onClick={handleSend} disabled={!canSendOTP.value}>
                 Send One-Time Passcode {counter.value > 0 ? `(${counter.value})` : ''}
             </AButton>

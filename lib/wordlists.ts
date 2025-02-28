@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-cond-assign
 import * as idb from './indexdb.ts';
 import { IWordList } from "../../memword-server/lib/iwordlist.ts";
-import { getServerWordlist, getB2File } from "./mem.ts";
+import { getWordlists, getB2File } from "./mem.ts";
 
 export interface IClientWordlist extends IWordList {
     wordSet: Set<string>;
@@ -10,14 +10,14 @@ export interface IClientWordlist extends IWordList {
 const wordlists = new Map<string, IClientWordlist>();
 
 const updateWordlist = async (wlid: string, download?: boolean) => {
-    const swl = await getServerWordlist(wlid);
+    const [swl] = await getWordlists((wl: IWordList) => wl.wlid == wlid)
     if (!swl && !download) return;
     const cwl = await idb.getWordlist(wlid);
     const [down, { version, disc }] = (!cwl && !swl) ? [false, {}] :
-        (!cwl && swl) ? [true, swl, idb.putWordlist([swl])] :
+        (!cwl && swl) ? [true, swl, idb.syncWordlists([swl])] :
         (cwl && !swl) ? [download, cwl] :
         (cwl!.version == swl!.version) ? [download, swl!] :
-        [true, swl!, idb.putWordlist([swl!])];
+        [true, swl!, idb.syncWordlists([swl!])];
     if (down) {
         const res1 = await getB2File(`${wlid}-${version}.txt`);
         if (!res1.ok) return;

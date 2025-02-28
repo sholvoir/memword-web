@@ -3,7 +3,7 @@ import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
 import RButton from '@sholvoir/components/button-ripple';
-import TInput from '@sholvoir/components/input-text';
+import SInput from '@sholvoir/components/input-simple';
 import Dialog from './dialog.tsx';
 
 const namePattern = /^[_\w-]+$/;
@@ -12,7 +12,7 @@ const fonePattern = /^\+\d+$/;
 export default () => {
     const phone = useSignal('');
     const handleSignin = () => {
-        app.go('signin');
+        app.go('#signin');
     }
     const handleSignup = async () => {
         if (!namePattern.test(app.name.value))
@@ -27,19 +27,19 @@ export default () => {
                 return app.showTips('电话号码已注册');
             case STATUS_CODE.OK:
                 app.showTips('注册成功，请登录');
-                app.go('signin');
+                app.go('#signin');
         }
     };
     return <Dialog title="注册" onBackClick={()=>app.go()}>
         <div class="p-2 h-full w-64 mx-auto flex flex-col">
             <label>用户名</label>
-            <TInput name="name"
+            <SInput name="name"
                 placeholder="name"
                 autoCapitalize="none"
                 binding={app.name}
                 class="mb-3" />
             <label>手机号码(含国际区号)</label>
-            <TInput name="phone"
+            <SInput name="phone"
                 placeholder="+1(987)765-5432"
                 autoCapitalize="none"
                 binding={phone}

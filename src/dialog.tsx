@@ -21,13 +21,11 @@ export default ({
 }) => <>
         <div class="title shrink-0 px-2 flex justify-between items-center font-bold">
             <div class="w-6 [app-region:no-drag]">
-                {leftElem ?? (onBackClick && <BButton class="w-6 h-6" onClick={onBackClick}>
-                    <span class="i-material-symbols-chevron-left" /></BButton>)}
+                {leftElem ?? (onBackClick && <BButton class="w-full h-6 i-material-symbols-chevron-left text-[150%]" onClick={onBackClick}/>)}
             </div>
             <div class="grow font-bold text-center [app-region:drag]">{app.tips.value || title}</div>
             <div class="w-6 [app-region:no-drag]">
-                {rightElem ?? (onMenuClick && <BButton class="w-6 h-6" onClick={onMenuClick}>
-                    <span class="i-mdi-chevron-down" /></BButton>)}
+                {rightElem ?? (onMenuClick && <BButton class="w-full h-6 i-heroicons-outline-dots-horizontal" onClick={onMenuClick}/>)}
             </div>
         </div>
         <div class={`body grow overflow-y-auto flex flex-col ${className ?? ''}`}>{children}</div>

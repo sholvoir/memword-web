@@ -1,0 +1,9 @@
+.menu {
+    --at-apply: p-2 flex flex-col gap-1;
+    &>menu {
+        --at-apply: cursor-pointer px-2
+    }
+    &>div {
+        --at-apply: h-px bg-[var(--color-neutral)];
+    }
+}

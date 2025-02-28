@@ -32,37 +32,5 @@
         @apply hover:bg-slate-300 dark:hover:bg-slate-700;
     }
 }
-.about {
-    @apply font-extrabold;
-    &>div {
-        @apply w-full min-h-80 p-5 flex flex-col justify-center odd:bg-slate-200
-            odd:text-slate-800 even:bg-slate-800 even:text-slate-300 even:text-right;
-    }
-    &>div>h1 {
-        @apply mb-4 text-5xl;
-    }
-    &>div>p {
-        @apply text-2xl;
-    }
-}
-.menu {
-    @apply p-2 flex flex-col gap-1;
-    &>menu {
-        @apply cursor-pointer
-    }
-    &>div {
-        @apply h-px bg-slate-500;
-    }
-}
-.tab {
-    @apply bg-slate-300 dark:bg-slate-700;
-    &>div:first-child {
-        @apply bg-slate-200 dark:bg-slate-800;
-        &>div {
-            @apply min-w-16 cursor-pointer
-        }
-        &>div.active {
-            @apply bg-slate-300 dark:bg-slate-700
-        }
-    }
-}
+
+

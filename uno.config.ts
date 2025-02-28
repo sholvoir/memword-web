@@ -5,8 +5,7 @@ export default defineConfig({
         cdn: 'https://esm.sh/',
         extraProperties: {
             'display': 'inline-block',
-            'vertical-align': 'bottom',
-            'font-size': '130%'
+            'vertical-align': 'bottom'
         }
     }),
     presetWind3({ dark: 'media' })],

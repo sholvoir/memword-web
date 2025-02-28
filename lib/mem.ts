@@ -6,7 +6,7 @@ import { IWordList } from "../../memword-server/lib/iwordlist.ts";
 import { IDict } from "../../memword-server/lib/idict.ts";
 import { B2_BASE_URL, now } from "../../memword-server/lib/common.ts";
 import { IClientWordlist, getClientWordlist } from "./wordlists.ts";
-import { IStats, initStats, statsFormat } from './istat.ts';
+import { initStats, IStats, statsFormat } from './istat.ts';
 import { IItem, item2task, newItem } from "./iitem.ts";
 import { API_URL } from "./common.ts";
 import { version } from '../package.json';
@@ -15,7 +15,6 @@ import { ITask } from "../../memword-server/lib/itask.ts";
 
 const dictExpire = 7 * 24 * 60 * 60;
 
-export { version }
 export const setStats = (stats: IStats) =>
     localStorage.setItem('_stats', JSON.stringify(stats));
 
@@ -32,9 +31,9 @@ let auth: string;
 const authHead = () => ({ "Authorization": `Bearer ${auth}` });
 const getAuth = async () => auth ?? (auth = await idb.getMeta('_auth'));
 
-const getServerDict = (word: string) => {
-    return getJson<IDict>(`${API_URL}/pub/dict?q=${encodeURIComponent(word)}`, undefined, { cache: 'reload' });
-}
+const getServerDict = (word: string) =>
+    getJson<IDict>(`${API_URL}/pub/dict?q=${encodeURIComponent(word)}`, undefined, { cache: 'reload' });
+
 const getServerAndUpdateLocalDict = async (word: string) => {
     const dict = await getServerDict(word);
     if (dict) return await idb.updateDict(dict);
@@ -44,7 +43,6 @@ const itemUpdateDict = async (item: IItem) => {
     if (item.dversion + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
     return item;
 }
-
 const submitIssues = async () => {
     const issues = await idb.getIssues();
     for (const issue of issues) {
@@ -53,6 +51,8 @@ const submitIssues = async () => {
         await idb.deleteIssue(issue.id);
     }
 };
+
+export { version }
 
 export const getUser = async () => {
     if (!auth) await getAuth();
@@ -180,10 +180,19 @@ export const getVocabulary = async () => {
     if (wordlist) return Array.from(wordlist.wordSet).sort();
 }
 
-export const getServerWordlist = async (wlid: string) => {
+export const getWordlists = async (filter: (wl: IWordList) => boolean) => {
     try {
-        return await getJson<IWordList>(`${API_URL}/pub/wordlist`, {wlid});
-    } catch { return undefined }
+        const owlTime = await idb.getMeta('_wl-time') as number;
+        const nwlTime = now();
+        if (nwlTime - owlTime > 3600 * 24) {
+            const wls = await getJson<Array<IWordList>>(`${API_URL}/pub/wordlist`);
+            if (!wls) return [];
+            idb.setMeta('_wl-time', now());
+            idb.syncWordlists(wls);
+            return wls.filter(filter);
+        }
+    } catch { }
+    return idb.getWordlists(filter);
 }
 
 export const postSysWordList = async (name: string, words: string, disc?: string) => {
@@ -201,7 +210,7 @@ export const getMyWordLists = async () => {
     try {
         const wls = await getJson<IWordList[]>(`${API_URL}/api/wordlist`, undefined, { headers: authHead() });
         if (!wls) return;
-        idb.putWordlist(wls);
+        idb.syncWordlists(wls);
         return wls;
     } catch { return }
 }

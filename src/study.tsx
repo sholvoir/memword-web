@@ -118,8 +118,8 @@ export default () => {
                 <div class="pb-2 flex gap-2 flex-wrap justify-between text-4xl font-bold">
                     {(console.log(app.citem.value), app.citem.value.word)}
                 </div>
-                {app.isPhaseAnswer.value && <div class="grow h-0 overflow-y-auto [scrollbar-width:none]">
-                    <Tab className="grow" cindex={cindex}>
+                {app.isPhaseAnswer.value && <div class="grow h-0 flex flex-col overflow-y-auto [scrollbar-width:none]">
+                    <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
                         {app.citem.value.cards?.map((card, i)=><Scard key={i} card={card}/>)}
                     </Tab>
                     <audio ref={player} src={app.citem.value.cards?.at(cindex.value)?.sound?
