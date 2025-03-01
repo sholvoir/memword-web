@@ -8,7 +8,6 @@ import About from './about.tsx';
 import Menu from './menu.tsx';
 import Issue from './issue.tsx';
 import Setting from './setting.tsx';
-import Add from './add.tsx';
 import Lookup from './lookup.tsx';
 import Dict from './search.tsx';
 import Study from './study.tsx';
@@ -28,7 +27,6 @@ export default () => {
     dialogs.set('#menu', <Menu />);
     dialogs.set('#issue', <Issue />);
     dialogs.set('#setting', <Setting  />);
-    dialogs.set('#add', <Add />);
     dialogs.set('#lookup', <Lookup />);
     dialogs.set('#search', <Dict />);
     dialogs.set('#study', <Study />);

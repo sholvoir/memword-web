@@ -1,41 +1,72 @@
 import { useEffect } from "preact/hooks";
-import { useSignal } from "@preact/signals";
+import { useSignal, useSignalEffect } from "@preact/signals";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
 import { settingFormat } from "../../memword-server/lib/isetting.ts";
 import { now } from "../../memword-server/lib/common.ts";
-import { IWordList } from "../../memword-server/lib/iwordlist.ts";
-import { Option } from "@sholvoir/components/options";
+import { compareWL, IWordList } from "../../memword-server/lib/iwordlist.ts";
 import Dialog from './dialog.tsx';
+import Input from '@sholvoir/components/input-simple';
 import Button from '@sholvoir/components/button-ripple';
 import List from '@sholvoir/components/list';
 
-const wl2option = (wl: IWordList): Option => ({ value:wl.wlid, label: wl.disc??wl.wlid });
 export default () => {
-    const myCIndex = useSignal(0);
-    const sysCIndex = useSignal(0);
-    const books = useSignal<Array<string>>([]);
-    const serverWls = useSignal<Array<IWordList>>([]);
-    const myWls = useSignal<Array<IWordList>>([]);
+    const filter = useSignal('^common');
+    const mindex = useSignal(0);
+    const wls = useSignal<Array<IWordList>>([]);
+    const cindex = useSignal(0);
+    const mwls = useSignal<Array<IWordList>>([]);
+    const handleAddSubClick = () => {
+        mwls.value = [...mwls.value, wls.value[cindex.value]];
+    }
+    const handleDeleteSubClick = () => {
+        mwls.value = [...mwls.value.slice(0, mindex.value), ...mwls.value.slice(mindex.value + 1)];
+    }
+    const handleAddTaskClick = async () => {
+            app.loading.value = true;
+            await mem.addTasks(mwls.value[mindex.value].wlid);
+            await app.totalStats();
+            app.loading.value = false;
+            app.go('#home');
+        }
     const handleOKClick = () => {
-        mem.setSetting({format: settingFormat, version: now(), books: books.value});
+        mem.setSetting({ format: settingFormat, version: now(), books: mwls.value.map(wl=>wl.wlid) });
         app.go();
     }
     const init = async () => {
+        wls.value = (await mem.getServerWordlist()).filter(wl=>wl.wlid.startsWith('common')).sort(compareWL);
         const setting = await mem.getSetting();
-        //await mem.getServerWordlist()
-        books.value = setting.books;
+        mwls.value = await mem.getWordlists(wl => setting.books.includes(wl.wlid));
     }
-    useEffect(() => {init()}, []);
-    return <Dialog className="p-2 gap-2" title="设置">
-        <List class="grow border" cindex={sysCIndex}
-            options={serverWls.value.map(wl2option)}/>
-        <div class="flex justify-end gap-2 pb-2">
-            <Button class="w-24 button btn-normal" onClick={()=>app.go()}>取消</Button>
-            <Button class="w-24 button btn-prime" onClick={handleOKClick}>确定</Button>
+    useSignalEffect(() => {
+        (async () => {
+            const regex = new RegExp(filter.value);
+            wls.value = (await mem.getWordlists(wl => regex.test(wl.wlid) ||
+                (wl.disc && regex.test(wl.disc)))).sort(compareWL);
+        })()
+    });
+    useEffect(() => { init() }, []);
+    return <Dialog className="p-2 gap-2" title="设置" onBackClick={() => app.go()}>
+        <div class="flex gap-2">
+            <label for="filter">设置过滤</label>
+            <Input class="grow" name="filter" binding={filter} />
         </div>
-        <label>我订阅的词书</label>
-        <List class="grow border" cindex={myCIndex}
-            options={myWls.value.map(wl2option)}/>
+        <fieldset class="px-2 border rounded max-h-[50%] grow overflow-y-auto">
+            <legend>可用的词书</legend>
+            <List cindex={cindex} options={wls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-tail)]" />
+        </fieldset>
+        <div class="flex justify-between gap-2">
+            <Button class="button btn-normal grow" onClick={handleAddSubClick}>添加订阅</Button>
+            <Button class="button btn-normal grow" onClick={handleDeleteSubClick}>删除订阅</Button>
+        </div>
+        <fieldset class="px-2 border rounded max-h-[50%] grow overflow-y-auto">
+            <legend>我订阅的词书</legend>
+            <List cindex={mindex} options={mwls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-tail)]"/>
+        </fieldset>
+        <div class="flex justify-between gap-2">
+            <Button class="button btn-normal grow" onClick={handleAddTaskClick}>添加任务</Button>
+            <Button class="button btn-normal grow" onClick={() => app.go()}>取消</Button>
+            <Button class="button btn-prime grow" onClick={handleOKClick}>保存</Button>
+        </div>
     </Dialog>
 }

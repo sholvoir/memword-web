@@ -77,7 +77,7 @@ export const getWordlist = (wlid: string) =>
         request.onsuccess = () => resolve(request.result);
     }));
 
-export const getWordlists = (filter: (wl: IWordList) => boolean) =>
+export const getWordlists = (filter: (wl: IWordList) => unknown) =>
     new Promise<Array<IWordList>>((resolve, reject) => run(reject, db => {
         const wls: Array<IWordList> = [];
         const transaction = db.transaction('wordlist', 'readonly');
@@ -120,7 +120,6 @@ export const syncWordlists = (wls: Array<IWordList>) =>
             }
             cursor.continue();
         }
-        for (const wl of wlMap) wStore.put(wl);
     }));
 
 export const deleteWordlist = (wlid: string) =>

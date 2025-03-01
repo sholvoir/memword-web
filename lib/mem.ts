@@ -180,17 +180,30 @@ export const getVocabulary = async () => {
     if (wordlist) return Array.from(wordlist.wordSet).sort();
 }
 
-export const getWordlists = async (filter: (wl: IWordList) => boolean) => {
+export const getServerWordlist = async () => {
+    const wls = await getJson<Array<IWordList>>(`${API_URL}/pub/wordlist`);
+    if (!wls) return [];
+    (async () => {
+        const time = now();
+        await idb.setMeta('_wl-time', time);
+        const deleted = await idb.syncWordlists(wls);
+        const setting = await idb.getMeta('_setting') as ISetting;
+        const nbooks = setting.books.filter(wlid => !deleted.has(wlid));
+        if (nbooks.length != setting.books.length) {
+            setting.books = nbooks;
+            setting.version = time;
+            await idb.setMeta('_setting', setting);
+        }
+    })();
+    return wls;
+}
+
+export const getWordlists = async (filter: (wl: IWordList) => unknown) => {
     try {
         const owlTime = await idb.getMeta('_wl-time') as number;
         const nwlTime = now();
-        if (nwlTime - owlTime > 3600 * 24) {
-            const wls = await getJson<Array<IWordList>>(`${API_URL}/pub/wordlist`);
-            if (!wls) return [];
-            idb.setMeta('_wl-time', now());
-            idb.syncWordlists(wls);
-            return wls.filter(filter);
-        }
+        if (nwlTime - owlTime > 3600 * 24)
+            return (await getServerWordlist()).filter(filter);
     } catch { }
     return idb.getWordlists(filter);
 }
@@ -206,18 +219,10 @@ export const postSysWordList = async (name: string, words: string, disc?: string
 export const postMyWordList = (name: string, words: string, disc?: string) =>
     getRes(`${API_URL}/api/wordlist`, { name, disc }, { body: words, method: 'POST', headers: authHead() });
 
-export const getMyWordLists = async () => {
-    try {
-        const wls = await getJson<IWordList[]>(`${API_URL}/api/wordlist`, undefined, { headers: authHead() });
-        if (!wls) return;
-        idb.syncWordlists(wls);
-        return wls;
-    } catch { return }
-}
 
 export const deleteWordList = async (wlid: string) => {
     try {
-        await getRes('wordlist', { wlid }, { method: 'DELETE' });
+        await getRes(`${API_URL}/api/wordlist`, { wlid }, { method: 'DELETE' });
         await idb.deleteWordlist(wlid);
         return true;
     } catch { return false }

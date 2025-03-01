@@ -5,7 +5,7 @@ import { IItem } from "../lib/iitem.ts";
 import * as mem from "../lib/mem.ts";
 
 const DIALS = ['#home', '#help', '#about', '#menu', '#issue', '#setting', '#syswordlist',
-    '#wordlist', '#wordlists', '#add', '#lookup', '#search', '#study', '#signup', '#signin', '#signout'] as const;
+    '#wordlist', '#wordlists', '#lookup', '#search', '#study', '#signup', '#signin', '#signout'] as const;
 export type TDial = typeof DIALS[number];
 
 export const user = signal('');
@@ -54,7 +54,6 @@ export const startStudy = async (wl?: string, bl?: number) => {
     } else {
         showTips('Congratulations! There are no more task need to do.');
         totalStats();
-        if (!wl && !bl) go('#add');
     }
 };
 

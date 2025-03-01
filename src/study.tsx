@@ -50,9 +50,10 @@ export default () => {
         app.showTips('Submit Success!')
     };
     const handleKeyPress = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
+        e.stopPropagation()
         if (e.ctrlKey || e.altKey) return;
         switch (e.key) {
-            case ' ': handleClick(); break;
+            case ' ': handleClick(e as any); break;
             case 'N': case 'X': case 'n': case 'x': if (app.isPhaseAnswer.value) handleIKnown().then(studyNext); break;
             case 'M': case 'Z': case 'm': case 'z': if (app.isPhaseAnswer.value) handleIKnown(0).then(studyNext); break;
         }
@@ -95,30 +96,41 @@ export default () => {
             player.current?.play();
         }
     };
-    const handleClick = () => {
+    const handleClick = (e: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
         if (!app.isPhaseAnswer.value) app.isPhaseAnswer.value = true;
         player.current?.play();
     }
     return <Dialog title="学习" onBackClick={finish}>
-        <div class={`relative h-full flex flex-col outline-none`} tabIndex={-1} onKeyUp={handleKeyPress}
+        <div class={`relative grow flex flex-col outline-none`}
+            tabIndex={-1} onKeyUp={handleKeyPress}
             style={{ top: `${endY.value - startY.value}px` }}>
-            <div class="p-2 flex gap-2 text-lg">
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown().then(studyNext)} title="X/N">&#9989;</SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(0).then(studyNext)} title="Z/M">&#10062;</SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => player.current?.play()}>&#128266;</SButton>
+            <div class="p-2 flex gap-4 text-[150%] items-center">
+                <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
+                    onClick={() => handleIKnown().then(studyNext)}
+                    class="i-material-symbols-check-circle text-green"/>
+                <SButton disabled={!app.isPhaseAnswer.value} title="Z/M"
+                    onClick={() => handleIKnown(0).then(studyNext)}
+                    class="i-gridicons-cross-circle text-fuchsia"/>
+                <SButton disabled={!app.isPhaseAnswer.value}
+                    onClick={() => player.current?.play()}
+                    class="i-material-symbols-volume-up text-blue"/>
                 <div class="grow text-center">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={() => handleIKnown(13).then(studyNext)}>&#127775;</SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}>&#10071;</SButton>
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}>
-                    <span class="i-material-symbols-refresh"/></SButton>
-                <div>{app.citem.value.level}</div>
+                <SButton disabled={!app.isPhaseAnswer.value}
+                    onClick={() => handleIKnown(13).then(studyNext)}
+                    class="i-material-symbols-light-family-star text-yellow"/>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
+                    class="i-material-symbols-error text-red"/>
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
+                    class="i-material-symbols-refresh text-purple"/>
+                <div class="text-xl">{app.citem.value.level}</div>
             </div>
-            <div class="grow px-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
+            <div class="grow px-2 pb-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>
                 <div class="pb-2 flex gap-2 flex-wrap justify-between text-4xl font-bold">
                     {(console.log(app.citem.value), app.citem.value.word)}
                 </div>
-                {app.isPhaseAnswer.value && <div class="grow h-0 flex flex-col overflow-y-auto [scrollbar-width:none]">
+                {app.isPhaseAnswer.value && <div class="grow h-0 flex flex-col">
                     <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
                         {app.citem.value.cards?.map((card, i)=><Scard key={i} card={card}/>)}
                     </Tab>
