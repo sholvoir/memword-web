@@ -60,18 +60,22 @@ export default () => {
     };
     const handleTouchStart = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
         e.stopPropagation();
+        e.preventDefault();
         app.isPhaseAnswer.value && (endY.value = startY.value = e.touches[0].clientY);
     }
     const handleTouchMove = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
         e.stopPropagation();
+        e.preventDefault();
         app.isPhaseAnswer.value && (endY.value = e.touches[0].clientY);
     }
     const handleTouchCancel = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
         e.stopPropagation();
+        e.preventDefault();
         app.isPhaseAnswer.value && (endY.value = startY.value = 0);
     }
     const handleTouchEnd = async (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
         e.stopPropagation();
+        e.preventDefault();
         if (app.isPhaseAnswer.value) {
             const h = e.currentTarget.scrollHeight + 60;
             const diff = endY.value - startY.value;
@@ -115,7 +119,7 @@ export default () => {
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => player.current?.play()}
                     class="i-material-symbols-volume-up text-blue"/>
-                <div class="grow text-center">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
+                <div class="grow text-center text-xl">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => handleIKnown(13).then(studyNext)}
                     class="i-material-symbols-light-family-star text-yellow"/>

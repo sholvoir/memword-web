@@ -19,29 +19,20 @@ export const sprint = signal(-1);
 export const name = signal('');
 export const loading = signal(false);
 export const loca = signal<TDial>('#about');
+
 export let vocabulary: Array<string> = [];
 const backs: Array<TDial> = [];
 
 export const isAdmin = () => user.value == 'hua';
 export const hideTips = () => tips.value = '';
-export const go = (d?: TDial) => {
-    if (d) {
-        backs.push(loca.value);
-        loca.value = d;
-    } else {
-        d = backs.pop();
-        loca.value = d ?? (user.value ? '#home' : '#about');
-    }
-}
+export const go = (d?: TDial) =>
+    loca.value = d ? (backs.push(loca.value), d) :
+        backs.pop() ?? (user.value ? '#home' : '#about');
+export const showTips = (content: string, autohide = true) =>
+    (tips.value = content, autohide && setTimeout(hideTips, 3000));
+export const totalStats = async () =>
+    mem.setStats(stats.value = await mem.totalStats());
 
-export const showTips = (content: string, autohide = true) => {
-    tips.value = content;
-    if (autohide) setTimeout(hideTips, 3000);
-};
-export const totalStats = async () => {
-    const a = await mem.totalStats();
-    if (a) stats.value = a;
-}
 export const startStudy = async (wl?: string, bl?: number) => {
     loading.value = true;
     const item = await mem.getEpisode(wlid.value = wl, blevel.value = bl);
