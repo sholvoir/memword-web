@@ -30,14 +30,13 @@ export default () => {
             app.go('#home');
         }
     const handleOKClick = async () => {
-        await mem.setSetting({ format: settingFormat, version: now(), books: mwls.value.map(wl=>wl.wlid) });
+        await mem.syncSetting({ format: settingFormat, version: now(), books: mwls.value.map(wl=>wl.wlid) });
         await app.totalStats();
         app.go();
     }
     const init = async () => {
         wls.value = (await mem.getServerWordlist()).filter(wl=>wl.wlid.startsWith('common')).sort(compareWL);
-        const setting = await mem.getSetting();
-        mwls.value = await mem.getWordlists(wl => setting.books.includes(wl.wlid));
+        mwls.value = await mem.getWordlists(wl => mem.setting.books.includes(wl.wlid));
     }
     useSignalEffect(() => {
         (async () => {

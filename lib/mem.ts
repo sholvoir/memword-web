@@ -5,7 +5,7 @@ import { IWordList } from "../../memword-server/lib/iwordlist.ts";
 import { IDict } from "../../memword-server/lib/idict.ts";
 import { B2_BASE_URL, now } from "../../memword-server/lib/common.ts";
 import { IClientWordlist, getClientWordlist } from "./wordlists.ts";
-import { initStats, IStats, statsFormat } from './istat.ts';
+import { IStats, statsFormat } from './istat.ts';
 import { IItem, item2task, newItem } from "./iitem.ts";
 import { API_URL } from "./common.ts";
 import { version } from '../package.json';
@@ -13,19 +13,6 @@ import * as idb from './indexdb.ts';
 import { ITask } from "../../memword-server/lib/itask.ts";
 
 const dictExpire = 7 * 24 * 60 * 60;
-
-export const setStats = (stats: IStats) =>
-    localStorage.setItem('_stats', JSON.stringify(stats));
-
-export const getStats = () => {
-    const result = localStorage.getItem('_stats');
-    if (result) {
-        const stats = JSON.parse(result) as IStats;
-        if (stats.format == statsFormat) return stats;
-    }
-    return initStats();
-};
-
 let auth: string;
 const authHead = () => ({ "Authorization": `Bearer ${auth}` });
 const getAuth = async () => auth ?? (auth = await idb.getMeta('_auth'));
@@ -51,6 +38,7 @@ const submitIssues = async () => {
     }
 };
 
+export let setting: ISetting = defaultSetting();
 export { version }
 
 export const getUser = async () => {
@@ -82,31 +70,18 @@ export const deleteDict = async (word: string) => {
     } catch { return false; }
 }
 
-export const getSetting = async () => {
-    let setting: ISetting = await idb.getMeta('_setting');
-    if (setting) return setting;
-    setting = defaultSetting();
+export const syncSetting = async (cSetting?: ISetting) => {
+    if (cSetting && cSetting.version > setting.version) setting = cSetting;
+    const lSetting: ISetting = await idb.getMeta('_setting');
+    if (lSetting && lSetting.version > setting.version) setting = lSetting;
+    else await idb.setMeta('_setting', setting);
     try {
         const res = await fetch(`${API_URL}/api/setting`, requestInit(setting, 'POST', authHead()));
-        if (!res.ok) return setting;
-        setting = await res.json();
-        idb.setMeta('_setting', setting);
+        if (!res.ok) return;
+        const sSetting: ISetting = await res.json();
+        if (sSetting.version > setting.version)
+            await idb.setMeta('_setting', setting = sSetting);
     } catch { }
-    return setting;
-}
-
-export const setSetting = async (cSetting: ISetting) => {
-    const lSetting: ISetting = await idb.getMeta('_setting');
-    if (!lSetting || cSetting.version > lSetting.version) {
-        await idb.setMeta('_setting', cSetting);
-        try {
-            const res = await fetch(`${API_URL}/api/setting`, requestInit(cSetting, 'POST', authHead()));
-            if (!res.ok) return;
-            const serverSetting: ISetting = await res.json();
-            if (serverSetting.version > cSetting.version)
-                await idb.setMeta('_setting', serverSetting);
-        } catch { }
-    }
 }
 
 export const search = async (word: string) => {
@@ -167,11 +142,9 @@ export const submitIssue = async (issue: string) => {
 }
 
 export const totalStats = async () => {
-    const setting = ((await idb.getMeta('_setting')) as ISetting) ?? defaultSetting();
-    const wls: Array<IClientWordlist | undefined> = [];
-    for (const wlid of setting.books) wls.push(await getClientWordlist(wlid));
-    const stats = await idb.getStats(wls);
-    return { format: statsFormat, stats } as IStats;
+    const cwls: Array<IClientWordlist | undefined> = [];
+    for (const wlid of setting.books) cwls.push(await getClientWordlist(wlid));
+    return { format: statsFormat, stats: await idb.getStats(cwls) } as IStats;
 }
 
 export const getVocabulary = async () => {

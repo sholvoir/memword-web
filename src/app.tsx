@@ -1,15 +1,16 @@
 // deno-lint-ignore-file no-cond-assign
 import { signal } from "@preact/signals";
-import { IStats } from "../lib/istat.ts";
+import { initStats, IStats } from "../lib/istat.ts";
 import { IItem } from "../lib/iitem.ts";
 import * as mem from "../lib/mem.ts";
 
 const DIALS = ['#home', '#help', '#about', '#menu', '#issue', '#setting', '#syswordlist',
     '#wordlist', '#wordlists', '#lookup', '#search', '#study', '#signup', '#signin', '#signout'] as const;
 export type TDial = typeof DIALS[number];
+const backs: Array<TDial> = [];
 
 export const user = signal('');
-export const stats = signal<IStats>(mem.getStats());
+export const stats = signal<IStats>(initStats());
 export const tips = signal('');
 export const isPhaseAnswer = signal(false);
 export const citem = signal<IItem>();
@@ -21,8 +22,7 @@ export const loading = signal(false);
 export const loca = signal<TDial>('#about');
 
 export let vocabulary: Array<string> = [];
-const backs: Array<TDial> = [];
-
+export const totalStats = async () => stats.value = await mem.totalStats();
 export const isAdmin = () => user.value == 'hua';
 export const hideTips = () => tips.value = '';
 export const go = (d?: TDial) =>
@@ -30,8 +30,6 @@ export const go = (d?: TDial) =>
         backs.pop() ?? (user.value ? '#home' : '#about');
 export const showTips = (content: string, autohide = true) =>
     (tips.value = content, autohide && setTimeout(hideTips, 3000));
-export const totalStats = async () =>
-    mem.setStats(stats.value = await mem.totalStats());
 
 export const startStudy = async (wl?: string, bl?: number) => {
     loading.value = true;
@@ -51,6 +49,7 @@ export const startStudy = async (wl?: string, bl?: number) => {
 export const init = async () => {
     if (user.value = (await mem.getUser()) ?? '') {
         go('#home');
+        await mem.syncSetting();
         const v = await mem.getVocabulary();
         if (v) vocabulary = v;
         await mem.syncTasks();
