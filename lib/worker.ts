@@ -4,7 +4,7 @@ import { API_URL } from "./common.ts";
 import { version } from "../package.json";
 
 const cacheName = `MemWord-V${version}`;
-const apiServerRegex = new RegExp(`^${API_URL}/(pub|api|admin)/`);
+const apiRegex = new RegExp(`^${API_URL}/(pub|api|admin)/`);
 
 const handleActivate = async () => {
     for (const cacheKey of await caches.keys()) if (cacheKey !== cacheName) await caches.delete(cacheKey)
@@ -17,13 +17,12 @@ const putInCache = async (request: Request, response: Response) => {
 
 const handleFetch = async (req: Request) => {
     console.log(req.url);
-    if (apiServerRegex.test(req.url)) return await fetch(req)
-    const respFromCache = await caches.match(req);
-    if (respFromCache) return respFromCache;
-    const respFromNetwork = await fetch(req);
-    if (respFromNetwork.ok)
-    putInCache(req, respFromNetwork.clone());
-    return respFromNetwork;
+    if (apiRegex.test(req.url)) return await fetch(req)
+    const cres = await caches.match(req);
+    if (cres) return cres;
+    const nresp = await fetch(req);
+    if (nresp.ok) putInCache(req, nresp.clone());
+    return nresp;
 };
 
 declare const self: ServiceWorkerGlobalScope;

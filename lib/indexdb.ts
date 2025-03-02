@@ -77,6 +77,13 @@ export const getWordlist = (wlid: string) =>
         request.onsuccess = () => resolve(request.result);
     }));
 
+export const putWordlist = (wl: IWordList) =>
+    new Promise<void>((resolve, reject) => run(reject, db => {
+        const request = db.transaction('wordlist', 'readwrite').objectStore('wordlist').put(wl);
+        request.onerror = reject;
+        request.onsuccess = () => resolve();
+    }));
+
 export const getWordlists = (filter: (wl: IWordList) => unknown) =>
     new Promise<Array<IWordList>>((resolve, reject) => run(reject, db => {
         const wls: Array<IWordList> = [];

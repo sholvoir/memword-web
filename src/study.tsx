@@ -6,8 +6,8 @@ import { wait } from "@sholvoir/generic/wait";
 import { API_URL } from "../lib/common.ts";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import Tab from '@sholvoir/components/tab';
-import SButton from '@sholvoir/components/button-base';
+import Tab from '../components/tab';
+import SButton from '../components/button-base';
 import Dialog from './dialog.tsx';
 import Scard from './scard.tsx';
 

@@ -3,9 +3,9 @@ import { useSignal } from "@preact/signals";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import TextInput from "@sholvoir/components/input-text";
-import Button from "@sholvoir/components/button-ripple";
-import Tab from "@sholvoir/components/tab";
+import TextInput from "../components/input-text";
+import Button from "../components/button-ripple";
+import Tab from "../components/tab";
 import Ecard from "./ecard.tsx";
 
 export default function Lookup() {

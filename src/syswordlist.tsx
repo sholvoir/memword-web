@@ -1,7 +1,7 @@
 import { useSignal } from "@preact/signals";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
-import Button from "@sholvoir/components/button-ripple";
+import Button from "../components/button-ripple";
 import Dialog from './dialog.tsx';
 
 export default () => {

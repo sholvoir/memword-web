@@ -1,7 +1,7 @@
 import { IStat } from "../lib/istat.ts";
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import Button from '@sholvoir/components/button-ripple';
+import Button from '../components/button-ripple';
 import Stat from './stat.tsx';
 import IconDict from "./icon-dict.tsx";
 import IconStudy from "./icon-study.tsx";

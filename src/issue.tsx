@@ -1,7 +1,7 @@
 import { useSignal } from "@preact/signals";
 import { submitIssue } from '../lib/mem.ts';
-import Button from '@sholvoir/components/button-ripple';
-import TAInput from '@sholvoir/components/input-textarea';
+import Button from '../components/button-ripple';
+import TAInput from '../components/input-textarea';
 import Dialog from './dialog.tsx';
 import * as app from "./app.tsx";
 

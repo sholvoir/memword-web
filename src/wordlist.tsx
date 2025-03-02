@@ -2,7 +2,7 @@ import { useSignal } from "@preact/signals";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import Button from "@sholvoir/components/button-ripple";
+import Button from "../components/button-ripple";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 
 export default () => {
@@ -11,13 +11,18 @@ export default () => {
     const words = useSignal('');
     const replace = useSignal('');
     const handleOKClick = async () => {
-        const res = await mem.postMyWordList(name.value, words.value, disc.value);
-        switch (res.status) {
+        const [status, result] = await mem.postMyWordList(name.value, words.value, disc.value);
+        switch (status) {
             case STATUS_CODE.BadRequest: return app.showTips('Error: 无名称或无内容');
             case STATUS_CODE.NotAcceptable:
-                replace.value = await res.text();
+                replace.value = Object.entries(result as Record<string, string[]>)
+                    .map(([key, value]) => `${key}: ${value.join(',')}`)
+                    .join('\n');
                 return app.showTips('未通过拼写检查');
-            case STATUS_CODE.OK: return app.showTips('词书上传成功');
+            case STATUS_CODE.OK: {
+                app.showTips('词书上传成功');
+                app.go();
+            }
         }
     }
     return <Dialog title="上传我的词书" className="p-2" onBackClick={()=>app.go()}>

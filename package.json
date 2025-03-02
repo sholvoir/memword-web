@@ -12,7 +12,7 @@
   "dependencies": {
     "@preact/signals": "^2.0.1",
     "@sholvoir/generic": "npm:@jsr/sholvoir__generic",
-    "@sholvoir/components": "../preact-components",
+    "@std/fs": "npm:@jsr/std__fs",
     "preact": "^10.26.2"
   },
   "devDependencies": {

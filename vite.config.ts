@@ -4,14 +4,13 @@ import UnoCSS from 'unocss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [preact(), UnoCSS()]
+  base: '',
+  plugins: [preact(), UnoCSS()],
+  build: {
+    target: 'esnext',
+    outDir: '../sholvoir.github.io/memword',
+    emptyOutDir: true,
+    assetsDir: '',
+    copyPublicDir: false
+  }
 })
-//
-// , VitePWA({
-//     registerType: 'autoUpdate',
-//     injectRegister: null,
-//     workbox: {
-//       clientsClaim: true,
-//       skipWaiting: true
-//     }
-//   })

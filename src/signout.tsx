@@ -1,6 +1,6 @@
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import Button from '@sholvoir/components/button-ripple';
+import Button from '../components/button-ripple';
 import Dialog from './dialog.tsx';
 
 export default () => {

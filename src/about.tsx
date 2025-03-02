@@ -2,7 +2,7 @@ import * as mem from '../lib/mem.ts';
 import * as app from './app.tsx';
 import './about.css'
 import Dialog from './dialog.tsx';
-import RButton from '@sholvoir/components/button-ripple';
+import RButton from '../components/button-ripple';
 
 export default () =>
     <Dialog title="快乐背单词" onBackClick={app.user.value?()=>app.go('#home'):undefined}>
@@ -29,7 +29,7 @@ export default () =>
             </div>
             <div>
                 <h1>开始学习</h1>
-                <p>使用你的电子邮件，单击<RButton class="button btn-prime text-slate-800" 
+                <p>使用你的电子邮件，单击<RButton class="button btn-prime" 
                     title="login" onClick={()=>app.go('#signup')}>登录</RButton>开始免费学习吧。
                 </p>
             </div>

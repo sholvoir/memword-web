@@ -1,0 +1,20 @@
+:root {
+    --slate-200: oklch(0.929 0.013 255.508);
+    --slate-300: oklch(0.869 0.022 252.894);
+    --slate-500: oklch(0.554 0.046 257.417);
+    --bg-body: var(--slate-200);
+    --bg-tab: var(--slate-300);
+    --color-neutral: var(--slate-500);
+}
+body {
+    background-color: var(--bg-body);
+    scrollbar-color: var(--slate-500) var(--bg-body);
+    border-color: var(--color-neutral);
+}
+input, textarea {
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: transparent;
+    outline: none;
+}

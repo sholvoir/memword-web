@@ -6,9 +6,9 @@ import { settingFormat } from "../../memword-server/lib/isetting.ts";
 import { now } from "../../memword-server/lib/common.ts";
 import { compareWL, IWordList } from "../../memword-server/lib/iwordlist.ts";
 import Dialog from './dialog.tsx';
-import Input from '@sholvoir/components/input-simple';
-import Button from '@sholvoir/components/button-ripple';
-import List from '@sholvoir/components/list';
+import Input from '../components/input-simple';
+import Button from '../components/button-ripple';
+import List from '../components/list';
 
 export default () => {
     const filter = useSignal('^common');
@@ -29,8 +29,9 @@ export default () => {
             app.loading.value = false;
             app.go('#home');
         }
-    const handleOKClick = () => {
-        mem.setSetting({ format: settingFormat, version: now(), books: mwls.value.map(wl=>wl.wlid) });
+    const handleOKClick = async () => {
+        await mem.setSetting({ format: settingFormat, version: now(), books: mwls.value.map(wl=>wl.wlid) });
+        await app.totalStats();
         app.go();
     }
     const init = async () => {

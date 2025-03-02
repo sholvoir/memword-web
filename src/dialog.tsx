@@ -1,6 +1,6 @@
 import { ComponentChildren, VNode } from "preact";
 import * as app from './app.tsx'
-import BButton from '@sholvoir/components/button-base';
+import BButton from '../components/button-base';
 
 export default ({
     title,

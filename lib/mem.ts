@@ -1,5 +1,4 @@
-// deno-lint-ignore-file no-empty
-import { requestInit, getRes, getJson } from '@sholvoir/generic/http';
+import { requestInit, getRes, getJson, STATUS_CODE } from '@sholvoir/generic/http';
 import { JWT } from "@sholvoir/generic/jwt";
 import { defaultSetting, ISetting } from "../../memword-server/lib/isetting.ts";
 import { IWordList } from "../../memword-server/lib/iwordlist.ts";
@@ -216,8 +215,15 @@ export const postSysWordList = async (name: string, words: string, disc?: string
     } catch { return false }
 }
 
-export const postMyWordList = (name: string, words: string, disc?: string) =>
-    getRes(`${API_URL}/api/wordlist`, { name, disc }, { body: words, method: 'POST', headers: authHead() });
+export const postMyWordList = async (name: string, words: string, disc?: string) => {
+    const res = await getRes(`${API_URL}/api/wordlist`, { name, disc }, { body: words, method: 'POST', headers: authHead() });
+    switch (res.status) {
+        case STATUS_CODE.NotAcceptable: return [res.status, await res.json()];
+        // @ts-expect-error
+        case STATUS_CODE.OK: idb.putWordlist(await res.json());
+        default: return [res.status]
+    }
+}
 
 
 export const deleteWordList = async (wlid: string) => {
