@@ -28,5 +28,5 @@ export default ({
                 {rightElem ?? (onMenuClick && <BButton class="w-full h-6 i-heroicons-outline-dots-horizontal" onClick={onMenuClick}/>)}
             </div>
         </div>
-        <div class={`body grow overflow-y-auto flex flex-col ${className ?? ''}`}>{children}</div>
+        <div class={`body grow h-0 flex flex-col ${className ?? ''}`}>{children}</div>
     </>;
