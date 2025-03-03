@@ -41,7 +41,7 @@ export default function Lookup() {
         <div class="flex flex-col grow"><Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
             {cards.value.map((card, i)=><Ecard key={i} card={card} />)}
         </Tab></div>
-        {app.isAdmin() && <div class="flex gap-2">
+        {app.isAdmin() && <div class="flex justify-between gap-2">
             <Button class="button btn-normal"
                 disabled = {!word.value} onClick={handleAddCardClick}>Add Card</Button>
             <Button class="button btn-normal"
