@@ -1,9 +1,9 @@
+import { JSX } from "preact";
 import { useRef } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 import { ICard } from "../../memword-server/lib/idict.ts";
 import * as app from "./app.tsx";
-import BButton from "../components/button-base";
-import { useSignal } from "@preact/signals";
-import { JSX } from "preact/jsx-runtime";
+import Button from "../components/button-ripple.tsx";
 
 export default ({ card, class: className }: {
     card: ICard
@@ -27,8 +27,10 @@ export default ({ card, class: className }: {
         <div class="flex">
             <textarea name="sound" placeholder="sound" class="h-32 grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value } />
-            <BButton class="button btn-normal ml-2 i-material-symbols-chevron-right"
-                onClick={handlePlayClick} disabled={!sound.value}/>
+            <Button class="button ml-2"
+                onClick={handlePlayClick} disabled={!sound.value}>
+                    <span class="text-[150%] i-material-symbols-chevron-right"></span>
+            </Button>
         </div>
         <audio ref={player} src={sound} />
     </div>;

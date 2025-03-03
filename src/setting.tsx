@@ -53,7 +53,7 @@ export default () => {
         </div>
         <fieldset class="px-2 border rounded max-h-[50%] grow overflow-y-auto">
             <legend>可用的词书</legend>
-            <List cindex={cindex} options={wls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-tail)]" />
+            <List cindex={cindex} options={wls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="flex justify-between gap-2">
             <Button class="button btn-normal grow" onClick={handleAddSubClick}>添加订阅</Button>
@@ -61,7 +61,7 @@ export default () => {
         </div>
         <fieldset class="px-2 border rounded max-h-[50%] grow overflow-y-auto">
             <legend>我订阅的词书</legend>
-            <List cindex={mindex} options={mwls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-tail)]"/>
+            <List cindex={mindex} options={mwls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-title)]"/>
         </fieldset>
         <div class="flex justify-between gap-2">
             <Button class="button btn-normal grow" onClick={handleAddTaskClick}>添加任务</Button>

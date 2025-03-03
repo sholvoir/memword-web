@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import type { JSX } from "preact";
 import { useRef } from "preact/hooks";
-import { useSignal } from "@preact/signals";
+import { useSignal, useSignalEffect } from "@preact/signals";
 import { wait } from "@sholvoir/generic/wait";
 import { API_URL } from "../lib/common.ts";
 import * as app from "./app.tsx";
@@ -21,7 +21,9 @@ export default () => {
     const cindex = useSignal(0);
     const startY = useSignal(0);
     const endY = useSignal(0);
+    const played = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
+    useSignalEffect(()=>{(cindex.value, played.value=false)});
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
         if (++app.sprint.value <= 0) return finish();
@@ -29,6 +31,7 @@ export default () => {
         if (!item) return finish();
         app.citem.value = item;
         app.isPhaseAnswer.value = false;
+        cindex.value = 0;
     };
     const continueMove = async (y: number, max: number) => {
         endY.value += y;
@@ -89,21 +92,21 @@ export default () => {
                     await continueMove(-60, max)
                 }
                 await studyNext();
-                endY.value = startY.value = 0;
-            } else {
-                endY.value = startY.value = 0;
-                if (Math.abs(diff) < 5) player.current?.play();
-            }
-        } else {
-            endY.value = startY.value = 0;
-            app.isPhaseAnswer.value = true;
-            player.current?.play();
-        }
+            } else if (Math.abs(diff) < 5) handleClick();
+        } else handleClick();
+        endY.value = startY.value = 0;
     };
-    const handleClick = (e: JSX.TargetedMouseEvent<HTMLDivElement>) => {
-        e.stopPropagation()
+    const handleClick = async (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+        e?.stopPropagation();
+        const cardsN = app.citem.value?.cards?.length ?? 0;
+        if (cardsN == 0) return;
         if (!app.isPhaseAnswer.value) app.isPhaseAnswer.value = true;
-        player.current?.play();
+        else if (!played.value) player.current?.play();
+        else if (cindex.value < cardsN - 1) cindex.value++;
+        else cindex.value = 0;
+    }
+    const handlePlayEnded = () => {
+        if ((app.citem.value?.cards?.length ?? 0) > 1) played.value = true;
     }
     return <Dialog title="学习" onBackClick={finish}>
         <div class={`relative grow flex flex-col outline-none`}
@@ -112,35 +115,36 @@ export default () => {
             <div class="p-2 flex gap-4 text-[150%] items-center">
                 <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
                     onClick={() => handleIKnown().then(studyNext)}
-                    class="i-material-symbols-check-circle text-green"/>
+                    class="i-material-symbols-check-circle text-green" />
                 <SButton disabled={!app.isPhaseAnswer.value} title="Z/M"
                     onClick={() => handleIKnown(0).then(studyNext)}
-                    class="i-gridicons-cross-circle text-fuchsia"/>
+                    class="i-gridicons-cross-circle text-fuchsia" />
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => player.current?.play()}
-                    class="i-material-symbols-volume-up text-blue"/>
+                    class="i-material-symbols-volume-up text-blue" />
                 <div class="grow text-center text-xl">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => handleIKnown(13).then(studyNext)}
-                    class="i-material-symbols-light-family-star text-yellow"/>
+                    class="i-material-symbols-light-family-star text-yellow" />
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
-                    class="i-material-symbols-error text-red"/>
+                    class="i-material-symbols-error text-red" />
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
-                    class="i-material-symbols-refresh text-purple"/>
+                    class="i-material-symbols-refresh text-purple" />
                 <div class="text-xl">{app.citem.value.level}</div>
             </div>
             <div class="grow px-2 pb-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>
-                <div class="pb-2 flex gap-2 flex-wrap justify-between text-4xl font-bold">
-                    {(console.log(app.citem.value), app.citem.value.word)}
+                <div class="pb-2 text-4xl font-bold">
+                    {app.citem.value.word}
                 </div>
-                {app.isPhaseAnswer.value && <div class="grow h-0 flex flex-col">
+                {app.isPhaseAnswer.value && (app.citem.value.cards?.length ?? 0 > 1 ?
                     <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
-                        {app.citem.value.cards?.map((card, i)=><Scard key={i} card={card}/>)}
-                    </Tab>
-                    <audio ref={player} src={app.citem.value.cards?.at(cindex.value)?.sound?
-                        `${API_URL}/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound!)}`:''} />
-                </div>}
+                        {app.citem.value.cards?.map((card, i) => <Scard key={i} card={card} />)}
+                    </Tab> :
+                    <Scard card={app.citem.value.cards?.[0]} />)
+                }
+                <audio ref={player} onEnded={handlePlayEnded} src={app.citem.value.cards?.at(cindex.value)?.sound ?
+                    `${API_URL}/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound!)}` : ''} />
             </div>
         </div>
     </Dialog>;

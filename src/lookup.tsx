@@ -42,13 +42,13 @@ export default function Lookup() {
             {cards.value.map((card, i)=><Ecard key={i} card={card} />)}
         </Tab></div>
         {app.isAdmin() && <div class="flex justify-between gap-2">
-            <Button class="button btn-normal"
+            <Button class="grow button btn-normal"
                 disabled = {!word.value} onClick={handleAddCardClick}>Add Card</Button>
-            <Button class="button btn-normal"
+            <Button class="grow button btn-normal"
                 disabled = {!word.value || cards.value.length <= 1} onClick={handleDeleteCardClick}>Delete Card</Button>
-            <Button class="button btn-normal"
+            <Button class="grow button btn-normal"
                 disabled = {!word.value} onClick={handleDeleteClick}>Delete</Button>
-            <Button class="button btn-normal"
+            <Button class="grow button btn-normal"
                 disabled = {!word.value} onClick={handleUpdateClick}>Update</Button>
         </div>}
     </Dialog>;

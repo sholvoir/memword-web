@@ -18,7 +18,7 @@ export default ({stat}: {stat: IStat}) => {
         const task = tasks[blevel];
         return <>
             <div class="text-left">{BLevelName[blevel]}</div>
-            <div class="relative bg-slate-300 dark:bg-slate-700 h-6 py-1 w-full hover:cursor-pointer"
+            <div class="relative bg-[var(--bg-title)] h-6 py-1 w-full hover:cursor-pointer"
                 onClick={()=>app.startStudy(stat.wlid, blevel)}>
                 <div class="my-auto h-4 bg-slate-400" style={{width: `${width ? (total * 100 / width) : 100}%`}}>
                     <div class="ml-auto h-full bg-orange-500" style={{width: `${total ? (task * 100 / total) : 0}%`}}/>
