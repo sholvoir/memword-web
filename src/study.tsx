@@ -109,7 +109,7 @@ export default () => {
         if ((app.citem.value?.cards?.length ?? 0) > 1) played.value = true;
     }
     return <Dialog title="学习" onBackClick={finish}>
-        <div class={`relative grow flex flex-col outline-none`}
+        <div class={`relative grow p-2 flex flex-col outline-none`}
             tabIndex={-1} onKeyUp={handleKeyPress}
             style={{ top: `${endY.value - startY.value}px` }}>
             <div class="p-2 flex gap-4 text-[150%] items-center">
@@ -132,14 +132,14 @@ export default () => {
                     class="i-material-symbols-refresh text-purple" />
                 <div class="text-xl">{app.citem.value.level}</div>
             </div>
-            <div class="grow px-2 pb-2 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
+            <div class="grow pb-3 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>
                 <div class="pb-2 text-4xl font-bold">
                     {app.citem.value.word}
                 </div>
-                {app.isPhaseAnswer.value && (app.citem.value.cards?.length ?? 0 > 1 ?
+                {app.isPhaseAnswer.value && ((app.citem.value.cards?.length ?? 0) > 1 ?
                     <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
-                        {app.citem.value.cards?.map((card, i) => <Scard key={i} card={card} />)}
+                        {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
                     </Tab> :
                     <Scard card={app.citem.value.cards?.[0]} />)
                 }
