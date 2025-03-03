@@ -7,7 +7,7 @@ import AButton from '../components/button-base';
 import SInput from '../components/input-simple';
 import Dialog from './dialog.tsx';
 
-let timer: Timer | undefined;
+let timer: number | undefined;
 
 export default () => {
     const code = useSignal('');

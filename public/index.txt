@@ -10,8 +10,6 @@
   <meta name="apple-mobile-web-app-title" content="MemWord" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#CBD5E1" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#0F172A" media="(prefers-color-scheme: dark)" />
   <script>navigator.serviceWorker.register('worker.js')</script>
   <script type="module" crossorigin src="index.js"></script>
   <link rel="stylesheet" crossorigin href="styles.css">
