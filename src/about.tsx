@@ -29,7 +29,7 @@ export default () =>
             </div>
             <div>
                 <h1>开始学习</h1>
-                <p>使用你的电子邮件，单击<RButton class="button btn-prime" 
+                <p>使用你的手机，单击<RButton class="button bg-orange-300 text-slate-800" 
                     title="login" onClick={()=>app.go('#signup')}>登录</RButton>开始免费学习吧。
                 </p>
             </div>
@@ -39,7 +39,8 @@ export default () =>
             </div>
             <div>
                 <h1>桌面</h1>
-                <p>*提示二：请使用「共享」-「添加到主屏幕」（iOS）或「...」-「安装应用」（Android）安装 <b>Web应用</b> 到桌面，以便下次直接点击进入。</p>
+                <p>*提示二(iOS): 请使用「共享」-「添加到主屏幕」安装 <b>Web应用</b> 到桌面，以便下次直接点击进入。</p>
+                <p>*提示三(Android): 请使用「...」-「安装应用」安装 <b>Web应用</b> 到桌面。</p>
             </div>
         </div>
     </Dialog>;

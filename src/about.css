@@ -1,13 +1,24 @@
 .about {
     --at-apply: font-extrabold;
     &>div {
-        --at-apply: w-full min-h-80 p-5 flex flex-col justify-center odd:bg-slate-200
-            odd:text-slate-800 even:bg-slate-800 even:text-slate-300 even:text-right;
+        --at-apply: w-full min-h-80 p-5 flex flex-col justify-center;  
+        &>h1 {
+            --at-apply: mb-4 text-5xl;
+        }
+        &>p {
+            --at-apply: text-2xl;
+        }
     }
-    &>div>h1 {
-        --at-apply: mb-4 text-5xl;
+    &>div:nth-child(odd) {
+        --at-apply: bg-slate-200 text-slate-800;
+        & b {
+            --at-apply: text-orange-600
+        }
     }
-    &>div>p {
-        --at-apply: text-2xl;
+    &>div:nth-child(even) {
+        --at-apply: bg-slate-800 text-slate-300 text-right;
+        & b {
+            --at-apply: text-orange-400
+        }
     }
 }
