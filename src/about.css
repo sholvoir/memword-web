@@ -1,24 +1,32 @@
 .about {
-    --at-apply: font-extrabold;
     &>div {
-        --at-apply: w-full min-h-80 p-5 flex flex-col justify-center;  
+        width: 100%;
+        min-height: 320px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         &>h1 {
-            --at-apply: mb-4 text-5xl;
+            margin-bottom: 16px;
+            font-size: 3rem;
         }
         &>p {
-            --at-apply: text-2xl;
+            font-size: 1.25rem;
         }
     }
     &>div:nth-child(odd) {
-        --at-apply: bg-slate-200 text-slate-800;
+        background-color: var(--slate-200);
+        color: var(--slate-800);
         & b {
-            --at-apply: text-orange-600
+            color: var(--orange-600);
         }
     }
     &>div:nth-child(even) {
-        --at-apply: bg-slate-800 text-slate-300 text-right;
+        background-color: var(--slate-800);
+        color: var(--slate-200);
+        text-align: right;
         & b {
-            --at-apply: text-orange-400
+            color: var(--orange-400)
         }
     }
 }

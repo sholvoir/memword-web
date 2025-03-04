@@ -1,4 +1,4 @@
-import { defineConfig, presetWind3, presetIcons, transformerDirectives} from 'unocss';
+import { defineConfig, presetWind3, presetIcons } from 'unocss';
 
 export default defineConfig({
     presets: [presetIcons({
@@ -8,9 +8,5 @@ export default defineConfig({
             'vertical-align': 'bottom'
         }
     }),
-    presetWind3({ dark: 'media' })],
-    shortcuts: {
-        button: 'rounded-md px-2 border'
-    },
-    transformers: [ transformerDirectives() ]
+    presetWind3({ dark: 'media' })]
 })

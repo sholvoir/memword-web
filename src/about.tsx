@@ -5,7 +5,7 @@ import Dialog from './dialog.tsx';
 import RButton from '../components/button-ripple.tsx';
 
 export default () =>
-    <Dialog title="快乐背单词" class="about flex flex-col pb-4"
+    <Dialog title="快乐背单词" class="about flex flex-col pb-4 font-extrabold"
         onBackClick={app.user.value ? () => app.go('#home') : undefined}>
         <div>
             <h1>快乐背单词</h1>

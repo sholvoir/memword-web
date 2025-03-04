@@ -73,12 +73,15 @@ div {
 }
 .button {
   border-color: var(--border-color);
+  border-radius: 6px;
+  padding-inline: 8px;
+  border-width: 1px;
 }
 .btn-anchor {
-  &:hover {
+  &:hover:enabled {
     text-decoration-line: underline;
   }
-  &:active {
+  &:active:enabled {
     color: var(--accent-color);
   }
 }
