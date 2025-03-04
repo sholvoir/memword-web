@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
 import type { JSX } from "preact";
 import { useRef } from "preact/hooks";
-import { useSignal, useSignalEffect } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import { wait } from "@sholvoir/generic/wait";
 import { API_URL } from "../lib/common.ts";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import Tab from '../components/tab';
-import SButton from '../components/button-base';
+import Tab from '../components/tab.tsx';
+import SButton from '../components/button-base.tsx';
 import Dialog from './dialog.tsx';
 import Scard from './scard.tsx';
 
@@ -21,9 +21,7 @@ export default () => {
     const cindex = useSignal(0);
     const startY = useSignal(0);
     const endY = useSignal(0);
-    const played = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
-    useSignalEffect(()=>{(cindex.value, played.value=false)});
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
         if (++app.sprint.value <= 0) return finish();
@@ -96,20 +94,17 @@ export default () => {
         } else handleClick();
         endY.value = startY.value = 0;
     };
-    const handleClick = async (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+    const handleClick = (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
         e?.stopPropagation();
         const cardsN = app.citem.value?.cards?.length ?? 0;
         if (cardsN == 0) return;
         if (!app.isPhaseAnswer.value) app.isPhaseAnswer.value = true;
-        else if (!played.value) player.current?.play();
-        else if (cindex.value < cardsN - 1) cindex.value++;
+        else if (cardsN == 1) player.current?.play();
+        if (cindex.value < cardsN - 1) cindex.value++;
         else cindex.value = 0;
     }
-    const handlePlayEnded = () => {
-        if ((app.citem.value?.cards?.length ?? 0) > 1) played.value = true;
-    }
     return <Dialog title="学习" onBackClick={finish}>
-        <div class={`relative grow h-0 p-2 flex flex-col outline-none`}
+        <div class={`relative h-full p-2 flex flex-col outline-none`}
             tabIndex={-1} onKeyUp={handleKeyPress}
             style={{ top: `${endY.value - startY.value}px` }}>
             <div class="flex gap-4 text-[150%] items-center">
@@ -143,7 +138,7 @@ export default () => {
                     </Tab> :
                     <div class="grow h-0 overflow-y-auto"><Scard card={app.citem.value.cards?.[0]} /></div>)
                 }
-                <audio ref={player} onEnded={handlePlayEnded} src={app.citem.value.cards?.at(cindex.value)?.sound ?
+                <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound ?
                     `${API_URL}/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound!)}` : ''} />
             </div>
         </div>

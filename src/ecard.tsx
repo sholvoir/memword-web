@@ -17,19 +17,19 @@ export default ({ card, class: className }: {
         if (!sound.value) app.showTips('no sound to play!');
         else player.current?.play();
     }
-    return <div class={`flex flex-col h-full gap-2 ${className??''}`}>
+    return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`}>
         <input name="phonetic" placeholder="phonetic" value={phonetic}
-            onInput={e => card.phonetic = phonetic.value = e.currentTarget.value } />
+            onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
         <textarea name="trans" placeholder="trans" class="h-32 grow" value={trans}
-            onInput={e => card.trans = trans.value = e.currentTarget.value } />
+            onInput={e => card.trans = trans.value = e.currentTarget.value} />
         <textarea name="def" placeholder="def" class="h-32 grow" value={def}
-            onInput={e => card.def = def.value = e.currentTarget.value } />
+            onInput={e => card.def = def.value = e.currentTarget.value} />
         <div class="flex">
             <textarea name="sound" placeholder="sound" class="h-32 grow" value={sound}
-                onInput={e => card.sound = sound.value = e.currentTarget.value } />
+                onInput={e => card.sound = sound.value = e.currentTarget.value} />
             <Button class="button ml-2"
                 onClick={handlePlayClick} disabled={!sound.value}>
-                    <span class="text-[150%] i-material-symbols-chevron-right"></span>
+                <span class="text-[150%] i-material-symbols-chevron-right"></span>
             </Button>
         </div>
         <audio ref={player} src={sound} />

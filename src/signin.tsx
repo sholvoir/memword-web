@@ -2,9 +2,9 @@ import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import Button from '../components/button-ripple';
-import AButton from '../components/button-base';
-import SInput from '../components/input-simple';
+import Button from '../components/button-ripple.tsx';
+import AButton from '../components/button-base.tsx';
+import SInput from '../components/input-simple.tsx';
 import Dialog from './dialog.tsx';
 
 let timer: number | undefined;
@@ -53,8 +53,8 @@ export default () => {
                 location.reload();
         }
     };
-    return <Dialog title="登录" onBackClick={()=>app.go()}>
-        <div class="p-2 h-full w-64 mx-auto flex flex-col">
+    return <Dialog class="p-2 flex flex-col" title="登录" onBackClick={()=>app.go()}>
+        <div class="w-64 m-auto flex flex-col">
             <label for="name">用户名</label>
             <SInput name="name" class="mb-3" placeholder="name" autoCapitalize="none" binding={app.name} />
             <label for="code">临时密码</label>

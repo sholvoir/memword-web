@@ -3,8 +3,9 @@ import { useSignal } from "@preact/signals"
 import ButtonBase from './button-base.tsx'
 import './animation-ripple.css'
 
-export default (props: JSX.ButtonHTMLAttributes<HTMLButtonElement>): VNode<HTMLButtonElement> => {
-    const { class: className, children, onClick, ...rest} = props;
+export default ({ class: className, children, onClick, ...rest}:
+    JSX.ButtonHTMLAttributes<HTMLButtonElement>
+): VNode<HTMLButtonElement> => {
     const showRipple = useSignal(false);
     const rippleStyle = useSignal({});
     const handleClick = (e: JSX.TargetedMouseEvent<HTMLButtonElement>) => {

@@ -2,13 +2,11 @@
 import { JSX, VNode } from "preact";
 import { Signal } from "@preact/signals";
 
-interface ICheckboxProps {
+export default ({ label, binding, disabled, class: className, onChange, ...rest}: {
     binding: Signal<boolean>;
     label?: string;
     disabled?: boolean;
-}
-export default (props: ICheckboxProps & JSX.HTMLAttributes<HTMLDivElement>): VNode<HTMLDivElement> => {
-    const { label, binding, disabled, class: className, onChange, ...rest} = props;
+} & JSX.HTMLAttributes<HTMLDivElement>): VNode<HTMLDivElement> => {
     const handleClick = (e: JSX.TargetedMouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         if (!disabled) {
@@ -16,7 +14,8 @@ export default (props: ICheckboxProps & JSX.HTMLAttributes<HTMLDivElement>): VNo
             if (onChange) onChange(e);
         }
     }
-    return <div class={`check-box_6oN7Y ${disabled?'opacity-50':''} ${className ?? ''}`} aria-disabled={disabled} onClick={handleClick} {...rest}>
+    return <div class={`${disabled?'opacity-50':''} ${className ?? ''}`}
+        aria-disabled={disabled} onClick={handleClick} {...rest}>
         <span class={binding.value?"i-material-symbols-check-box-outline":"i-material-symbols-check-box-outline-blank"}/>
         {label}
     </div>

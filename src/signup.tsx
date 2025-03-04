@@ -2,8 +2,8 @@ import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
-import RButton from '../components/button-ripple';
-import SInput from '../components/input-simple';
+import RButton from '../components/button-ripple.tsx';
+import SInput from '../components/input-simple.tsx';
 import Dialog from './dialog.tsx';
 
 const namePattern = /^[_\w-]+$/;
@@ -30,8 +30,8 @@ export default () => {
                 app.go('#signin');
         }
     };
-    return <Dialog title="注册" onBackClick={()=>app.go()}>
-        <div class="p-2 h-full w-64 mx-auto flex flex-col">
+    return <Dialog class="p-2 flex flex-col" title="注册" onBackClick={()=>app.go()}>
+        <div class="w-64 m-auto flex flex-col pb-4">
             <label>用户名</label>
             <SInput name="name"
                 placeholder="name"

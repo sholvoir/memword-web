@@ -14,5 +14,5 @@ export default ({ class: className, cindex, children }: {
         <section class={`grow h-0 p-2 overflow-y-auto ${className ?? ''}`}>
             {childs[cindex.value]}
         </section>
-    </> : <></>;
+    </> : undefined;
 }

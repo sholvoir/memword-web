@@ -1,7 +1,7 @@
 import { useSignal } from "@preact/signals";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
-import TInput from '../components/input-text';
+import TInput from '../components/input-text.tsx';
 import Dialog from './dialog.tsx';
 
 export default () => {
@@ -16,8 +16,11 @@ export default () => {
         app.sprint.value = -1;
         app.go('#study');
     }
-    return <Dialog title="词典" onBackClick={()=>app.go()}>
-        <TInput autoCapitalize="none" type="search" name="word" placeholder="word" class="m-2 w-[calc(100%-16px)]"
-            binding={word} onChange={handleSearchClick} options={app.vocabulary}/>
+    return <Dialog class="flex flex-col" title="词典" onBackClick={()=>app.go()}>
+        <TInput autoCapitalize="none" type="search" name="word"
+            placeholder="word" class="m-2 w-[calc(100%-16px)]"
+            binding={word} onChange={handleSearchClick}
+            options={app.vocabulary}
+        />
     </Dialog>;
 }

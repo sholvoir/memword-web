@@ -1,9 +1,9 @@
 import { useSignal } from "@preact/signals";
+import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import Button from "../components/button-ripple";
-import { STATUS_CODE } from "@sholvoir/generic/http";
+import Button from "../components/button-ripple.tsx";
 
 export default () => {
     const name = useSignal('');
@@ -25,7 +25,7 @@ export default () => {
             }
         }
     }
-    return <Dialog title="上传我的词书" className="p-2" onBackClick={()=>app.go()}>
+    return <Dialog class="flex flex-col p-2" title="上传我的词书" onBackClick={()=>app.go()}>
         <label for="name">名称</label>
         <input name="name" value={name} onChange={e=>name.value=e.currentTarget.value} />
         <label for="disc" class="mt-2">描述</label>
@@ -36,7 +36,7 @@ export default () => {
             <label for="replace" class="text-red-500 mt-2">请考虑用下面的词替换</label>
             <textarea name="replace" class="grow" value={replace} onChange={e=>replace.value=e.currentTarget.value} />
         </>:undefined}
-        <div class="flex justify-end gap-2 mt-2">
+        <div class="flex justify-end gap-2 my-2">
             <Button class="w-32 button btn-normal" onClick={()=>app.go()}>取消</Button>
             <Button class="w-32 button btn-prime" onClick={handleOKClick}>上传</Button>
         </div>

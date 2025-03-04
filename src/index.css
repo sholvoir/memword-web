@@ -17,9 +17,9 @@
   --bg-ripple: oklch(from var(--slate-300) l c h / .8);
   --bg-title: var(--slate-300);
   --bg-body: var(--slate-200);
-  --bg-button: var(--slate-400);
-  --bg-btn-hover: var(--slate-300);
-  --bg-btn-active: var(--slate-500);
+  --bg-button: var(--slate-300);
+  --bg-btn-hover: var(--slate-200);
+  --bg-btn-active: var(--slate-400);
   --bg-button-prime: var(--orange-400);
   --bg-btn-prime-hover: var(--orange-300);
   --bg-btn-prime-active: var(--orange-500);
@@ -84,19 +84,19 @@ div {
 }
 .btn-normal {
   background-color: var(--bg-button);
-  &:hover {
+  &:hover:enabled {
     background-color: var(--bg-btn-hover);
   }
-  &:active {
+  &:active:enabled {
     background-color: var(--bg-btn-active);
   }
 }
 .btn-prime {
   background-color: var(--bg-button-prime);
-  &:hover {
+  &:hover:enabled {
     background-color: var(--bg-btn-prime-hover);
   }
-  &:active {
+  &:active:enabled {
     background-color: var(--bg-btn-prime-active);
   }
 }

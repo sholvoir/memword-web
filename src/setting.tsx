@@ -6,9 +6,9 @@ import { settingFormat } from "../../memword-server/lib/isetting.ts";
 import { now } from "../../memword-server/lib/common.ts";
 import { compareWL, IWordList } from "../../memword-server/lib/iwordlist.ts";
 import Dialog from './dialog.tsx';
-import Input from '../components/input-simple';
-import Button from '../components/button-ripple';
-import List from '../components/list';
+import Input from '../components/input-simple.tsx';
+import Button from '../components/button-ripple.tsx';
+import List from '../components/list.tsx';
 
 export default () => {
     const filter = useSignal('^common');
@@ -46,7 +46,7 @@ export default () => {
         })()
     });
     useEffect(() => { init() }, []);
-    return <Dialog className="p-2 gap-2" title="设置" onBackClick={() => app.go()}>
+    return <Dialog class="p-2 gap-2 flex flex-col" title="设置" onBackClick={() => app.go()}>
         <div class="flex gap-2">
             <label for="filter">设置过滤</label>
             <Input class="grow" name="filter" binding={filter} />

@@ -3,9 +3,9 @@ import { useSignal } from "@preact/signals";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
-import TextInput from "../components/input-text";
-import Button from "../components/button-ripple";
-import Tab from "../components/tab";
+import TextInput from "../components/input-text.tsx";
+import Button from "../components/button-ripple.tsx";
+import Tab from "../components/tab.tsx";
 import Ecard from "./ecard.tsx";
 
 export default function Lookup() {
@@ -31,7 +31,7 @@ export default function Lookup() {
     const handleDeleteClick = async () => {
         app.showTips((await mem.deleteDict(word.value)) ? `success delete word "${word.value}"!` : `Error`)
     };
-    return <Dialog title="辞典编辑" className="gap-2 p-2" onBackClick={()=>app.go()}>
+    return <Dialog class="flex flex-col gap-2 p-2" title="辞典编辑æˌəˈɪ" onBackClick={()=>app.go()}>
         <div class="flex gap-2">
             <TextInput name="word" placeholder="word" class="grow"
                 binding={word} options={app.vocabulary} onChange={handleSearchClick}/>
@@ -41,7 +41,7 @@ export default function Lookup() {
         <div class="flex flex-col grow"><Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
             {cards.value.map((card, i)=><Ecard key={`${word.value}${i}`} card={card} />)}
         </Tab></div>
-        {app.isAdmin() && <div class="flex justify-between gap-2">
+        <div class="flex justify-between gap-2 pb-4">
             <Button class="grow button btn-normal"
                 disabled = {!word.value} onClick={handleAddCardClick}>Add Card</Button>
             <Button class="grow button btn-normal"
@@ -50,6 +50,6 @@ export default function Lookup() {
                 disabled = {!word.value} onClick={handleDeleteClick}>Delete</Button>
             <Button class="grow button btn-normal"
                 disabled = {!word.value} onClick={handleUpdateClick}>Update</Button>
-        </div>}
+        </div>
     </Dialog>;
 }

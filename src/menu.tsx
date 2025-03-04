@@ -15,8 +15,7 @@ export default () => {
         await app.totalStats();
         app.go();
     }
-    return <Dialog title="菜单" onBackClick={() => app.go()}>
-        <div class="menu">
+    return <Dialog class="menu p-2 flex flex-col gap-1" title="菜单" onBackClick={() => app.go()}>
             {app.isAdmin() && <>
                 <menu title="#lookup" onClick={open}>辞典编辑</menu>
                 <div />
@@ -36,6 +35,5 @@ export default () => {
             <menu title="#help" onClick={open}>帮助</menu>
             <div />
             <menu title="#logout" onClick={open}>登出</menu>
-        </div>
     </Dialog>
 }
