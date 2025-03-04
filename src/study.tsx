@@ -100,7 +100,7 @@ export default () => {
         if (cardsN == 0) return;
         if (!app.isPhaseAnswer.value) app.isPhaseAnswer.value = true;
         else if (cardsN == 1) player.current?.play();
-        if (cindex.value < cardsN - 1) cindex.value++;
+        else if (cindex.value < cardsN - 1) cindex.value++;
         else cindex.value = 0;
     }
     return <Dialog title="学习" onBackClick={finish}>
