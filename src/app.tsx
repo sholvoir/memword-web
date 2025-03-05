@@ -18,6 +18,7 @@ export const wlid = signal<string>();
 export const blevel = signal<number>();
 export const sprint = signal(-1);
 export const name = signal('');
+export const wlname = signal('');
 export const loading = signal(false);
 export const loca = signal<TDial>('#about');
 

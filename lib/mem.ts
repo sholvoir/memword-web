@@ -1,7 +1,8 @@
+// deno-lint-ignore-file no-empty
 import { requestInit, getRes, getJson, STATUS_CODE } from '@sholvoir/generic/http';
 import { JWT } from "@sholvoir/generic/jwt";
 import { defaultSetting, ISetting } from "../../memword-server/lib/isetting.ts";
-import { IWordList } from "../../memword-server/lib/iwordlist.ts";
+import { IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
 import { IDict } from "../../memword-server/lib/idict.ts";
 import { B2_BASE_URL, now } from "../../memword-server/lib/common.ts";
 import { IClientWordlist, getClientWordlist } from "./wordlists.ts";
@@ -189,11 +190,11 @@ export const postSysWordList = async (name: string, words: string, disc?: string
 }
 
 export const postMyWordList = async (name: string, words: string, disc?: string) => {
-    const res = await getRes(`${API_URL}/api/wordlist`, { name, disc }, { body: words, method: 'POST', headers: authHead() });
+    const res = await getRes(`${API_URL}/api/wordlist`, { name, disc },
+        { body: words, method: 'POST', headers: authHead() });
     switch (res.status) {
         case STATUS_CODE.NotAcceptable: return [res.status, await res.json()];
-        // @ts-expect-error
-        case STATUS_CODE.OK: idb.putWordlist(await res.json());
+        case STATUS_CODE.OK: idb.putWordlist(await res.json()); return [res.status];
         default: return [res.status]
     }
 }
@@ -201,7 +202,9 @@ export const postMyWordList = async (name: string, words: string, disc?: string)
 
 export const deleteWordList = async (wlid: string) => {
     try {
-        await getRes(`${API_URL}/api/wordlist`, { wlid }, { method: 'DELETE' });
+        const name = splitID(wlid)[1];
+        await getRes(`${API_URL}/api/wordlist`, { name },
+            { method: 'DELETE', headers: authHead() });
         await idb.deleteWordlist(wlid);
         return true;
     } catch { return false }

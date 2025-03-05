@@ -4,14 +4,16 @@ import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
 import Button from "../components/button-ripple.tsx";
+import SInput from "../components/input-simple.tsx";
+import TaInput from "../components/input-textarea.tsx"
 
 export default () => {
-    const name = useSignal('');
     const disc = useSignal('');
     const words = useSignal('');
     const replace = useSignal('');
     const handleOKClick = async () => {
-        const [status, result] = await mem.postMyWordList(name.value, words.value, disc.value);
+        app.wlname.value = app.wlname.value.replaceAll('/', '-');
+        const [status, result] = await mem.postMyWordList(app.wlname.value, words.value, disc.value);
         switch (status) {
             case STATUS_CODE.BadRequest: return app.showTips('Error: 无名称或无内容');
             case STATUS_CODE.NotAcceptable:
@@ -27,11 +29,11 @@ export default () => {
     }
     return <Dialog class="flex flex-col p-2" title="上传我的词书" onBackClick={()=>app.go()}>
         <label for="name">名称</label>
-        <input name="name" value={name} onChange={e=>name.value=e.currentTarget.value} />
+        <SInput name="name" binding={app.wlname} />
         <label for="disc" class="mt-2">描述</label>
-        <input name="disc" value={disc} onChange={e=>disc.value=e.currentTarget.value} />
+        <SInput name="disc" binding={disc} />
         <label for='words' class="mt-2">词表</label>
-        <textarea name="words" class="grow" value={words} onChange={e=>words.value=e.currentTarget.value} />
+        <TaInput name="words" class="grow" binding={words} />
         {replace.value.length ? <>
             <label for="replace" class="text-red-500 mt-2">请考虑用下面的词替换</label>
             <textarea name="replace" class="grow" value={replace} onChange={e=>replace.value=e.currentTarget.value} />

@@ -51,17 +51,19 @@ export default () => {
             <label for="filter">设置过滤</label>
             <Input class="grow" name="filter" binding={filter} />
         </div>
-        <fieldset class="px-2 border rounded max-h-[50%] grow overflow-y-auto">
+        <fieldset class="border rounded max-h-[50%] grow overflow-y-auto">
             <legend>可用的词书</legend>
-            <List cindex={cindex} options={wls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-title)]" />
+            <List cindex={cindex} options={wls.value.map(wl=>wl.disc??wl.wlid)}
+                class="px-2" activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="flex justify-between gap-2">
             <Button class="button btn-normal grow" onClick={handleAddSubClick}>添加订阅</Button>
             <Button class="button btn-normal grow" onClick={handleDeleteSubClick}>删除订阅</Button>
         </div>
-        <fieldset class="px-2 border rounded max-h-[50%] grow overflow-y-auto">
+        <fieldset class="border rounded max-h-[50%] grow overflow-y-auto">
             <legend>我订阅的词书</legend>
-            <List cindex={mindex} options={mwls.value.map(wl=>wl.disc??wl.wlid)} activeClass="bg-[var(--bg-title)]"/>
+            <List cindex={mindex} options={mwls.value.map(wl=>wl.disc??wl.wlid)}
+                class="px-2" activeClass="bg-[var(--bg-title)]"/>
         </fieldset>
         <div class="flex justify-between gap-2">
             <Button class="button btn-normal grow" onClick={handleAddTaskClick}>添加任务</Button>
