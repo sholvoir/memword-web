@@ -51,6 +51,7 @@ export const startStudy = async (wl?: string, bl?: number) => {
 export const init = async () => {
     if (user.value = (await mem.getUser()) ?? '') {
         go('#home');
+        await mem.initSetting();
         await totalStats();
         const v = await mem.getVocabulary();
         if (v) vocabulary = v;

@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import { IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
+import { compareWL, IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
@@ -26,7 +26,9 @@ export default () => {
         app.go('#wordlist');
     }
     const init = async () => {
-        wls.value = (await mem.getWordlists(wl => wl.wlid.startsWith(app.user.value)));
+        wls.value = (await mem.getServerWordlist())
+            .filter(wl => wl.wlid.startsWith(app.user.value))
+            .sort(compareWL);
     }
     useEffect(() => {init()}, []);
     return <Dialog class="p-2 flex flex-col gap-2" title="我的词书" onBackClick={()=>app.go()}>
