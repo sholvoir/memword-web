@@ -139,7 +139,7 @@ export default () => {
                     <div class="grow h-0 overflow-y-auto"><Scard card={app.citem.value.cards?.[0]} /></div>)
                 }
                 <audio ref={player} autoPlay src={(app.isPhaseAnswer.value && app.citem.value.cards?.at(cindex.value)?.sound) ?
-                    `${API_URL}/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound!)}` : ''} />
+                    `${API_URL}/pub/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound!)}` : ''} />
             </div>
         </div>
     </Dialog>;

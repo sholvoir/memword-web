@@ -148,10 +148,8 @@ export const totalStats = async () => {
     return { format: statsFormat, stats: await idb.getStats(cwls) } as IStats;
 }
 
-export const getVocabulary = async () => {
-    const wordlist = await getClientWordlist('system/vocabulary');
-    if (wordlist) return Array.from(wordlist.wordSet).sort();
-}
+export const getVocabulary = () =>
+    getJson<Array<string>>(`${API_URL}/pub/vocabulary`);
 
 export const getServerWordlist = async () => {
     const wls = await getJson<Array<IWordList>>(`${API_URL}/pub/wordlist`);
