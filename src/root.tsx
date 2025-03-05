@@ -14,7 +14,7 @@ import Study from './study.tsx';
 import Signup from './signup.tsx';
 import Signin from './signin.tsx';
 import Signout from './signout.tsx';
-import SysWordList from './syswordlist.tsx';
+import Ignore from './ignore.tsx';
 import WordLists from './wordlists.tsx';
 import WordList from './wordlist.tsx';
 import Loading from './icon-loading.tsx';
@@ -33,7 +33,7 @@ export default () => {
     dialogs.set('#signup', <Signup />);
     dialogs.set('#signin', <Signin />);
     dialogs.set('#signout', <Signout />);
-    dialogs.set('#syswordlist', <SysWordList />);
+    dialogs.set('#ignore', <Ignore />);
     dialogs.set('#wordlists', <WordLists />);
     dialogs.set('#wordlist', <WordList />);
 

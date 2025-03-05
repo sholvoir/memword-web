@@ -151,6 +151,14 @@ export const totalStats = async () => {
 export const getVocabulary = () =>
     getJson<Array<string>>(`${API_URL}/pub/vocabulary`);
 
+export const postVocabulary = async (words: string) => {
+    try {
+        const res = await getRes(`${API_URL}/admin/wordlist`, undefined,
+            { body: words, method: 'POST', headers: authHead() });
+        return res.ok
+    } catch { return false }
+}
+
 export const getServerWordlist = async () => {
     const wls = await getJson<Array<IWordList>>(`${API_URL}/pub/wordlist`);
     if (!wls) return [];
@@ -179,14 +187,6 @@ export const getWordlists = async (filter: (wl: IWordList) => unknown) => {
     return idb.getWordlists(filter);
 }
 
-export const postSysWordList = async (name: string, words: string, disc?: string) => {
-    try {
-        const res = await getRes(`${API_URL}/admin/wordlist`, { name, disc },
-            { body: words, method: 'POST', headers: authHead() });
-        return res.ok
-    } catch { return false }
-}
-
 export const postMyWordList = async (name: string, words: string, disc?: string) => {
     const res = await getRes(`${API_URL}/api/wordlist`, { name, disc },
         { body: words, method: 'POST', headers: authHead() });
@@ -196,7 +196,6 @@ export const postMyWordList = async (name: string, words: string, disc?: string)
         default: return [res.status]
     }
 }
-
 
 export const deleteWordList = async (wlid: string) => {
     try {

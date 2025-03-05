@@ -5,19 +5,12 @@ import Button from "../components/button-ripple.tsx";
 import Dialog from './dialog.tsx';
 
 export default () => {
-    const name = useSignal('');
-    const disc = useSignal('');
     const words = useSignal('');
     const handleOKClick = async () => {
-        const result = await mem.postSysWordList(name.value, words.value, disc.value);
-        app.showTips(result ? '词书上传成功' : '词书上传失败');
+        const result = await mem.postVocabulary(words.value);
+        app.showTips(result ? '上传成功' : '上传失败');
     }
-    return <Dialog class="flex flex-col p-2" title="系统词书" onBackClick={()=>app.go()}>
-        <label for="name">名称</label>
-        <input name="name" value={name} onChange={e=>name.value=e.currentTarget.value} />
-        <label for='disc' class="mt-2">描述</label>
-        <input name="disc" value={disc} onChange={e=>disc.value=e.currentTarget.value} />
-        <label for='disc' class="mt-2">词表</label>
+    return <Dialog class="flex flex-col p-2" title="拼写忽略" onBackClick={()=>app.go()}>
         <textarea class="grow" value={words} onChange={e=>words.value=e.currentTarget.value} />
         <div class="flex justify-end gap-2 my-2">
             <Button class="w-32 button btn-normal" onClick={()=>app.go()}>取消</Button>

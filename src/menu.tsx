@@ -20,7 +20,7 @@ export default () => {
         {app.isAdmin() && <>
             <menu title="#lookup" onClick={open}>辞典编辑</menu>
             <div />
-            <menu title="#syswordlist" onClick={open}>系统词书</menu>
+            <menu title="#ignore" onClick={open}>拼写忽略</menu>
             <div />
         </>}
         <menu title="#issue" onClick={open}>报告问题</menu>
