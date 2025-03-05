@@ -49,10 +49,13 @@ export const startStudy = async (wl?: string, bl?: number) => {
 export const init = async () => {
     if (user.value = (await mem.getUser()) ?? '') {
         go('#home');
-        await mem.syncSetting();
+        await totalStats();
         const v = await mem.getVocabulary();
         if (v) vocabulary = v;
-        await mem.syncTasks();
-        await totalStats();
+        (async () => {
+            await mem.syncSetting();
+            await mem.syncTasks();
+            await totalStats();
+        })();
     } else go('#about');
 };
