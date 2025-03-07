@@ -49,6 +49,8 @@ export const startStudy = async (wl?: string, bl?: number) => {
 };
 
 export const init = async () => {
+    const rs = await navigator.serviceWorker.getRegistrations();
+    for (const r of rs) await r.unregister();
     if (user.value = (await mem.getUser()) ?? '') {
         go('#home');
         await mem.initSetting();
