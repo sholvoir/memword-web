@@ -117,6 +117,9 @@ export default () => {
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => player.current?.play()}
                     class="i-material-symbols-volume-up text-blue" />
+                {app.isAdmin() && <SButton disabled={!app.isPhaseAnswer.value}
+                    onClick={() => app.go('#lookup')}
+                    class="i-material-symbols-dictionary-outline text-cyan" />}
                 <div class="grow text-center text-xl">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => handleIKnown(13).then(studyNext)}

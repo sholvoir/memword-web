@@ -150,12 +150,14 @@ export const totalStats = async () => {
     return { format: statsFormat, stats: await idb.getStats(cwls) } as IStats;
 }
 
-export const getVocabulary = () =>
-    getJson<Array<string>>(`${API_URL}/pub/vocabulary`);
+export const getVocabulary = async () => {
+    const wordlist = await getClientWordlist('system/vocabulary');
+    if (wordlist) return Array.from(wordlist.wordSet).sort();
+}
 
 export const postVocabulary = async (words: string) => {
     try {
-        const res = await getRes(`${API_URL}/admin/wordlist`, undefined,
+        const res = await getRes(`${API_URL}/admin/vocabulary`, undefined,
             { body: words, method: 'POST', headers: authHead() });
         return res.ok
     } catch { return false }

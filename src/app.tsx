@@ -4,7 +4,7 @@ import { initStats, IStats } from "../lib/istat.ts";
 import { IItem } from "../lib/iitem.ts";
 import * as mem from "../lib/mem.ts";
 
-const DIALS = ['#home', '#help', '#about', '#menu', '#issue',
+const DIALS = ['', '#home', '#help', '#about', '#menu', '#issue',
     '#setting', '#ignore', '#wordlist', '#wordlists', '#lookup',
     '#search', '#study', '#signup', '#signin', '#signout'] as const;
 export type TDial = typeof DIALS[number];
@@ -21,7 +21,7 @@ export const sprint = signal(-1);
 export const name = signal('');
 export const wlname = signal('');
 export const loading = signal(false);
-export const loca = signal<TDial>('#about');
+export const loca = signal<TDial>('');
 
 export let vocabulary: Array<string> = [];
 export const totalStats = async () => stats.value = await mem.totalStats();
