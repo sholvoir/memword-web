@@ -7,6 +7,7 @@ import Help from './help.tsx';
 import About from './about.tsx';
 import Menu from './menu.tsx';
 import Issue from './issue.tsx';
+import Issues from './issues.tsx';
 import Setting from './setting.tsx';
 import Lookup from './lookup.tsx';
 import Dict from './search.tsx';
@@ -26,6 +27,7 @@ export default () => {
     dialogs.set('#about', <About />);
     dialogs.set('#menu', <Menu />);
     dialogs.set('#issue', <Issue />);
+    dialogs.set('#issues', <Issues />);
     dialogs.set('#setting', <Setting  />);
     dialogs.set('#lookup', <Lookup />);
     dialogs.set('#search', <Dict />);

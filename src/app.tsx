@@ -5,7 +5,7 @@ import { IItem } from "../lib/iitem.ts";
 import * as mem from "../lib/mem.ts";
 
 const DIALS = ['', '#home', '#help', '#about', '#menu', '#issue',
-    '#setting', '#ignore', '#wordlist', '#wordlists', '#lookup',
+    '#issues', '#setting', '#ignore', '#wordlist', '#wordlists', '#lookup',
     '#search', '#study', '#signup', '#signin', '#signout'] as const;
 export type TDial = typeof DIALS[number];
 const backs: Array<TDial> = [];

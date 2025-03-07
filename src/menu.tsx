@@ -22,6 +22,8 @@ export default () => {
             <div />
             <menu title="#ignore" onClick={open}>拼写忽略</menu>
             <div />
+            <menu title="#issues" onClick={open}>处理问题</menu>
+            <div />
         </>}
         <menu title="#issue" onClick={open}>报告问题</menu>
         <div />

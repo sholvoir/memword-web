@@ -4,6 +4,7 @@ import { JWT } from "@sholvoir/generic/jwt";
 import { defaultSetting, ISetting } from "../../memword-server/lib/isetting.ts";
 import { IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
 import { IDict } from "../../memword-server/lib/idict.ts";
+import { IIssue } from "../../memword-server/lib/iissue.ts";
 import { B2_BASE_URL, now } from "../../memword-server/lib/common.ts";
 import { IClientWordlist, getClientWordlist } from "./wordlists.ts";
 import { IStats, statsFormat } from './istat.ts';
@@ -143,6 +144,16 @@ export const submitIssue = async (issue: string) => {
     await idb.addIssue(issue);
     submitIssues();
 }
+
+export const getServerIssues = () =>
+    getJson<Array<IIssue>>(`${API_URL}/admin/issue`, undefined, {
+        method: 'GET',  headers: authHead()
+    });
+
+export const deleteServerIssue = (_id: string) =>
+    getJson(`${API_URL}/admin/issue`, {_id}, {
+        method: 'DELETE', headers: authHead()
+    });
 
 export const totalStats = async () => {
     const cwls: Array<IClientWordlist | undefined> = [];
