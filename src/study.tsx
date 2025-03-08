@@ -132,8 +132,13 @@ export default () => {
             </div>
             <div class="grow h-0 pb-4 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>
-                <div class="py-2 text-4xl font-bold">
-                    {app.citem.value.word}
+                <div class="py-2 flex gap-2 flex-wrap justify-between">
+                    <div class="text-4xl font-bold">{app.citem.value.word}</div>
+                    {app.isPhaseAnswer.value &&
+                        <div class="text-2xl flex items-center">
+                            {app.citem.value.cards?.[cindex.value].phonetic}
+                        </div>
+                    }
                 </div>
                 {app.isPhaseAnswer.value && ((app.citem.value.cards?.length ?? 0) > 1 ?
                     <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
