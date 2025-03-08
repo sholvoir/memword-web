@@ -78,7 +78,7 @@ export default () => {
                 options={mwls.value.map(wl => wl.disc ?? wl.wlid)}
                 activeClass="bg-[var(--bg-title)]" />
         </fieldset>
-        <div class="flex justify-between gap-2">
+        <div class="pb-2 flex justify-between gap-2">
             <Button class="button btn-normal grow"
                 onClick={handleAddTaskClick}>添加任务</Button>
             <Button class="button btn-normal grow"

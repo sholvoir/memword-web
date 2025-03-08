@@ -15,8 +15,7 @@ export default () => {
         app.go('#wordlist');
     }
     const handleDeleteClick = async () => {
-        const name = splitID(wls.value[cindex.value].wlid)[1];
-        app.showTips(await mem.deleteWordList(name) ?
+        app.showTips(await mem.deleteWordList(wls.value[cindex.value].wlid) ?
             '删除成功': '删除失败');
         wls.value = [...wls.value.slice(0, cindex.value),
             ...wls.value.slice(cindex.value + 1)];

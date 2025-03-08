@@ -218,10 +218,10 @@ export const postMyWordList = async (name: string, words: string, disc?: string)
 export const deleteWordList = async (wlid: string) => {
     try {
         const name = splitID(wlid)[1];
-        await getRes(`${API_URL}/api/wordlist`, { name },
+        const res = await getRes(`${API_URL}/api/wordlist`, { name },
             { method: 'DELETE', headers: authHead() });
-        await idb.deleteWordlist(wlid);
-        return true;
+        if (res.ok) await idb.deleteWordlist(wlid);
+        return res.ok;
     } catch { return false }
 }
 
