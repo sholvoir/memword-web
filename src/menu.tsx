@@ -15,6 +15,11 @@ export default () => {
         await app.totalStats();
         app.go();
     }
+    const handleSignoutClick = () => {
+        app.user.value = '';
+        app.go('#about');
+        mem.signout();
+    };
     return <Dialog class="menu p-2 flex flex-col gap-1"
         title="菜单" onBackClick={() => app.go()}>
         {app.isAdmin() && <>
@@ -37,6 +42,6 @@ export default () => {
         <div />
         <menu title="#help" onClick={open}>帮助</menu>
         <div />
-        <menu title="#logout" onClick={open}>登出</menu>
+        <menu onClick={handleSignoutClick}>登出</menu>
     </Dialog>
 }

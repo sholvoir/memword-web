@@ -3,10 +3,10 @@ set -euo pipefail
 
 outdir="../sholvoir.github.io/memword"
 bun run build
-rm $outdir/index-*.js
-mv $outdir/index-*.css $outdir/styles.css
-cp public/index.txt $outdir/index.html
-bun run build.ts esb
-rm $outdir/index.cs*
+sed -i '/<\/head>/i \
+  <link rel="icon" type="image/svg+xml" href="icon/icon.svg" />\
+  <link rel="manifest" href="manifest.json" />\
+  <link rel="apple-touch-startup-image" href="icon/icon-1024.png" />'\
+  $outdir/index.html
 cp -r public/icon $outdir/
 cp public/manifest.json $outdir/

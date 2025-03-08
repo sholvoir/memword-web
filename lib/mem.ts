@@ -244,9 +244,6 @@ export const signin = async (name: string, code: string) => {
         return res.status;
     } catch { return -1 }
 }
-export const signout = async () => {
-    localStorage.clear();
-    await idb.clear();
-}
+export const signout = idb.clear;
 
 export const getB2File = (fileName: string) => fetch(`${B2_BASE_URL}/${fileName}`);
