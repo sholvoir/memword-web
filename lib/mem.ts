@@ -72,7 +72,10 @@ export const deleteDict = async (word: string) => {
     } catch { return false; }
 }
 
-export const initSetting = async () => setting = await idb.getMeta('_setting');
+export const initSetting = async () => {
+    const s = await idb.getMeta('_setting');
+    if (s) setting = s;
+}
 
 export const syncSetting = async (cSetting?: ISetting) => {
     if (cSetting && cSetting.version > setting.version) setting = cSetting;
