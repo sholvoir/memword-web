@@ -43,7 +43,7 @@ export const startStudy = async (wl?: string, bl?: number) => {
         sprint.value = 0;
         go('#study');
     } else {
-        showTips('Congratulations! There are no more task need to do.');
+        showTips('No More Task');
         totalStats();
     }
 };

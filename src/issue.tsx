@@ -16,7 +16,7 @@ export default () => {
         onBackClick={()=>app.go()}>
         <label>请在这里描述你的问题:</label>
         <TAInput name="issue" class="grow" binding={issue}>{issue.value}</TAInput>
-        <div class="flex gap-2 mt-2 pb-4 justify-end">
+        <div class="flex gap-2 mt-2 pb-3 justify-end">
             <Button class="w-24 button btn-normal" onClick={()=>app.go()}>取消</Button>
             <Button class="w-24 button btn-prime" onClick={handleSubmitClick}>提交</Button>
         </div>

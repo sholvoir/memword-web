@@ -35,7 +35,7 @@ export default () => {
             <List cindex={cindex} options={wls.value.map(wl=>wl.disc??wl.wlid)}
                 class="px-2" activeClass="bg-[var(--bg-title)]"/>
         </div>
-        <div class="flex justify-end gap-2 pb-2">
+        <div class="pb-3 flex justify-end gap-2">
             <Button class="w-24 button btn-normal" name="new" onClick={handleNewClick}>新建</Button>
             <Button class="w-24 button btn-normal" name="delete" disabled={!wls.value.length} onClick={handleDeleteClick}>删除</Button>
             <Button class="w-24 button btn-normal" name="update" disabled={!wls.value.length} onClick={handleUpdateClick}>更新</Button>

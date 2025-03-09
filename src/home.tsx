@@ -13,7 +13,7 @@ export default () => <Dialog class="flex flex-col" title="学习进度">
             {app.stats.value.stats.map((stat: IStat, i: number)=><Stat key={i} stat={stat}/>)}
         </div>
     </div>
-    <div class="tail shrink-0 px-4 pt-2 pb-4 flex gap-3 justify-between [&>button]:grow font-bold">
+    <div class="tail shrink-0 px-4 pt-2 pb-5 flex gap-3 justify-between [&>button]:grow font-bold">
         <Button onClick={()=>app.go('#search')}><IconDict class="w-9 h-9 inline-block"/>词典</Button>
         <Button onClick={()=>app.startStudy()}><IconStudy  class="w-9 h-9 inline-block"/>学习</Button>
         <Button onClick={()=>app.go('#menu')}><IconMe class="w-9 h-9 inline-block"/>我</Button>
