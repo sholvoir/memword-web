@@ -120,7 +120,7 @@ export default () => {
                 {app.isAdmin() && <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => app.go('#lookup')}
                     class="i-material-symbols-dictionary-outline text-cyan" />}
-                <div class="grow text-center text-xl">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
+                <div class="grow text-center text-lg">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => handleIKnown(13).then(studyNext)}
                     class="i-material-symbols-light-family-star text-yellow" />
@@ -128,7 +128,7 @@ export default () => {
                     class="i-material-symbols-error text-red" />
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
                     class="i-material-symbols-refresh text-purple" />
-                <div class="text-xl">{app.citem.value.level}</div>
+                <div class="text-lg">{app.citem.value.level}</div>
             </div>
             <div class="grow h-0 pb-4 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>

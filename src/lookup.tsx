@@ -13,10 +13,9 @@ export default function Lookup() {
     const cindex = useSignal(0);
     const cards = useSignal<Array<ICard>>([]);
     const handleSearchClick = async () => {
-        const dict = await mem.getDict(word.value);
-        if (!dict) return app.showTips(`Error`);
-        cindex.value = 0;
-        cards.value = dict.cards ?? [];
+        const item = await mem.getUpdatedItem(word.value);
+        if (!item) return app.showTips(`Not Found`);
+        app.citem.value = item;
     };
     const handleAddCardClick = () => {
         cards.value = [...cards.value, {}];
@@ -44,7 +43,7 @@ export default function Lookup() {
                 disabled={!word.value} onClick={handleSearchClick}>Search</Button>
         </div>
         <div class="flex flex-col grow"><Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
-            {cards.value.map((card, i)=><Ecard key={`${word.value}${i}`} card={card} />)}
+            {cards.value.map((card)=><Ecard key={card} card={card} />)}
         </Tab></div>
         <div class="flex justify-between gap-2 pb-4">
             <Button class="grow button btn-normal"
