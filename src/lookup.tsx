@@ -1,5 +1,6 @@
+import { useEffect } from 'preact/hooks';
 import { ICard, IDict } from "../../memword-server/lib/idict.ts";
-import { useSignal, useSignalEffect } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
@@ -12,10 +13,15 @@ export default function Lookup() {
     const word = useSignal<string>('');
     const cindex = useSignal(0);
     const cards = useSignal<Array<ICard>>([]);
+    const getData = (dict?: IDict) => {
+        word.value = dict?.word??'';
+        cindex.value = 0;
+        cards.value =dict?.cards??[];
+    }
     const handleSearchClick = async () => {
-        const item = await mem.getUpdatedItem(word.value);
+        const item = await mem.getDict(word.value);
         if (!item) return app.showTips(`Not Found`);
-        app.citem.value = item;
+        getData(item);
     };
     const handleAddCardClick = () => {
         cards.value = [...cards.value, {}];
@@ -30,11 +36,7 @@ export default function Lookup() {
     const handleDeleteClick = async () => {
         app.showTips((await mem.deleteDict(word.value)) ? `success delete word "${word.value}"!` : `Error`)
     };
-    useSignalEffect(() => {
-        word.value = app.citem.value?.word??'';
-        cindex.value = 0;
-        cards.value = app.citem.value?.cards??[];
-    });
+    useEffect(()=>getData(app.citem.value), []);
     return <Dialog class="flex flex-col gap-2 p-2" title="辞典编辑æˌəˈɪ" onBackClick={()=>app.go()}>
         <div class="flex gap-2">
             <TextInput name="word" placeholder="word" class="grow"
