@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-empty
 import { requestInit, getRes, getJson, STATUS_CODE } from '@sholvoir/generic/http';
+import { blobToBase64 } from "@sholvoir/generic/blob";
 import { JWT } from "@sholvoir/generic/jwt";
 import { defaultSetting, ISetting } from "../../memword-server/lib/isetting.ts";
 import { IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
@@ -24,7 +25,14 @@ const getServerDict = (word: string) =>
 
 const getServerAndUpdateLocalDict = async (word: string) => {
     const dict = await getServerDict(word);
-    if (dict) return await idb.updateDict(dict);
+    if (dict) {
+        if (dict.cards) for (const card of dict.cards) if (card.sound) {
+            const resp = await fetch(`${API_URL}/pub/sound?q=${encodeURIComponent(card.sound)}`,
+                { cache: 'force-cache' });
+            if (resp.ok) card.sound = await blobToBase64(await resp.blob());
+        }
+        return await idb.updateDict(dict);
+    }
 }
 const itemUpdateDict = async (item: IItem) => {
     if (!item.dversion) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
