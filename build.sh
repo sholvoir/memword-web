@@ -10,3 +10,4 @@ sed -i '/<\/head>/i \
   $outdir/index.html
 cp -r public/icon $outdir/
 cp public/manifest.json $outdir/
+bun build.ts release

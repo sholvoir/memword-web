@@ -9,8 +9,7 @@ const outdir = '../sholvoir.github.io/memword';
 const esb = async (release = false) => {
    await esbuild.build({
       entryPoints: [
-         { out: 'worker', in: "./lib/worker.ts" },
-         { out: 'index', in: './src/main1.tsx' }
+         { out: 'worker', in: "./lib/worker.ts" }
       ],
       outdir,
       bundle: true,
