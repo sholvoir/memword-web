@@ -3,7 +3,6 @@ import type { JSX } from "preact";
 import { useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { wait } from "@sholvoir/generic/wait";
-import { API_URL } from "../lib/common.ts";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
 import Tab from '../components/tab.tsx';
@@ -147,7 +146,7 @@ export default () => {
                     <div class="grow h-0 overflow-y-auto"><Scard card={app.citem.value.cards?.[0]} /></div>)
                 }
                 <audio ref={player} autoPlay src={(app.isPhaseAnswer.value && app.citem.value.cards?.at(cindex.value)?.sound) ?
-                    `${API_URL}/pub/sound?q=${encodeURIComponent(app.citem.value.cards[cindex.value].sound!)}` : ''} />
+                    app.citem.value.cards[cindex.value].sound : ''} />
             </div>
         </div>
     </Dialog>;
