@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import { compareWL, IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
+import { compareWL, IWordList } from "../../memword-server/lib/iwordlist.ts";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
@@ -11,7 +11,7 @@ export default () => {
     const cindex = useSignal(0);
     const wls = useSignal<Array<IWordList>>([]);
     const handleNewClick = () => {
-        app.wlname.value = '';
+        app.wl.value = undefined;
         app.go('#wordlist');
     }
     const handleDeleteClick = async () => {
@@ -21,7 +21,7 @@ export default () => {
             ...wls.value.slice(cindex.value + 1)];
     }
     const handleUpdateClick = () => {
-        app.wlname.value = splitID(wls.value[cindex.value].wlid)[1];
+        app.wl.value = wls.value[cindex.value];
         app.go('#wordlist');
     }
     const init = async () => {

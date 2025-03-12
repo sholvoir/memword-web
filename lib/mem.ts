@@ -11,7 +11,6 @@ import { IClientWordlist, getClientWordlist } from "./wordlists.ts";
 import { IStats, statsFormat } from './istat.ts';
 import { IItem, item2task, newItem } from "./iitem.ts";
 import { API_URL } from "./common.ts";
-import { version } from '../package.json';
 import * as idb from './indexdb.ts';
 import { ITask } from "../../memword-server/lib/itask.ts";
 
@@ -49,7 +48,6 @@ const submitIssues = async () => {
 };
 
 export let setting: ISetting = defaultSetting();
-export { version }
 
 export const getUser = async () => {
     if (!auth) await getAuth();

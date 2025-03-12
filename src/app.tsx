@@ -3,6 +3,7 @@ import { signal } from "@preact/signals";
 import { initStats, IStats } from "../lib/istat.ts";
 import { IItem } from "../lib/iitem.ts";
 import * as mem from "../lib/mem.ts";
+import { IWordList } from "../../memword-server/lib/iwordlist.ts";
 
 const DIALS = ['', '#home', '#help', '#about', '#menu', '#issue',
     '#issues', '#setting', '#ignore', '#wordlist', '#wordlists',
@@ -19,7 +20,7 @@ export const wlid = signal<string>();
 export const blevel = signal<number>();
 export const sprint = signal(-1);
 export const name = signal('');
-export const wlname = signal('');
+export const wl = signal<IWordList>();
 export const loading = signal(false);
 export const loca = signal<TDial>('');
 
@@ -56,6 +57,7 @@ export const init = async () => {
         const v = await mem.getVocabulary();
         if (v) vocabulary = v;
         (async () => {
+            mem.getServerWordlist();
             await mem.syncSetting();
             await mem.syncTasks();
             await totalStats();

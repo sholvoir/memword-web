@@ -1,3 +1,4 @@
+import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as mem from '../lib/mem.ts';
@@ -6,14 +7,16 @@ import Dialog from './dialog.tsx';
 import Button from "../components/button-ripple.tsx";
 import SInput from "../components/input-simple.tsx";
 import TaInput from "../components/input-textarea.tsx"
+import { splitID } from "../../memword-server/lib/iwordlist.ts";
 
 export default () => {
+    const name = useSignal('');
     const disc = useSignal('');
     const words = useSignal('');
     const replace = useSignal('');
     const handleOKClick = async () => {
-        app.wlname.value = app.wlname.value.replaceAll('/', '-');
-        const [status, result] = await mem.postMyWordList(app.wlname.value, words.value, disc.value);
+        name.value = name.value.replaceAll('/', '-');
+        const [status, result] = await mem.postMyWordList(name.value, words.value, disc.value);
         switch (status) {
             case STATUS_CODE.BadRequest: return app.showTips('Error: 无名称或无内容');
             case STATUS_CODE.NotAcceptable:
@@ -27,9 +30,15 @@ export default () => {
             }
         }
     }
+    useEffect(()=>{
+        if (app.wl.value) {
+            name.value = splitID(app.wl.value.wlid)[1];
+            if (app.wl.value.disc) disc.value = app.wl.value.disc;
+        }
+    }, [])
     return <Dialog class="flex flex-col p-2" title="上传我的词书" onBackClick={()=>app.go()}>
         <label for="name">名称</label>
-        <SInput name="name" binding={app.wlname} />
+        <SInput name="name" binding={name} />
         <label for="disc" class="mt-2">描述</label>
         <SInput name="disc" binding={disc} />
         <label for='words' class="mt-2">词表</label>

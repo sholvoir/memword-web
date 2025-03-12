@@ -1,12 +1,12 @@
-import * as mem from '../lib/mem.ts';
 import * as app from './app.tsx';
+import * as idb from '../lib/indexdb.ts';
 import './about.css'
 import Dialog from './dialog.tsx';
 import BButton from '../components/button-base.tsx';
 import RButton from '../components/button-ripple.tsx';
 import Input from '../components/input-simple.tsx';
 import { useSignal } from "@preact/signals";
-import * as idb from '../lib/indexdb.ts';
+import { version } from "../lib/version.ts";
 
 export default () => {
     const show = useSignal(false);
@@ -19,7 +19,7 @@ export default () => {
         >OK</BButton></>}
         <div>
             <h1>快乐背单词</h1>
-            <p>版本：{mem.version}</p>
+            <p>版本：{version}</p>
         </div>
         <div>
             <h1>语言基础</h1>
