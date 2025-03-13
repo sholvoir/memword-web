@@ -37,7 +37,7 @@ export default function Lookup() {
         app.showTips((await mem.deleteDict(word.value)) ? `success delete word "${word.value}"!` : `Error`)
     };
     useEffect(()=>getData(app.citem.value), []);
-    return <Dialog class="flex flex-col gap-2 p-2" title="辞典编辑æˌəˈɪ" onBackClick={()=>app.go()}>
+    return <Dialog class="flex flex-col gap-2 p-2 text-lg" title="辞典编辑æˌəˈɪ" onBackClick={()=>app.go()}>
         <div class="flex gap-2">
             <TextInput name="word" placeholder="word" class="grow"
                 binding={word} options={app.vocabulary} onChange={handleSearchClick}/>
