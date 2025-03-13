@@ -14,12 +14,13 @@ export default () => {
     const handleSubmitClick = async () => {
         const issue = issues.value[cindex.value];
         const result = await mem.deleteServerIssue(issue._id) as any;
-        if (result.acknowledged) issues.value = [
-            ...issues.value.slice(0, cindex.value),
-            ...issues.value.slice(cindex.value + 1)
-        ];
-        app.showTips(result.acknowledged ? '处理成功!' : "处理失败");
-        app.go();
+        if (result.acknowledged && result.deletedCount > 0) {
+            issues.value = [
+                ...issues.value.slice(0, cindex.value),
+                ...issues.value.slice(cindex.value + 1)
+            ];
+            app.showTips('处理成功!');
+        } else app.showTips("处理失败");
     }
     useEffect(() => { mem.getServerIssues().then(is => is && (issues.value = is)) }, []);
     return <Dialog class="p-2 flex flex-col" title="处理问题"

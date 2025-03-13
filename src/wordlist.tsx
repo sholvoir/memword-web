@@ -2,6 +2,7 @@ import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import { splitID } from "../../memword-server/lib/iwordlist.ts";
+import { getClientWordlist } from "../lib/wordlists.ts";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
@@ -16,6 +17,12 @@ export default () => {
     const words = useSignal('');
     const replace = useSignal(false);
     const revision = useSignal('');
+    const handleDownloadClick = async () => {
+        const wlid = `${app.user.value}/${name}`;
+        const clientWl = await getClientWordlist(wlid);
+        if (!clientWl) return;
+        words.value = Array.from(clientWl.wordSet).sort().join('\n');
+    }
     const handleOKClick = async () => {
         name.value = name.value.replaceAll('/', '-');
         const [status, result] = await mem.postMyWordList(
@@ -51,9 +58,11 @@ export default () => {
             <label for="replace" class="text-red-500 mt-2">请考虑用下面的词替换</label>
             <textarea name="replace" class="grow" value={revision} onChange={e=>revision.value=e.currentTarget.value} />
         </>:undefined}
-        <div class="flex justify-between gap-2 my-2">
+        <div class="flex gap-2 my-2">
             <Checkbox binding={replace} label="Replace"/>
-            <Button class="w-32 button btn-prime" onClick={handleOKClick}>上传</Button>
+            <div class="grow"></div>
+            <Button class="w-24 button btn-normal" onClick={handleDownloadClick}>下载</Button>
+            <Button class="w-24 button btn-prime" onClick={handleOKClick}>上传</Button>
         </div>
     </Dialog>
 }

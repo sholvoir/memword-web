@@ -159,8 +159,8 @@ export const getServerIssues = () =>
         method: 'GET',  headers: authHead()
     });
 
-export const deleteServerIssue = (_id: string) =>
-    getJson(`${API_URL}/admin/issue`, {_id}, {
+export const deleteServerIssue = (id: string) =>
+    getJson(`${API_URL}/admin/issue`, {id}, {
         method: 'DELETE', headers: authHead()
     });
 

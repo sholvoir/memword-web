@@ -1,7 +1,7 @@
 import { JSX, VNode } from "preact";
 import { Signal } from "@preact/signals";
 
-export default ({ label, binding, disabled, class: className, onChange, ...rest}: {
+export default ({ label, binding, disabled, class: className, onChange, ...rest }: {
     binding: Signal<boolean>;
     label?: string;
     disabled?: boolean;
@@ -13,9 +13,11 @@ export default ({ label, binding, disabled, class: className, onChange, ...rest}
             if (onChange) onChange(e);
         }
     }
-    return <div class={`${disabled?'opacity-50':''} ${className ?? ''}`}
+    return <div class={`${disabled ? 'opacity-50' : ''} ${className ?? ''}`}
         aria-disabled={disabled} onClick={handleClick} {...rest}>
-        <span class={binding.value?"i-material-symbols-check-box-outline":"i-material-symbols-check-box-outline-blank"}/>
+        <span class={`text-[150%] ${binding.value ?
+            "i-material-symbols-check-box-outline" :
+            "i-material-symbols-check-box-outline-blank"}`} />
         {label}
     </div>
 }
