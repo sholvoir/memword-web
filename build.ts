@@ -25,15 +25,8 @@ const esb = async (release = false) => {
 if (import.meta.main) {
    for (const arg of Bun.argv.slice(2)) {
       switch (arg) {
-         //case 'static': await copy('static', outdir, { overwrite: true }); break;
          case 'esb': await esb(); break;
-         case 'release': {
-            //await copy('public/index.html', `${outdir}/index.html`, { overwrite: true });
-            //await copy('public/manifest.json', `${outdir}/manifest.json`);
-            //await copy('public/icon', `${outdir}/icon`);
-            await esb(true);
-            break;
-         }
+         case 'release': await esb(true); break;
          default: console.log(`Not a Command!!!`);
       }
    }

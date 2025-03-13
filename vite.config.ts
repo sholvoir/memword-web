@@ -8,9 +8,7 @@ export default defineConfig({
   plugins: [preact(), UnoCSS()],
   build: {
     target: 'esnext',
-    outDir: '../sholvoir.github.io/memword',
     emptyOutDir: true,
-    assetsDir: '',
-    copyPublicDir: false
+    assetsDir: ''
   }
 })

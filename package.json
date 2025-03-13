@@ -1,12 +1,12 @@
 {
   "name": "memword-web",
   "private": true,
-  "version": "0.8.5",
+  "version": "0.9.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "force": "vite --force",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,7 +16,6 @@
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.1",
-    "typescript": "~5.7.3",
     "unocss": "^66.1.0-beta.3",
     "vite": "^6.2.1"
   }
