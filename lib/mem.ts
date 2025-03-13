@@ -211,8 +211,8 @@ export const getWordlists = async (filter: (wl: IWordList) => unknown) => {
     return idb.getWordlists(filter);
 }
 
-export const postMyWordList = async (name: string, words: string, disc?: string) => {
-    const res = await getRes(`${API_URL}/api/wordlist`, { name, disc },
+export const postMyWordList = async (name: string, words: string, disc?: string, replace?: '1') => {
+    const res = await getRes(`${API_URL}/api/wordlist`, { name, disc, replace },
         { body: words, method: 'POST', headers: authHead() });
     switch (res.status) {
         case STATUS_CODE.NotAcceptable: return [res.status, await res.json()];

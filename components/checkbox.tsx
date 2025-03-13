@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { JSX, VNode } from "preact";
 import { Signal } from "@preact/signals";
 

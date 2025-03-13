@@ -36,7 +36,7 @@ export default function Lookup() {
         if (app.citem.value) word.value = app.citem.value.word;
         handleSearchClick();
     }, []);
-    return <Dialog class="flex flex-col gap-2 p-2 text-lg" title="辞典编辑æˌəˈɪ" onBackClick={() => app.go()}>
+    return <Dialog class="flex flex-col gap-2 p-2 text-lg" title="辞典编辑æˌəˈɪʌ" onBackClick={() => app.go()}>
         <div class="flex gap-2">
             <TextInput name="word" placeholder="word" class="grow"
                 binding={word} options={app.vocabulary} onChange={handleSearchClick} />
@@ -48,13 +48,13 @@ export default function Lookup() {
         </Tab></div>
         <div class="flex justify-between gap-2 pb-4">
             <Button class="grow button btn-normal"
-                disabled={!word.value} onClick={handleAddCardClick}>Add Card</Button>
+                disabled={!word.value} onClick={handleAddCardClick}>增卡</Button>
             <Button class="grow button btn-normal"
-                disabled={!word.value || cards.value.length <= 1} onClick={handleDeleteCardClick}>Delete Card</Button>
+                disabled={!word.value || cards.value.length <= 1} onClick={handleDeleteCardClick}>删卡</Button>
             <Button class="grow button btn-normal"
-                disabled={!word.value} onClick={handleDeleteClick}>Delete</Button>
+                disabled={!word.value} onClick={handleDeleteClick}>删除</Button>
             <Button class="grow button btn-normal"
-                disabled={!word.value} onClick={handleUpdateClick}>Update</Button>
+                disabled={!word.value} onClick={handleUpdateClick}>更新</Button>
         </div>
     </Dialog>;
 }
