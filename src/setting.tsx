@@ -28,7 +28,6 @@ export default () => {
         await mem.addTasks(mwls.value[mindex.value].wlid);
         await app.totalStats();
         app.loading.value = false;
-        app.go('#home');
     }
     const handleOKClick = async () => {
         await mem.syncSetting({

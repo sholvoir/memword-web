@@ -36,7 +36,7 @@ export default function Lookup() {
         if (app.citem.value) word.value = app.citem.value.word;
         handleSearchClick();
     }, []);
-    return <Dialog class="flex flex-col gap-2 p-2 text-lg" title="辞典编辑æˌəˈɪʌ" onBackClick={() => app.go()}>
+    return <Dialog class="flex flex-col gap-2 p-2 text-lg" title="辞典编辑æˌəˈɪʌʊ" onBackClick={() => app.go()}>
         <div class="flex gap-2">
             <TextInput name="word" placeholder="word" class="grow"
                 binding={word} options={app.vocabulary} onChange={handleSearchClick} />
