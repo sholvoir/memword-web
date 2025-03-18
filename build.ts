@@ -3,15 +3,14 @@
 /// <reference lib="dom.asynciterable" />
 
 import * as esbuild from "esbuild";
-
-const outdir = '../sholvoir.github.io/memword';
+import { outDir } from "./outdir.ts";
 
 const esb = async (release = false) => {
    await esbuild.build({
       entryPoints: [
          { out: 'worker', in: "./lib/worker.ts" }
       ],
-      outdir,
+      outdir: outDir,
       bundle: true,
       format: "esm",
       jsx: "automatic",
