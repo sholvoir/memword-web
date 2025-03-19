@@ -27,6 +27,7 @@ export default function Lookup() {
     }
     const handleUpdateClick = async () => {
         const dict: IDict = { word: word.value, cards: cards.value };
+        if (app.citem.value?.word == word.value) app.citem.value.cards = cards.value;
         app.showTips((await mem.putDict(dict)) ? `success update word "${word.value}"!` : `Error`);
     };
     const handleDeleteClick = async () => {
