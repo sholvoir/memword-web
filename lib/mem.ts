@@ -55,16 +55,10 @@ export const getUser = async () => {
 }
 
 export const getDict = async (word: string) => {
-    try {
-        const dict = await getServerDict(word);
-        if (!dict) return;
-        idb.updateDict(dict);
-        return dict;
-    } catch { return }
+    try { return await getServerDict(word); } catch { }
 }
 
 export const putDict = async (dict: IDict) => {
-    idb.updateDict(dict);
     try {
         const res = await fetch(`${API_URL}/admin/dict`, requestInit(dict, 'PUT', authHead()));
         return res.ok;
