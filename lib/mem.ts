@@ -30,7 +30,7 @@ const getServerAndUpdateLocalDict = async (word: string) => {
                 { cache: 'force-cache' });
             if (resp.ok) card.sound = await blobToBase64(await resp.blob());
         }
-        return await idb.updateDict(dict);
+        return (await idb.updateDict(dict)) ?? newItem(dict);
     }
 }
 const itemUpdateDict = async (item: IItem) => {

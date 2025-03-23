@@ -59,7 +59,7 @@ export default () => {
             <label for="filter">设置过滤</label>
             <Input class="grow" name="filter" binding={filter} />
         </div>
-        <fieldset class="border rounded max-h-[50%] grow overflow-y-auto">
+        <fieldset class="border rounded max-h-[50%] grow overflow-y-auto px-2">
             <legend>可用的词书</legend>
             <List class="px-2" cindex={cindex}
                 options={wls.value.map(wl => wl.disc ?? wl.wlid)}
@@ -71,7 +71,7 @@ export default () => {
             <Button class="button btn-normal grow"
                 onClick={handleDeleteSubClick}>删除订阅</Button>
         </div>
-        <fieldset class="border rounded max-h-[50%] grow overflow-y-auto">
+        <fieldset class="border rounded max-h-[50%] grow overflow-y-auto px-2">
             <legend>我订阅的词书</legend>
             <List class="px-2" cindex={mindex}
                 options={mwls.value.map(wl => wl.disc ?? wl.wlid)}
