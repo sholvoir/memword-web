@@ -1,11 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
-import { IStat, addTaskToStat, isBLevelIncludesLevel, initStat } from "./istat.ts";
-import { IItem, itemMergeDict, itemMergeTask, neverItem } from "./iitem.ts";
-import { ITask, studyTask } from "../../memword-server/lib/itask.ts";
-import { IWordList } from "../../memword-server/lib/iwordlist.ts";
-import { IDict } from "../../memword-server/lib/idict.ts";
+import { type IStat, addTaskToStat, isBLevelIncludesLevel, initStat } from "./istat.ts";
+import { type IItem, itemMergeDict, itemMergeTask, neverItem } from "./iitem.ts";
+import { type ITask, studyTask } from "../../memword-server/lib/itask.ts";
+import type { IWordList } from "../../memword-server/lib/iwordlist.ts";
+import type { IDict } from "../../memword-server/lib/idict.ts";
+import type { IClientWordlist } from "./wordlists.ts";
 import { now } from "../../memword-server/lib/common.ts";
-import { IClientWordlist } from "./wordlists.ts";
 
 export const tempItems = new Map<string, IItem>();
 type kvKey = '_sync-time' | '_setting' | '_auth' | '_wl-time';
@@ -39,7 +39,7 @@ export const getMeta = (key: kvKey) =>
     new Promise<any>((resolve, reject) => run(reject, db => {
         const request = db.transaction('mata', 'readonly').objectStore('mata').get(key);
         request.onerror = reject;
-        request.onsuccess = () => resolve(request.result && request.result.value);
+        request.onsuccess = () => resolve(request.result?.value);
     }));
 
 export const setMeta = (key: kvKey, value: any) =>
@@ -118,7 +118,7 @@ export const syncWordlists = (wls: Array<IWordList>) =>
             const cwl = cursor.value as IWordList;
             if (wlMap.has(cwl.wlid)) {
                 const swl = wlMap.get(cwl.wlid)!;
-                if (swl.version != cwl.version)
+                if (swl.version !== cwl.version)
                     wStore.put(swl);
                 wlMap.delete(cwl.wlid);
             } else {

@@ -24,7 +24,9 @@ export default () => {
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
         if (++app.sprint.value <= 0) return finish();
+        app.loading.value = true;
         const item = await mem.getEpisode(app.wlid.value, app.blevel.value);
+        app.loading.value = false;
         if (!item) return finish();
         app.citem.value = item;
         app.isPhaseAnswer.value = false;
@@ -49,6 +51,9 @@ export default () => {
         await mem.submitIssue(app.citem.value!.word);
         app.showTips('Submit Success!')
     };
+    const handleDelete = async () => {
+        app.showTips((await mem.deleteItem(app.citem.value!.word)) ? '删除成功' : '删除失败');
+    }
     const handleKeyPress = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
         e.stopPropagation()
         if (e.ctrlKey || e.altKey) return;
@@ -93,17 +98,17 @@ export default () => {
         } else handleClick();
         endY.value = startY.value = 0;
     };
-    const handleClick = (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+    const handleClick = (e?: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
         e?.stopPropagation();
         const cardsN = app.citem.value?.cards?.length ?? 0;
-        if (cardsN == 0) return;
+        if (cardsN === 0) return;
         if (!app.isPhaseAnswer.value) app.isPhaseAnswer.value = true;
-        else if (cardsN == 1) player.current?.play();
+        else if (cardsN === 1) player.current?.play();
         else if (cindex.value < cardsN - 1) cindex.value++;
         else cindex.value = 0;
     }
     return <Dialog title="学习" onBackClick={finish}>
-        <div class={`relative h-full p-2 flex flex-col outline-none`}
+        <div class="relative h-full p-2 flex flex-col outline-none"
             tabIndex={-1} onKeyUp={handleKeyPress}
             style={{ top: `${endY.value - startY.value}px` }}>
             <div class="flex gap-4 text-[150%] items-center">
@@ -121,6 +126,9 @@ export default () => {
                     class="i-material-symbols-dictionary-outline text-cyan" />}
                 <div class="grow text-center text-lg">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
                 <SButton disabled={!app.isPhaseAnswer.value}
+                    onClick={handleDelete}
+                    class="i-material-symbols-delete-outline text-orange" />
+                <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={() => handleIKnown(13).then(studyNext)}
                     class="i-material-symbols-light-family-star text-yellow" />
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
@@ -130,7 +138,7 @@ export default () => {
                 <div class="text-lg">{app.citem.value.level}</div>
             </div>
             <div class="grow h-0 pb-4 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onClick={handleClick}>
+                onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onKeyUp={handleClick}>
                 <div class="py-2 flex gap-2 flex-wrap justify-between">
                     <div class="text-4xl font-bold">{app.citem.value.word}</div>
                     {app.isPhaseAnswer.value &&

@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import { compareWL, IWordList } from "../../memword-server/lib/iwordlist.ts";
+import { type IWordList, compareWL } from "../../memword-server/lib/iwordlist.ts";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';

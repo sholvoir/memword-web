@@ -1,9 +1,9 @@
 // deno-lint-ignore-file no-cond-assign
 import { signal } from "@preact/signals";
-import { initStats, IStats } from "../lib/istat.ts";
-import { IItem } from "../lib/iitem.ts";
+import { type IStats, initStats } from "../lib/istat.ts";
+import type { IItem } from "../lib/iitem.ts";
+import type { IWordList } from "../../memword-server/lib/iwordlist.ts";
 import * as mem from "../lib/mem.ts";
-import { IWordList } from "../../memword-server/lib/iwordlist.ts";
 
 const DIALS = ['', '#home', '#help', '#about', '#menu', '#issue',
     '#issues', '#setting', '#ignore', '#wordlist', '#wordlists',
@@ -26,7 +26,7 @@ export const loca = signal<TDial>('');
 
 export let vocabulary: Array<string> = [];
 export const totalStats = async () => stats.value = await mem.totalStats();
-export const isAdmin = () => user.value == 'hua';
+export const isAdmin = () => user.value === 'hua';
 export const hideTips = () => tips.value = '';
 export const go = (d?: TDial) =>
     loca.value = d ? (backs.push(loca.value), d) :

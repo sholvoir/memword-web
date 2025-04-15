@@ -2,17 +2,17 @@
 import { requestInit, getRes, getJson, STATUS_CODE } from '@sholvoir/generic/http';
 import { blobToBase64 } from "@sholvoir/generic/blob";
 import { JWT } from "@sholvoir/generic/jwt";
-import { defaultSetting, ISetting } from "../../memword-server/lib/isetting.ts";
-import { IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
-import { IDict } from "../../memword-server/lib/idict.ts";
-import { IIssue } from "../../memword-server/lib/iissue.ts";
+import { defaultSetting, type ISetting } from "../../memword-server/lib/isetting.ts";
+import type { IDict } from "../../memword-server/lib/idict.ts";
+import type { IIssue } from "../../memword-server/lib/iissue.ts";
+import type { ITask } from "../../memword-server/lib/itask.ts";
+import { type IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
+import { type IClientWordlist, getClientWordlist } from "./wordlists.ts";
+import { type IStats, statsFormat } from './istat.ts';
+import { type IItem, item2task, newItem } from "./iitem.ts";
 import { B2_BASE_URL, now } from "../../memword-server/lib/common.ts";
-import { IClientWordlist, getClientWordlist } from "./wordlists.ts";
-import { IStats, statsFormat } from './istat.ts';
-import { IItem, item2task, newItem } from "./iitem.ts";
 import { API_URL } from "./common.ts";
 import * as idb from './indexdb.ts';
-import { ITask } from "../../memword-server/lib/itask.ts";
 
 const dictExpire = 7 * 24 * 60 * 60;
 let auth: string;
@@ -105,11 +105,21 @@ export const search = async (word: string) => {
     };
     return await itemUpdateDict(item);
 }
+
 export const getUpdatedItem = (word: string) => getServerAndUpdateLocalDict(word);
 
 export const getEpisode = async (wlid?: string, blevel?: number) => {
     const item = await idb.getEpisode(wlid ? (await getClientWordlist(wlid))?.wordSet : undefined, blevel);
     if (item) return await itemUpdateDict(item);
+}
+
+export const deleteItem = async (word: string) => {
+    try {
+        const resp = await fetch(`${API_URL}/api/task`, requestInit([word], 'DELETE', authHead()));
+        if (!resp.ok) return console.error('Network Error: get sync task data error.');
+        await idb.deleteItem(word);
+        return true;
+    } catch { return false }
 }
 
 export const studied = (word: string, level?: number) => idb.studied(word, level);
@@ -186,7 +196,7 @@ export const getServerWordlist = async () => {
         const deleted = await idb.syncWordlists(wls);
         const setting = await idb.getMeta('_setting') as ISetting;
         const nbooks = setting.books.filter(wlid => !deleted.has(wlid));
-        if (nbooks.length != setting.books.length) {
+        if (nbooks.length !== setting.books.length) {
             setting.books = nbooks;
             setting.version = time;
             await idb.setMeta('_setting', setting);
