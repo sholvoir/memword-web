@@ -1,9 +1,11 @@
 // deno-lint-ignore-file no-cond-assign
 import { signal } from "@preact/signals";
+import { wait } from "@sholvoir/generic/wait";
 import { type IStats, initStats } from "../lib/istat.ts";
 import type { IItem } from "../lib/iitem.ts";
 import type { IWordList } from "../../memword-server/lib/iwordlist.ts";
 import * as mem from "../lib/mem.ts";
+import * as idb from "../lib/indexdb.ts";
 
 const DIALS = ['', '#home', '#help', '#about', '#menu', '#issue',
     '#issues', '#setting', '#ignore', '#wordlist', '#wordlists',
@@ -61,6 +63,10 @@ export const init = async () => {
             await mem.syncSetting();
             await mem.syncTasks();
             await totalStats();
+            for (const item of await idb.getPredict(3600, 500)) {
+                await mem.itemUpdateDict(item);
+                await wait(300);
+            }
         })();
     } else go('#about');
 };

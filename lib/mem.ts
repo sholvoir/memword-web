@@ -33,11 +33,7 @@ const getServerAndUpdateLocalDict = async (word: string) => {
         return (await idb.updateDict(dict)) ?? newItem(dict);
     }
 }
-const itemUpdateDict = async (item: IItem) => {
-    if (!item.dversion) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
-    if (item.dversion + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
-    return item;
-}
+
 const submitIssues = async () => {
     const issues = await idb.getIssues();
     for (const issue of issues) {
@@ -48,6 +44,12 @@ const submitIssues = async () => {
 };
 
 export let setting: ISetting = defaultSetting();
+
+export const itemUpdateDict = async (item: IItem) => {
+    if (!item.dversion) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
+    if (item.dversion + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
+    return item;
+}
 
 export const getUser = async () => {
     if (!auth) await getAuth();

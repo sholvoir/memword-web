@@ -24,9 +24,7 @@ export default () => {
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
         if (++app.sprint.value <= 0) return finish();
-        app.loading.value = true;
         const item = await mem.getEpisode(app.wlid.value, app.blevel.value);
-        app.loading.value = false;
         if (!item) return finish();
         app.citem.value = item;
         app.isPhaseAnswer.value = false;

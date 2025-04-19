@@ -213,14 +213,33 @@ export const getEpisode = (wordList?: Set<string>, blevel?: number) =>
         const transaction = db.transaction('item', 'readonly');
         transaction.onerror = reject;
         transaction.oncomplete = () => resolve(result);
-        transaction.objectStore('item').index('next').openCursor(IDBKeyRange.upperBound(now()), "prev").onsuccess = (e) => {
-            const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
-            if (!cursor) return;
-            const item = cursor.value as IItem;
-            if ((!wordList || wordList.has(item.word)) && ((blevel === undefined) || isBLevelIncludesLevel(blevel, item.level)))
-                return result = item;
-            cursor.continue();
-        }
+        transaction.objectStore('item').index('next')
+            .openCursor(IDBKeyRange.upperBound(now()), "prev")
+            .onsuccess = (e) => {
+                const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
+                if (!cursor) return;
+                const item = cursor.value as IItem;
+                if ((!wordList || wordList.has(item.word)) && ((blevel === undefined) || isBLevelIncludesLevel(blevel, item.level)))
+                    return result = item;
+                cursor.continue();
+            }
+    }));
+
+export const getPredict = (time: number, sprint: number) =>
+    new Promise<Array<IItem>>((resolve, reject) => run(reject, db => {
+        const result: Array<IItem> = [];
+        const transaction = db.transaction('item', 'readonly');
+        transaction.onerror = reject;
+        transaction.oncomplete = () => resolve(result);
+        transaction.objectStore('item').index('next')
+            .openCursor(IDBKeyRange.upperBound(now()+time), "prev")
+            .onsuccess = (e) => {
+                const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
+                if (!cursor) return;
+                result.push(cursor.value);
+                if (result.length >= sprint) return;
+                cursor.continue();
+            }
     }));
 
 export const getStats = (wls: Array<IClientWordlist | undefined>) =>
