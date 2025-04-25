@@ -1,6 +1,7 @@
 import { useEffect } from 'preact/hooks';
-import { ICard, IDict } from "../../memword-server/lib/idict.ts";
 import { useSignal } from "@preact/signals";
+import { now } from '../../memword-server/lib/common.ts';
+import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
 import Dialog from './dialog.tsx';
@@ -15,7 +16,7 @@ export default function Lookup() {
     const cards = useSignal<Array<ICard>>([]);
     const handleSearchClick = async () => {
         const dict = await mem.getDict(word.value);
-        if (!dict) return app.showTips(`Not Found`);
+        if (!dict) return app.showTips('Not Found');
         cindex.value = 0;
         cards.value = dict?.cards ?? [];
     };
@@ -26,11 +27,11 @@ export default function Lookup() {
         if (cards.value.length > 1) cards.value = cards.value.toSpliced(cindex.value, 1);
     }
     const handleUpdateClick = async () => {
-        const dict: IDict = { word: word.value, cards: cards.value };
-        app.showTips((await mem.putDict(dict)) ? `success update word "${word.value}"!` : `Error`);
+        const dict: IDict = { word: word.value, cards: cards.value, version: now() };
+        app.showTips((await mem.putDict(dict)) ? `success update word "${word.value}"!` : 'Error');
     };
     const handleDeleteClick = async () => {
-        app.showTips((await mem.deleteDict(word.value)) ? `success delete word "${word.value}"!` : `Error`)
+        app.showTips((await mem.deleteDict(word.value)) ? `success delete word "${word.value}"!` : 'Error')
     };
     useEffect(() => {
         if (app.citem.value) word.value = app.citem.value.word;

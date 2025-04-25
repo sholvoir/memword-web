@@ -23,14 +23,17 @@ const getServerDict = (word: string) =>
     getJson<IDict>(`${API_URL}/pub/dict?q=${encodeURIComponent(word)}`, undefined, { cache: 'reload' });
 
 const getServerAndUpdateLocalDict = async (word: string) => {
+    const item = await idb.getItem(word);
     const dict = await getServerDict(word);
+    if (item && (!dict || item.version >= dict.version)) return item;
     if (dict) {
+        if (!item) return newItem(dict);
         if (dict.cards) for (const card of dict.cards) if (card.sound) {
             const resp = await fetch(`${API_URL}/pub/sound?q=${encodeURIComponent(card.sound)}`,
                 { cache: 'force-cache' });
             if (resp.ok) card.sound = await blobToBase64(await resp.blob());
         }
-        return (await idb.updateDict(dict)) ?? newItem(dict);
+        return (await idb.updateDict(dict));
     }
 }
 
@@ -46,8 +49,8 @@ const submitIssues = async () => {
 export let setting: ISetting = defaultSetting();
 
 export const itemUpdateDict = async (item: IItem) => {
-    if (!item.dversion) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
-    if (item.dversion + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
+    if (item.version === undefined) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
+    if (item.version + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
     return item;
 }
 

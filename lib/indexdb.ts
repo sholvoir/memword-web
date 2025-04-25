@@ -199,11 +199,7 @@ export const updateDict = (dict: IDict) =>
         const iStore = transaction.objectStore('item');
         iStore.get(dict.word).onsuccess = (e1) => {
             item = (e1.target as IDBRequest<IItem>).result;
-            if (item) {
-                itemMergeDict(item, dict);
-                item.dversion = now();
-                iStore.put(item);
-            }
+            if (item) iStore.put(itemMergeDict(item, dict));
         }
     }));
 
