@@ -25,16 +25,15 @@ const getServerDict = (word: string) =>
 const getServerAndUpdateLocalDict = async (word: string) => {
     const item = await idb.getItem(word);
     const dict = await getServerDict(word);
-    if (item && (!dict || item.version >= dict.version)) return item;
-    if (dict) {
-        if (!item) return newItem(dict);
-        if (dict.cards) for (const card of dict.cards) if (card.sound) {
-            const resp = await fetch(`${API_URL}/pub/sound?q=${encodeURIComponent(card.sound)}`,
-                { cache: 'force-cache' });
-            if (resp.ok) card.sound = await blobToBase64(await resp.blob());
-        }
-        return (await idb.updateDict(dict));
+    if (!dict) return item;
+    if (!item) return newItem(dict);
+    if (item.version >= dict.version) return (await idb.updateDict(item));
+    if (dict.cards) for (const card of dict.cards) if (card.sound) {
+        const resp = await fetch(`${API_URL}/pub/sound?q=${encodeURIComponent(card.sound)}`,
+            { cache: 'force-cache' });
+        if (resp.ok) card.sound = await blobToBase64(await resp.blob());
     }
+    return (await idb.updateDict(dict));
 }
 
 const submitIssues = async () => {
@@ -49,8 +48,8 @@ const submitIssues = async () => {
 export let setting: ISetting = defaultSetting();
 
 export const itemUpdateDict = async (item: IItem) => {
-    if (item.version === undefined) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
-    if (item.version + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
+    if (!item.dictSync) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
+    if (item.dictSync + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
     return item;
 }
 
