@@ -7,12 +7,12 @@ export interface IItem extends IDict, ITask {
 }
 
 export const neverItem = (word: string, time: number): IItem =>
-    ({ word, last: time, next: time, level: 0, version: 0 });
+    ({ word, last: time, next: time, level: 0 });
 
 export const newItem = (dict: IDict): IItem => {
     const time = now();
     return { word: dict.word, cards: dict.cards, level: 0,
-        version: time, last: time, next: time, dictSync: time
+        last: time, next: time, dictSync: time
     }
 };
 
@@ -27,6 +27,6 @@ export const itemMergeTask = (item: IItem, task: ITask) => {
 
 export const itemMergeDict = (item: IItem, dict: IDict) => {
     item.cards = dict.cards;
-    item.version = dict.version;
+    if (dict.version !== undefined) item.version = dict.version;
     return item;
 }

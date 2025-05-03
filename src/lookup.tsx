@@ -1,6 +1,5 @@
 import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
-import { now } from '../../memword-server/lib/common.ts';
 import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";
@@ -27,7 +26,7 @@ export default function Lookup() {
         if (cards.value.length > 1) cards.value = cards.value.toSpliced(cindex.value, 1);
     }
     const handleUpdateClick = async () => {
-        const dict: IDict = { word: word.value, cards: cards.value, version: now() };
+        const dict: IDict = { word: word.value, cards: cards.value };
         app.showTips((await mem.putDict(dict)) ? `success update word "${word.value}"!` : 'Error');
     };
     const handleDeleteClick = async () => {
@@ -37,7 +36,7 @@ export default function Lookup() {
         if (app.citem.value) word.value = app.citem.value.word;
         handleSearchClick();
     }, []);
-    return <Dialog class="flex flex-col gap-2 p-2 text-lg" title="辞典编辑ˈæəɪʌʊˌ" onBackClick={() => app.go()}>
+    return <Dialog class="flex flex-col gap-2 p-2 text-lg" title="辞典编辑ˈʒɑæəɪʌʊˌ" onBackClick={() => app.go()}>
         <div class="flex gap-2">
             <TextInput name="word" placeholder="word" class="grow"
                 binding={word} options={app.vocabulary} onChange={handleSearchClick} />
