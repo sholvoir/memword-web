@@ -27,7 +27,8 @@ const getServerAndUpdateLocalDict = async (word: string) => {
     const dict = await getServerDict(word);
     if (!dict) return item;
     if (!item) return newItem(dict);
-    if ((item.version ?? 0) >= (dict.version ?? 0)) return (await idb.updateDict(item));
+    if (item.version !== undefined && dict.version !== undefined && item.version >= dict.version)
+        return (await idb.updateDict(item));
     if (dict.cards) for (const card of dict.cards) if (card.sound) {
         const resp = await fetch(`${API_URL}/pub/sound?q=${encodeURIComponent(card.sound)}`,
             { cache: 'force-cache' });
