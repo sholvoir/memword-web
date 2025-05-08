@@ -100,7 +100,7 @@ export default () => {
         e?.stopPropagation();
         const cardsN = app.citem.value?.cards?.length ?? 0;
         if (cardsN === 0) return;
-        if (!app.isPhaseAnswer.value) app.isPhaseAnswer.value = true;
+        if (!app.isPhaseAnswer.value) (app.isPhaseAnswer.value = true) && player.current?.play();
         else if (cardsN === 1) player.current?.play();
         else if (cindex.value < cardsN - 1) cindex.value++;
         else cindex.value = 0;
