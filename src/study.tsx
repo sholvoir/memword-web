@@ -117,18 +117,16 @@ export default () => {
                     onClick={() => handleIKnown(0).then(studyNext)}
                     class="i-gridicons-cross-circle text-fuchsia" />
                 <SButton disabled={!app.isPhaseAnswer.value}
-                    onClick={() => player.current?.play()}
-                    class="i-material-symbols-volume-up text-blue" />
-                {app.isAdmin() && <SButton disabled={!app.isPhaseAnswer.value}
-                    onClick={() => app.go('#lookup')}
-                    class="i-material-symbols-dictionary-outline text-cyan" />}
-                <div class="grow text-center text-lg">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
+                    onClick={() => handleIKnown(13).then(studyNext)}
+                    class="i-material-symbols-light-family-star text-yellow" />
                 <SButton disabled={!app.isPhaseAnswer.value}
                     onClick={handleDelete}
                     class="i-material-symbols-delete-outline text-orange" />
-                <SButton disabled={!app.isPhaseAnswer.value}
-                    onClick={() => handleIKnown(13).then(studyNext)}
-                    class="i-material-symbols-light-family-star text-yellow" />
+                <div class="grow text-center text-lg">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
+                <SButton onClick={() => player.current?.play()}
+                    class="i-material-symbols-volume-up text-blue" />
+                {app.isAdmin() && <SButton onClick={() => app.go('#lookup')}
+                    class="i-material-symbols-dictionary-outline text-cyan" />}
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
                     class="i-material-symbols-error text-red" />
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
@@ -151,8 +149,7 @@ export default () => {
                     </Tab> :
                     <div class="grow h-0 overflow-y-auto"><Scard card={app.citem.value.cards?.[0]} /></div>)
                 }
-                <audio ref={player} autoPlay src={(app.isPhaseAnswer.value && app.citem.value.cards?.at(cindex.value)?.sound) ?
-                    app.citem.value.cards[cindex.value].sound : ''} />
+                <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
             </div>
         </div>
     </Dialog>;
