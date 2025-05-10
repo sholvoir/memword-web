@@ -19,7 +19,6 @@ export const tips = signal('');
 export const isPhaseAnswer = signal(false);
 export const citem = signal<IItem>();
 export const wlid = signal<string>();
-export const blevel = signal<number>();
 export const sprint = signal(-1);
 export const name = signal('');
 export const wl = signal<IWordList>();
@@ -36,9 +35,9 @@ export const go = (d?: TDial) =>
 export const showTips = (content: string, autohide = true) =>
     (tips.value = content, autohide && setTimeout(hideTips, 3000));
 
-export const startStudy = async (wl?: string, bl?: number) => {
+export const startStudy = async (wl?: string) => {
     loading.value = true;
-    const item = await mem.getEpisode(wlid.value = wl, blevel.value = bl);
+    const item = await mem.getEpisode(wlid.value = wl);
     loading.value = false;
     if (item) {
         citem.value = item;

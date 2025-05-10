@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { type IStat, addTaskToStat, isBLevelIncludesLevel, initStat } from "./istat.ts";
+import { type IStat, addTaskToStat, initStat } from "./istat.ts";
 import { type IItem, itemMergeDict, itemMergeTask, neverItem } from "./iitem.ts";
 import { type ITask, studyTask } from "../../memword-server/lib/itask.ts";
 import type { IWordList } from "../../memword-server/lib/iwordlist.ts";
@@ -203,7 +203,7 @@ export const updateDict = (dict: IDict) =>
         }
     }));
 
-export const getEpisode = (wordList?: Set<string>, blevel?: number) =>
+export const getEpisode = (wordList?: Set<string>) =>
     new Promise<IItem | undefined>((resolve, reject) => run(reject, db => {
         let result: IItem;
         const transaction = db.transaction('item', 'readonly');
@@ -215,7 +215,7 @@ export const getEpisode = (wordList?: Set<string>, blevel?: number) =>
                 const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
                 if (!cursor) return;
                 const item = cursor.value as IItem;
-                if ((!wordList || wordList.has(item.word)) && ((blevel === undefined) || isBLevelIncludesLevel(blevel, item.level)))
+                if (!wordList || wordList.has(item.word))
                     return result = item;
                 cursor.continue();
             }

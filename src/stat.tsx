@@ -1,5 +1,5 @@
 import { splitID } from "../../memword-server/lib/iwordlist.ts";
-import { aggrToBAggr, BLevelName, IStat } from "../lib/istat.ts";
+import { aggrToBAggr, BLevelName, type IStat } from "../lib/istat.ts";
 import * as app from './app.tsx';
 
 const sum = (s: number, b: number) => s + b;
@@ -18,8 +18,7 @@ export default ({stat}: {stat: IStat}) => {
         const task = tasks[blevel];
         return <>
             <div class="text-left">{BLevelName[blevel]}</div>
-            <div class="relative bg-[var(--bg-title)] h-6 py-1 w-full hover:cursor-pointer"
-                onClick={()=>app.startStudy(stat.wlid, blevel)}>
+            <div class="relative bg-[var(--bg-title)] h-6 py-1 w-full hover:cursor-pointer">
                 <div class="my-auto h-4 bg-slate-400" style={{width: `${width ? (total * 100 / width) : 100}%`}}>
                     <div class="ml-auto h-full bg-orange-500" style={{width: `${total ? (task * 100 / total) : 0}%`}}/>
                 </div>
@@ -29,7 +28,7 @@ export default ({stat}: {stat: IStat}) => {
     }
     return <div class="grow min-w-80 grid gap-x-1 grid-cols-[max-content_1fr] items-center">
         <div class="col-span-2 text-center font-bold">
-            <a class="hover:cursor-pointer hover:underline" onClick={()=>app.startStudy(stat.wlid)}>{title}</a>
+            <button type="button" class="hover:cursor-pointer hover:underline" onClick={()=>app.startStudy(stat.wlid)}>{title}</button>
         </div>
         {[0,1,2,3,4,5].map(blevelBar)}
     </div>

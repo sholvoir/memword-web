@@ -1,5 +1,5 @@
 // deno-lint-ignore-file
-import { JSX } from "preact";
+import type { JSX } from "preact";
 import { useEffect } from "preact/hooks";
 import * as app from "./app.tsx";
 import Home from "./home.tsx";

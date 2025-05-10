@@ -113,8 +113,8 @@ export const search = async (word: string) => {
 
 export const getUpdatedItem = (word: string) => getServerAndUpdateLocalDict(word);
 
-export const getEpisode = async (wlid?: string, blevel?: number) => {
-    const item = await idb.getEpisode(wlid ? (await getClientWordlist(wlid))?.wordSet : undefined, blevel);
+export const getEpisode = async (wlid?: string) => {
+    const item = await idb.getEpisode(wlid ? (await getClientWordlist(wlid))?.wordSet : undefined);
     if (item) return await itemUpdateDict(item);
 }
 
