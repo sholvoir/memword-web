@@ -26,7 +26,7 @@ if (import.meta.main) {
       switch (arg) {
          case 'esb': await esb(); break;
          case 'release': await esb(true); break;
-         default: console.log(`Not a Command!!!`);
+         default: console.log('Not a Command!!!');
       }
    }
 }

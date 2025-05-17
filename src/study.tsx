@@ -96,7 +96,7 @@ export default () => {
         } else handleClick();
         endY.value = startY.value = 0;
     };
-    const handleClick = (e?: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
+    const handleClick = (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
         e?.stopPropagation();
         const cardsN = app.citem.value?.cards?.length ?? 0;
         if (cardsN === 0) return;
@@ -106,8 +106,7 @@ export default () => {
         else cindex.value = 0;
     }
     return <Dialog title="学习" onBackClick={finish}>
-        <div class="relative h-full p-2 flex flex-col outline-none"
-            tabIndex={-1} onKeyUp={handleKeyPress}
+        <div class="relative h-full p-2 flex flex-col"
             style={{ top: `${endY.value - startY.value}px` }}>
             <div class="flex gap-4 text-[150%] items-center">
                 <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
@@ -133,8 +132,10 @@ export default () => {
                     class="i-material-symbols-refresh text-purple" />
                 <div class="text-lg">{app.citem.value.level}</div>
             </div>
-            <div class="grow h-0 pb-4 flex flex-col" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel} onKeyUp={handleClick}>
+            <div class="grow h-0 pb-4 flex flex-col outline-none" tabIndex={-1}
+                onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}
+                onClick={handleClick}  onKeyUp={handleKeyPress}>
                 <div class="py-2 flex gap-2 flex-wrap justify-between">
                     <div class="text-4xl font-bold">{app.citem.value.word}</div>
                     {app.isPhaseAnswer.value &&

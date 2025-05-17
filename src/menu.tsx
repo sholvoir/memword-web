@@ -1,4 +1,4 @@
-import { JSX } from "preact";
+import type { JSX } from "preact";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
 import './menu.css'
