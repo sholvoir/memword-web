@@ -5,7 +5,6 @@ import { JWT } from "@sholvoir/generic/jwt";
 import { defaultSetting, type ISetting } from "../../memword-server/lib/isetting.ts";
 import type { IDict } from "../../memword-server/lib/idict.ts";
 import type { IIssue } from "../../memword-server/lib/iissue.ts";
-import type { ITask } from "../../memword-server/lib/itask.ts";
 import { type IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
 import { type IClientWordlist, getClientWordlist } from "./wordlists.ts";
 import { type IStats, statsFormat } from './istat.ts';
@@ -141,19 +140,11 @@ export const syncTasks = async () => {
         const thisTime = now();
         const lastTime: number = (await idb.getMeta('_sync-time')) ?? 1;
         const tasks = (await idb.getItems(lastTime)).map(item2task);
-        const resp = await fetch(`${API_URL}/api/task?lastgt=${lastTime}`, requestInit(tasks, 'POST', authHead()));
+        const resp = await fetch(`${API_URL}/api/task`, requestInit(tasks, 'POST', authHead()));
         if (!resp.ok) return console.error('Network Error: get sync task data error.');
         const ntasks = await resp.json();
         await idb.mergeTasks(ntasks);
         await idb.setMeta('_sync-time', thisTime);
-        return true;
-    } catch { return false }
-}
-
-export const downTasks = async () => {
-    try {
-        await idb.mergeTasks((await getJson<Array<ITask>>(`${API_URL}/api/task`,
-            { lastgt: '0' }, requestInit([], 'POST', authHead())))!);
         return true;
     } catch { return false }
 }

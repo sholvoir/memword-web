@@ -1,7 +1,7 @@
-import { JSX } from "preact";
+import type { JSX } from "preact";
+import type { ICard } from "../../memword-server/lib/idict.ts";
 import { useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
-import { ICard } from "../../memword-server/lib/idict.ts";
 import * as app from "./app.tsx";
 import Button from "../components/button-ripple.tsx";
 
@@ -29,7 +29,7 @@ export default ({ card, class: className }: {
                 onInput={e => card.sound = sound.value = e.currentTarget.value} />
             <Button class="button ml-2"
                 onClick={handlePlayClick} disabled={!sound.value}>
-                <span class="text-[150%] i-material-symbols-chevron-right"></span>
+                <span class="text-[150%] i-material-symbols-chevron-right"/>
             </Button>
         </div>
         <audio ref={player} src={sound} />

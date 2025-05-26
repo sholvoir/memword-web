@@ -9,12 +9,6 @@ export default () => {
         e.stopPropagation()
         app.go(e.currentTarget.title as app.TDial);
     }
-    const down = async (e: JSX.TargetedMouseEvent<HTMLMenuElement>) => {
-        e.stopPropagation();
-        await mem.downTasks();
-        await app.totalStats();
-        app.go();
-    }
     const handleSignoutClick = () => {
         app.user.value = '';
         app.go('#about');
@@ -29,10 +23,9 @@ export default () => {
             <div />
             <menu title="#issues" onClick={open}>处理问题</menu>
             <div />
+            <div />
         </>}
         <menu title="#issue" onClick={open}>报告问题</menu>
-        <div />
-        <menu onClick={down}>完全同步</menu>
         <div />
         <menu title="#wordlists" onClick={open}>我的词书</menu>
         <div />
