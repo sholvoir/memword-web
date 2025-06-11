@@ -195,6 +195,7 @@ export const mergeTasks = (tasks: Array<ITask>) =>
             if (taskMap.has(item.word)) {
                 const task = taskMap.get(item.word)!;
                 if (task.last > item.last) cursor.update(itemMergeTask(item, task));
+                taskMap.delete(item.word)
             } else cursor.delete();
             cursor.continue();
         }
