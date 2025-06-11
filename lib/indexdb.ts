@@ -179,15 +179,25 @@ export const addTasks = (words: Iterable<string>) =>
 
 export const mergeTasks = (tasks: Array<ITask>) =>
     new Promise<void>((resolve, reject) => run(reject, db => {
+        const taskMap = new Map<string, ITask>();
+        for (const task of tasks) taskMap.set(task.word, task);
         const transaction = db.transaction('item', 'readwrite');
         transaction.onerror = reject;
         transaction.oncomplete = () => resolve();
         const iStore = transaction.objectStore('item');
-        for (const task of tasks) iStore.get(task.word).onsuccess = (e) => {
-            const item = (e.target as IDBRequest<IItem>).result;
-            if (!item) iStore.add(task);
-            else if (task.last > item.last) iStore.put(itemMergeTask(item, task));
-        };
+        iStore.openCursor().onsuccess = (e) => {
+            const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
+            if (!cursor) {
+                for (const [_, task] of taskMap) iStore.add(task);
+                return;
+            }
+            const item = cursor.value as IItem;
+            if (taskMap.has(item.word)) {
+                const task = taskMap.get(item.word)!;
+                if (task.last > item.last) cursor.update(itemMergeTask(item, task));
+            } else cursor.delete();
+            cursor.continue();
+        }
     }));
 
 export const updateDict = (dict: IDict) =>
