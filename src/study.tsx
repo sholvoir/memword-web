@@ -13,6 +13,7 @@ import Scard from './scard.tsx';
 export default () => {
     const finish = async () => {
         app.go();
+        await app.totalStats();
         await mem.syncTasks();
         app.totalStats();
     }
