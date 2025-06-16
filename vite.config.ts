@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite'
-import { outDir } from './outdir.ts';
 import preact from '@preact/preset-vite'
 import UnoCSS from 'unocss/vite'
 
@@ -9,8 +8,16 @@ export default defineConfig({
   plugins: [preact(), UnoCSS()],
   build: {
     target: 'esnext',
-    outDir,
+    outDir: '../sholvoir.github.io/memword',
     emptyOutDir: true,
-    assetsDir: ''
+    assetsDir: '',
+    rollupOptions: {
+      input: ['lib/worker.ts', 'index.html', 'admin.html'],
+      output: {
+        entryFileNames(chunkInfo) {
+          return chunkInfo.name == 'worker' ? '[name].js' : '[name]-[hash].js';
+        }
+      }
+    }
   }
 })
