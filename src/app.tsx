@@ -8,8 +8,8 @@ import * as mem from "../lib/mem.ts";
 import * as idb from "../lib/indexdb.ts";
 
 const DIALS = ['', '#home', '#help', '#about', '#menu', '#issue',
-    '#issues', '#setting', '#ignore', '#wordlist', '#wordlists',
-    '#lookup', '#search', '#study', '#signup', '#signin'] as const;
+    '#setting', '#wordlist', '#wordlists', '#search', '#study',
+    '#signup', '#signin'] as const;
 export type TDial = typeof DIALS[number];
 const backs: Array<TDial> = [];
 

@@ -16,15 +16,6 @@ export default () => {
     };
     return <Dialog class="menu p-2 flex flex-col gap-1"
         title="菜单" onBackClick={() => app.go()}>
-        {app.isAdmin() && <>
-            <menu title="#lookup" onClick={open}>辞典编辑</menu>
-            <div />
-            <menu title="#ignore" onClick={open}>拼写忽略</menu>
-            <div />
-            <menu title="#issues" onClick={open}>处理问题</menu>
-            <div />
-            <div />
-        </>}
         <menu title="#issue" onClick={open}>报告问题</menu>
         <div />
         <menu title="#wordlists" onClick={open}>我的词书</menu>

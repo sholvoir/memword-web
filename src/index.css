@@ -49,7 +49,7 @@ body {
   color: var(--text-color);
   background-color: var(--bg-title);
 }
-input, textarea {
+input, textarea, fieldset {
   background-color: transparent;
   border-color: var(--border-color);
   border-width: 1px;
