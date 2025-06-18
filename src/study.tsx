@@ -125,12 +125,11 @@ export default () => {
                 <div class="grow text-center text-lg">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
                 <SButton onClick={() => player.current?.play()}
                     class="i-material-symbols-volume-up text-blue" />
-                {app.isAdmin() && <SButton onClick={() => app.go('#lookup')}
-                    class="i-material-symbols-dictionary-outline text-cyan" />}
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
                     class="i-material-symbols-error text-red" />
                 <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
                     class="i-material-symbols-refresh text-purple" />
+                <SButton class="i-material-symbols-dictionary-outline text-cyan" />
                 <div class="text-lg">{app.citem.value.level}</div>
             </div>
             <div class="grow h-0 pb-4 flex flex-col outline-none" tabIndex={-1}

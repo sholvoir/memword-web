@@ -74,29 +74,7 @@ export default function Lookup() {
     return <>
         <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || "系统管理ˈʒɑɜæəɪʌʊʃˌ"}</div>
         <div class="body grow flex flex-col gap-2 p-2">
-            <div class="h-1 grow flex gap-2">
-                <fieldset class="w-1 grow border rounded p-2 flex flex-col gap-2">
-                    <legend>拼写忽略</legend>
-                    <textarea class="grow" value={ignoreWords} onChange={e => ignoreWords.value = e.currentTarget.value} />
-                    <div class="flex justify-end">
-                        <Button class="w-24 button btn-normal" onClick={handleUploadIgnoreWordsClick}>上传</Button>
-                    </div>
-                </fieldset>
-                <fieldset class="w-1 grow border rounded p-2 flex flex-col gap-2">
-                    <legend>处理问题</legend>
-                    <div class="grow border">
-                        <List class="px-2" cindex={currentIssueIndex}
-                            activeClass="bg-[var(--bg-title)]"
-                            options={issues.value.map(is => `${is.reporter}: ${is.issue}`)}
-                            onClick={handleIssueClick} />
-                    </div>
-                    <div class="flex justify-end">
-                        <Button class="w-24 button btn-normal" onClick={handleProcessIssueClick}>处理</Button>
-                    </div>
-                </fieldset>
-            </div>
-            <fieldset class="h-4 grow-4 border rounded p-2 flex flex-col gap-2">
-                <legend>辞典编辑</legend>
+            <div class="h-4 grow-4 flex flex-col gap-2">
                 <div class="flex gap-2">
                     <TextInput name="word" placeholder="word" class="grow"
                         binding={word} options={vocabulary.value} onChange={handleSearchClick} />
@@ -116,7 +94,26 @@ export default function Lookup() {
                     <Button class="grow button btn-normal"
                         disabled={!word.value} onClick={handleUpdateClick}>更新</Button>
                 </div>
-            </fieldset>
+            </div>
+            <div class="h-1 grow flex gap-2">
+                <div class="w-1 grow flex flex-col gap-2">
+                    <textarea class="grow" value={ignoreWords} onChange={e => ignoreWords.value = e.currentTarget.value} />
+                    <div class="flex justify-end">
+                        <Button class="w-24 button btn-normal" onClick={handleUploadIgnoreWordsClick}>拼写忽略</Button>
+                    </div>
+                </div>
+                <div class="w-1 grow flex flex-col gap-2">
+                    <div class="grow border">
+                        <List class="px-2" cindex={currentIssueIndex}
+                            activeClass="bg-[var(--bg-title)]"
+                            options={issues.value.map(is => `${is.reporter}: ${is.issue}`)}
+                            onClick={handleIssueClick} />
+                    </div>
+                    <div class="flex justify-end">
+                        <Button class="w-24 button btn-normal" onClick={handleProcessIssueClick}>处理问题</Button>
+                    </div>
+                </div>
+            </div>
         </div>
     </>;
 }

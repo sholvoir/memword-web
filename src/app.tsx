@@ -27,7 +27,6 @@ export const loca = signal<TDial>('');
 
 export let vocabulary: Array<string> = [];
 export const totalStats = async () => stats.value = await mem.totalStats();
-export const isAdmin = () => user.value === 'hua';
 export const hideTips = () => tips.value = '';
 export const go = (d?: TDial) =>
     loca.value = d ? (backs.push(loca.value), d) :
