@@ -12,23 +12,18 @@ import List from '../components/list.tsx';
 
 export default function Lookup() {
     const tips = useSignal('');
-    const ignoreWords = useSignal('');
-    const currentIssueIndex = useSignal(0);
-    const issues = useSignal<Array<IIssue>>([]);
-    const word = useSignal<string>('');
-    const currentCardIndex = useSignal(0);
-    const cards = useSignal<Array<ICard>>([]);
-    const vocabulary = useSignal<Array<string>>([]);
-
     const hideTips = () => tips.value = '';
     const showTips = (content: string, autohide = true) =>
         (tips.value = content, autohide && setTimeout(hideTips, 3000));
 
-
+    const ignoreWords = useSignal('');
     const handleUploadIgnoreWordsClick = async () => {
         const result = await mem.postVocabulary(ignoreWords.value);
         showTips(result ? '上传成功' : '上传失败');
     }
+
+    const currentIssueIndex = useSignal(0);
+    const issues = useSignal<Array<IIssue>>([]);
     const handleLoadIssueClick = async () => {
         const is = await mem.getServerIssues();
         if (is) issues.value = is;
@@ -49,9 +44,17 @@ export default function Lookup() {
             showTips('处理成功!');
         } else showTips("处理失败");
     }
+
+    const word = useSignal('');
+    const currentWord = useSignal('_')
+    const currentCardIndex = useSignal(0);
+    const cards = useSignal<Array<ICard>>([]);
+    const vocabulary = useSignal<Array<string>>([]);
+
     const handleSearchClick = async () => {
         const dict = await mem.getDict(word.value);
         if (!dict) return showTips('Not Found');
+        currentWord.value = dict.word;
         currentCardIndex.value = 0;
         cards.value = dict?.cards ?? [];
     };
@@ -90,13 +93,13 @@ export default function Lookup() {
                 </Tab></div>
                 <div class="flex justify-between gap-2">
                     <Button class="grow button btn-normal"
-                        disabled={!word.value} onClick={handleAddCardClick}>增卡</Button>
+                        disabled={word.value!=currentWord.value} onClick={handleAddCardClick}>增卡</Button>
                     <Button class="grow button btn-normal"
-                        disabled={!word.value || cards.value.length <= 1} onClick={handleDeleteCardClick}>删卡</Button>
+                        disabled={(word.value!=currentWord.value) || cards.value.length <= 1} onClick={handleDeleteCardClick}>删卡</Button>
                     <Button class="grow button btn-normal"
-                        disabled={!word.value} onClick={handleDeleteClick}>删除</Button>
+                        disabled={word.value!=currentWord.value} onClick={handleDeleteClick}>删除</Button>
                     <Button class="grow button btn-normal"
-                        disabled={!word.value} onClick={handleUpdateClick}>更新</Button>
+                        disabled={word.value!=currentWord.value} onClick={handleUpdateClick}>更新</Button>
                 </div>
             </div>
             <div class="h-1 grow flex gap-2">
