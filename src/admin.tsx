@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
 import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
@@ -27,6 +28,10 @@ export default function Lookup() {
     const handleUploadIgnoreWordsClick = async () => {
         const result = await mem.postVocabulary(ignoreWords.value);
         showTips(result ? '上传成功' : '上传失败');
+    }
+    const handleLoadIssueClick = async () => {
+        const is = await mem.getServerIssues();
+        if (is) issues.value = is;
     }
     const handleIssueClick = () => {
         const issue = issues.value[currentIssueIndex.value];
@@ -67,8 +72,7 @@ export default function Lookup() {
         const v = await mem.getVocabulary();
         if (v) vocabulary.value = v;
         await mem.getUser();
-        const is = await mem.getServerIssues();
-        if (is) issues.value = is;
+        await handleLoadIssueClick();
     }
     useEffect(() => { init() }, []);
     return <>
@@ -110,6 +114,7 @@ export default function Lookup() {
                             onClick={handleIssueClick} />
                     </div>
                     <div class="flex justify-end">
+                        <Button class="w-24 button btn-normal" onClick={handleLoadIssueClick}>加载问题</Button>
                         <Button class="w-24 button btn-normal" onClick={handleProcessIssueClick}>处理问题</Button>
                     </div>
                 </div>

@@ -12,7 +12,7 @@ export default ({ cindex, options, activeClass, class: className, ...rest }: {
     return <ButtonBase onClick={() => isOpen.value = !isOpen.value} {...rest}
         class={`relative px-2 flex gap-2 justify-between items-center ${className ?? ''}`}>
         <span>{options[cindex.value]}</span>
-        <span class="i-mdi-chevron-down" />
+        <span class="i-mdi-chevron-down"/>
         {isOpen.value && <div class="absolute top-[calc(100%_+_4px)] max-h-64 z-100 bg-[var(--bg-body)] inset-x-0 border overflow-y-auto text-left">
             {options.map((option, i) => <div key={i}
                 onClick={e => (e.stopPropagation(), cindex.value = i, isOpen.value = false)}
