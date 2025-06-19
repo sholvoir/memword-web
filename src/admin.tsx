@@ -11,6 +11,7 @@ import Ecard from "./ecard.tsx";
 import List from '../components/list.tsx';
 
 export default function Lookup() {
+    const vocabulary = useSignal<Array<string>>([]);
     const tips = useSignal('');
     const hideTips = () => tips.value = '';
     const showTips = (content: string, autohide = true) =>
@@ -22,36 +23,14 @@ export default function Lookup() {
         showTips(result ? '上传成功' : '上传失败');
     }
 
-    const currentIssueIndex = useSignal(0);
-    const issues = useSignal<Array<IIssue>>([]);
-    const handleLoadIssueClick = async () => {
-        const is = await mem.getServerIssues();
-        if (is) issues.value = is;
-    }
-    const handleIssueClick = () => {
-        const issue = issues.value[currentIssueIndex.value];
-        word.value = issue.issue;
-        handleSearchClick();
-    }
-    const handleProcessIssueClick = async () => {
-        const issue = issues.value[currentIssueIndex.value];
-        const result = await mem.deleteServerIssue(issue._id) as any;
-        if (result.acknowledged && result.deletedCount > 0) {
-            issues.value = [
-                ...issues.value.slice(0, currentIssueIndex.value),
-                ...issues.value.slice(currentIssueIndex.value + 1)
-            ];
-            showTips('处理成功!');
-        } else showTips("处理失败");
-    }
-
     const word = useSignal('');
     const currentWord = useSignal('_')
     const currentCardIndex = useSignal(0);
     const cards = useSignal<Array<ICard>>([]);
-    const vocabulary = useSignal<Array<string>>([]);
-
     const handleSearchClick = async () => {
+        const w = encodeURIComponent(word.value);
+        window.open(`https://www.merriam-webster.com/dictionary/${w}`, 'merriam-webster');
+        window.open(`https://www.oxfordlearnersdictionaries.com/us/definition/english/${w}`, 'oxfordlearnersdictionaries');
         const dict = await mem.getDict(word.value);
         if (!dict) return showTips('Not Found');
         currentWord.value = dict.word;
@@ -71,6 +50,36 @@ export default function Lookup() {
     const handleDeleteClick = async () => {
         showTips((await mem.deleteDict(word.value)) ? `success delete word "${word.value}"!` : 'Error')
     };
+
+    const currentIssueIndex = useSignal(0);
+    const issues = useSignal<Array<IIssue>>([]);
+    const handleLoadIssueClick = async () => {
+        const is = await mem.getServerIssues();
+        if (is) issues.value = is;
+        handleIssueClick();
+    }
+    const handleIssueClick = () => {
+        if (issues.value.length) {
+            const issue = issues.value[currentIssueIndex.value];
+            word.value = issue.issue;
+            handleSearchClick();
+        }
+    }
+    const handleProcessIssueClick = async () => {
+        const issue = issues.value[currentIssueIndex.value];
+        const result = await mem.deleteServerIssue(issue._id) as any;
+        if (result.acknowledged && result.deletedCount > 0) {
+            issues.value = [
+                ...issues.value.slice(0, currentIssueIndex.value),
+                ...issues.value.slice(currentIssueIndex.value + 1)
+            ];
+            if (currentIssueIndex.value >= issues.value.length)
+                currentIssueIndex.value = issues.value.length - 1;
+            handleIssueClick();
+            showTips('处理成功!');
+        } else showTips("处理失败");
+    }
+
     const init = async () => {
         const v = await mem.getVocabulary();
         if (v) vocabulary.value = v;
@@ -116,7 +125,7 @@ export default function Lookup() {
                             options={issues.value.map(is => `${is.reporter}: ${is.issue}`)}
                             onClick={handleIssueClick} />
                     </div>
-                    <div class="flex justify-end">
+                    <div class="flex justify-end gap-2">
                         <Button class="w-24 button btn-normal" onClick={handleLoadIssueClick}>加载问题</Button>
                         <Button class="w-24 button btn-normal" onClick={handleProcessIssueClick}>处理问题</Button>
                     </div>
