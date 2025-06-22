@@ -55,15 +55,15 @@ export default function Lookup() {
     const issues = useSignal<Array<IIssue>>([]);
     const handleLoadIssueClick = async () => {
         const is = await mem.getServerIssues();
-        if (is) issues.value = is;
-        handleIssueClick();
+        if (is) {
+            issues.value = is;
+            handleIssueClick();
+        }
     }
     const handleIssueClick = () => {
-        if (issues.value.length) {
-            const issue = issues.value[currentIssueIndex.value];
-            word.value = issue.issue;
-            handleSearchClick();
-        }
+        const issue = issues.value[currentIssueIndex.value];
+        word.value = issue.issue;
+        handleSearchClick();
     }
     const handleProcessIssueClick = async () => {
         const issue = issues.value[currentIssueIndex.value];
@@ -75,7 +75,13 @@ export default function Lookup() {
             ];
             if (currentIssueIndex.value >= issues.value.length)
                 currentIssueIndex.value = issues.value.length - 1;
-            handleIssueClick();
+            if (issues.value.length) handleIssueClick();
+            else {
+                word.value = '';
+                currentWord.value = '_';
+                cards.value = [];
+                currentCardIndex.value = 0;
+            }
             showTips('处理成功!');
         } else showTips("处理失败");
     }
