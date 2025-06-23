@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { JSX, VNode } from "preact";
 import { Signal, useSignal } from "@preact/signals";
 import ButtonBase from './button-base.tsx';

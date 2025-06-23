@@ -81,6 +81,7 @@ export default function Lookup() {
                 currentWord.value = '_';
                 cards.value = [];
                 currentCardIndex.value = 0;
+                handleLoadIssueClick();
             }
             showTips('处理成功!');
         } else showTips("处理失败");
