@@ -10,9 +10,12 @@ import { version } from "../lib/version.ts";
 
 export default () => {
     const show = useSignal(false);
-    const auth = useSignal('')
+    const auth = useSignal('');
+    app.showMenuButton.value = false;
     return <Dialog title="快乐背单词" class="about flex flex-col pb-4 font-extrabold"
-        onBackClick={app.user.value ? () => app.go('#home') : undefined}>
+        onBackClick={app.user.value ? () => {
+            app.go('#home');app.showMenuButton.value = true;
+        } : undefined}>
         {show.value && <><Input binding={auth}/><BButton
             class="button btn-normal"
             onClick={()=>idb.setMeta('_auth', auth.value)}

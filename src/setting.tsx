@@ -24,10 +24,10 @@ export default () => {
         ...mwls.value.slice(mindex.value + 1)];
     }
     const handleAddTaskClick = async () => {
-        app.loading.value = true;
+        app.showLoading.value = true;
         await mem.addTasks(mwls.value[mindex.value].wlid);
         await app.totalStats();
-        app.loading.value = false;
+        app.showLoading.value = false;
     }
     const handleOKClick = async () => {
         await mem.syncSetting({
@@ -53,8 +53,7 @@ export default () => {
         })()
     });
     useEffect(() => { init() }, []);
-    return <Dialog class="p-2 gap-2 flex flex-col" title="设置"
-        onBackClick={() => app.go()}>
+    return <Dialog class="p-2 gap-2 flex flex-col" title="设置">
         <div class="flex gap-2">
             <label for="filter">设置过滤</label>
             <Input class="grow" name="filter" binding={filter} />

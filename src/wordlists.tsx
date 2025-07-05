@@ -30,12 +30,13 @@ export default () => {
             .sort(compareWL);
     }
     useEffect(() => {init()}, []);
-    return <Dialog class="p-2 flex flex-col gap-2" title="我的词书" onBackClick={()=>app.go()}>
+    return <Dialog class="p-2 flex flex-col gap-2" title="我的词书">
         <div class="h-0 grow border overflow-y-auto">
             <List cindex={cindex} options={wls.value.map(wl=>wl.disc??wl.wlid)}
                 class="px-2" activeClass="bg-[var(--bg-title)]"/>
         </div>
         <div class="pb-3 flex justify-end gap-2">
+            <Button class="w-24 button btn-normal" name="cancel" onClick={()=>app.go()}>取消</Button>
             <Button class="w-24 button btn-normal" name="new" onClick={handleNewClick}>新建</Button>
             <Button class="w-24 button btn-normal" name="delete" disabled={!wls.value.length} onClick={handleDeleteClick}>删除</Button>
             <Button class="w-24 button btn-normal" name="update" disabled={!wls.value.length} onClick={handleUpdateClick}>更新</Button>

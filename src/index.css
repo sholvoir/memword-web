@@ -15,6 +15,7 @@
   --color-neutral: var(--slate-500);
   --border-color: var(--color-neutral);
   --bg-ripple: oklch(from var(--slate-300) l c h / .8);
+  --bg-menu: oklch(from var(--slate-800) l c h / .2);
   --bg-title: var(--slate-300);
   --bg-body: var(--slate-200);
   --bg-button: var(--slate-300);
@@ -33,6 +34,7 @@
 @media (prefers-color-scheme: dark) {
   :root, :host {
     --bg-ripple: oklch(from var(--slate-800), L, C, H, / .8);
+    --bg-menu: oklch(from var(--slate-300), L, C, H, / .2);
     --bg-title: var(--slate-800);
     --bg-body: var(--slate-900);
     --bg-button: var(--slate-800);

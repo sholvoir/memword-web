@@ -12,8 +12,7 @@ export default () => {
         app.showTips('提交成功!');
         app.go();
     }
-    return <Dialog class="p-2 flex flex-col" title="提交问题"
-        onBackClick={()=>app.go()}>
+    return <Dialog class="p-2 flex flex-col" title="提交问题">
         <label>请在这里描述你的问题:</label>
         <TAInput name="issue" class="grow" binding={issue}>{issue.value}</TAInput>
         <div class="flex gap-2 mt-2 pb-3 justify-end">
