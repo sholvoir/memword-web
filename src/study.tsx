@@ -14,8 +14,8 @@ import Dialog from './dialog.tsx';
 import Scard from './scard.tsx';
 
 export default () => {
-    const finish = async () => {
-        app.go();
+    const finish = async (d?: app.TDial) => {
+        app.go(d);
         await app.totalStats();
         await mem.syncTasks();
         app.totalStats();
@@ -29,7 +29,7 @@ export default () => {
     const player = useRef<HTMLAudioElement>(null);
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
-        if (++app.sprint.value <= 0) return finish();
+        if (++app.sprint.value <= 0) return finish('#search');
         const item = await mem.getEpisode(app.wlid.value);
         if (!item) return finish();
         app.citem.value = item;
