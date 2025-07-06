@@ -1,7 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
-import type { JSX } from "preact";
-import { useRef } from "preact/hooks";
+import { Fragment, type JSX } from "preact";
+import { splitID, type IWordList } from "../../memword-server/lib/iwordlist.ts";
+import { useEffect, useRef } from "preact/hooks";
+import { STATUS_CODE } from "@sholvoir/generic/http";
 import { useSignal } from "@preact/signals";
+import { getClientWordlist } from "../lib/wordlists.ts";
 import { wait } from "@sholvoir/generic/wait";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
@@ -21,6 +24,8 @@ export default () => {
     const cindex = useSignal(0);
     const startY = useSignal(0);
     const endY = useSignal(0);
+    const mwls = useSignal<Array<IWordList>>([]);
+    const showAddToBookMenu = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
@@ -99,6 +104,7 @@ export default () => {
     };
     const handleClick = (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
         e?.stopPropagation();
+        if (showAddToBookMenu.value) return showAddToBookMenu.value = false;
         const cardsN = app.citem.value?.cards?.length ?? 0;
         if (cardsN === 0) return;
         if (!app.isPhaseAnswer.value) (app.isPhaseAnswer.value = true) && player.current?.play();
@@ -106,52 +112,70 @@ export default () => {
         else if (cindex.value < cardsN - 1) cindex.value++;
         else cindex.value = 0;
     }
-    return <Dialog title="学习" onBackClick={finish}>
-        <div class="relative h-full p-2 flex flex-col"
-            style={{ top: `${endY.value - startY.value}px` }}>
-            <div class="flex gap-4 text-[150%] items-center">
-                <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
-                    onClick={() => handleIKnown().then(studyNext)}
-                    class="i-material-symbols-check-circle text-green" />
-                <SButton disabled={!app.isPhaseAnswer.value} title="Z/M"
-                    onClick={() => handleIKnown(0).then(studyNext)}
-                    class="i-gridicons-cross-circle text-fuchsia" />
-                <SButton disabled={!app.isPhaseAnswer.value}
-                    onClick={() => handleIKnown(13).then(studyNext)}
-                    class="i-material-symbols-light-family-star text-yellow" />
-                <SButton disabled={!app.isPhaseAnswer.value}
-                    onClick={handleDelete}
-                    class="i-material-symbols-delete-outline text-orange" />
-                <div class="grow text-center text-lg">{app.sprint.value > 0 ? app.sprint.value : ''}</div>
-                <SButton onClick={() => player.current?.play()}
-                    class="i-material-symbols-volume-up text-blue" />
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
-                    class="i-material-symbols-error text-red" />
-                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
-                    class="i-material-symbols-refresh text-purple" />
-                <SButton class="i-material-symbols-dictionary-outline text-cyan" />
-                <div class="text-lg">{app.citem.value.level}</div>
-            </div>
-            <div class="grow h-0 pb-4 flex flex-col outline-none" tabIndex={-1}
-                onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}
-                onClick={handleClick}  onKeyUp={handleKeyPress}>
-                <div class="py-2 flex gap-2 flex-wrap justify-between">
-                    <div class="text-4xl font-bold">{app.citem.value.word}</div>
-                    {app.isPhaseAnswer.value &&
-                        <div class="text-2xl flex items-center">
-                            {app.citem.value.cards?.[cindex.value].phonetic}
-                        </div>
-                    }
-                </div>
-                {app.isPhaseAnswer.value && ((app.citem.value.cards?.length ?? 0) > 1 ?
-                    <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
-                        {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
-                    </Tab> :
-                    <div class="grow h-0 overflow-y-auto"><Scard card={app.citem.value.cards?.[0]} /></div>)
+    const handleAddToBook = async (wl: IWordList) => {
+        showAddToBookMenu.value = false;
+        const word = app.citem.value!.word;
+        const wordSet = (await getClientWordlist(wl.wlid))?.wordSet;
+        if (wordSet?.has(word)) return app.showTips("已包含");
+        const [_, bookName] = splitID(wl.wlid);
+        const [status] = await mem.postMyWordList(bookName, word);
+        app.showTips(status == STATUS_CODE.OK? "添加成功" : "添加失败");
+        wordSet?.add(app.citem.value!.word);
+    }
+    const init = async () => {
+        mwls.value = await mem.getWordlists(wl => wl.wlid.startsWith(app.user.value));
+    }
+    useEffect(() => { init() }, []);
+    return <Dialog onBackClick={finish} class="flex flex-col p-2"
+        title={`学习${app.sprint.value > 0 ? `(${app.sprint.value})` : ''}`}>
+        <div class="relative flex gap-4 text-[150%] justify-between items-end">
+            <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
+                onClick={() => handleIKnown().then(studyNext)}
+                class="i-material-symbols-check-circle text-green" />
+            <SButton disabled={!app.isPhaseAnswer.value} title="Z/M"
+                onClick={() => handleIKnown(0).then(studyNext)}
+                class="i-gridicons-cross-circle text-fuchsia" />
+            <SButton disabled={!app.isPhaseAnswer.value}
+                onClick={() => handleIKnown(13).then(studyNext)}
+                class="i-material-symbols-light-family-star text-yellow" />
+            <SButton disabled={!app.isPhaseAnswer.value} onClick={handleDelete}
+                class="i-material-symbols-delete-outline text-orange" />
+            <SButton onClick={() => player.current?.play()}
+                class="i-material-symbols-volume-up text-blue" />
+            <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
+                class="i-material-symbols-error text-red" />
+            <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
+                class="i-material-symbols-refresh text-purple" />
+            <SButton disabled={!app.isPhaseAnswer.value}
+                onClick={()=>showAddToBookMenu.value = !showAddToBookMenu.value}
+                class="i-material-symbols-dictionary-outline text-cyan">
+            </SButton>
+            <div class="text-lg">{app.citem.value.level}</div>
+            {showAddToBookMenu.value && <div class="menu absolute top-[100%] right-[36px] text-lg text-right bg-[var(--bg-body)] z-1">
+                {mwls.value.map(wl => <Fragment key={wl}><div/><menu onClick={()=>handleAddToBook(wl)}>{wl.disc??wl.wlid}</menu></Fragment>)}
+                {mwls.value.length && <div/>}
+            </div>}
+        </div>
+        <div class="relative grow h-0 pb-4 flex flex-col outline-none" tabIndex={-1}
+            style={{ top: `${endY.value - startY.value}px` }}
+            onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}
+            onClick={handleClick}  onKeyUp={handleKeyPress}>
+            <div class="py-2 flex gap-2 flex-wrap justify-between">
+                <div class="text-4xl font-bold">{app.citem.value.word}</div>
+                {app.isPhaseAnswer.value &&
+                    <div class="text-2xl flex items-center">
+                        {app.citem.value.cards?.[cindex.value].phonetic}
+                    </div>
                 }
-                <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
             </div>
+            {app.isPhaseAnswer.value && ((app.citem.value.cards?.length ?? 0) > 1 ?
+                <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
+                    {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
+                </Tab> :
+                <div class="grow h-0 overflow-y-auto"><Scard card={app.citem.value.cards?.[0]} /></div>)
+            }
+            <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
         </div>
     </Dialog>;
 }
