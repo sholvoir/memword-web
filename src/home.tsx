@@ -10,7 +10,7 @@ export default () => <Dialog class="flex flex-col" title="学习进度">
             {app.stats.value.stats.map((stat: IStat) => <Stat key={`${stat.time}${stat.wlid}`} stat={stat} />)}
         </div>
     </div>
-    <div class="tail shrink-0 px-4 pt-2 pb-5 flex gap-3 justify-between [&>button]:grow [&>button]:min-w-[90px] [&>button>i]:text-5xl font-bold overflow-x-auto [scrollbar-width:none]">
+    <div class="tail shrink-0 px-4 pt-2 pb-5 flex gap-3 justify-between [&>button]:grow [&>button]:min-w-[80px] [&>button>i]:text-4xl font-bold overflow-x-auto [scrollbar-width:none]">
         <Button onClick={() => app.go('#search')}>
             <i class="i-material-symbols-dictionary-outline" /><br />词典
         </Button>

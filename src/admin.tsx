@@ -11,6 +11,7 @@ import Ecard from "./ecard.tsx";
 import List from '../components/list.tsx';
 
 export default function Lookup() {
+    const auth = useSignal(false);
     const vocabulary = useSignal<Array<string>>([]);
     const tips = useSignal('');
     const hideTips = () => tips.value = '';
@@ -88,13 +89,13 @@ export default function Lookup() {
     }
 
     const init = async () => {
-        const v = await mem.getVocabulary();
-        if (v) vocabulary.value = v;
-        await mem.getUser();
-        await handleLoadIssueClick();
+        if (auth.value = ('hua' === await mem.getUser())) {
+            vocabulary.value = (await mem.getVocabulary()) ?? [];
+            await handleLoadIssueClick();
+        }
     }
     useEffect(() => { init() }, []);
-    return <>
+    return auth.value && <>
         <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || "系统管理ˈʒɑɜæəɪʌʊʃˌ"}</div>
         <div class="body grow flex flex-col gap-2 p-2">
             <div class="h-4 grow-4 flex flex-col gap-2">
