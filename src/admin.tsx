@@ -1,6 +1,7 @@
 // deno-lint-ignore-file
 import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
+import { version } from "../lib/version.ts";
 import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
 import type { IIssue } from "../../memword-server/lib/iissue.ts";
 import * as mem from '../lib/mem.ts';
@@ -63,8 +64,10 @@ export default function Lookup() {
     }
     const handleIssueClick = () => {
         const issue = issues.value[currentIssueIndex.value];
-        word.value = issue.issue;
-        handleSearchClick();
+        if (issue) {
+            word.value = issue.issue;
+            handleSearchClick();
+        }
     }
     const handleProcessIssueClick = async () => {
         const issue = issues.value[currentIssueIndex.value];
@@ -96,7 +99,7 @@ export default function Lookup() {
     }
     useEffect(() => { init() }, []);
     return auth.value && <>
-        <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || "系统管理ˈʒɑɜæəɪʌʊʃˌ"}</div>
+        <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || `系统管理-${version} ˈʒɑɜæəɪʌʊʃˌ`}</div>
         <div class="body grow flex flex-col gap-2 p-2">
             <div class="h-4 grow-4 flex flex-col gap-2">
                 <div class="flex gap-2">
