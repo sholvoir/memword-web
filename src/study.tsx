@@ -126,7 +126,7 @@ export default () => {
         mwls.value = await mem.getWordlists(wl => wl.wlid.startsWith(app.user.value));
     }
     useEffect(() => { init() }, []);
-    return <Dialog onBackClick={finish} class="flex flex-col p-2"
+    return <Dialog onBackClick={()=>finish()} class="flex flex-col p-2"
         title={`学习${app.sprint.value > 0 ? `(${app.sprint.value})` : ''}`}>
         <div class="relative flex gap-4 text-[150%] justify-between items-end">
             <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
