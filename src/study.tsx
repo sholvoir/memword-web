@@ -14,8 +14,8 @@ import Dialog from './dialog.tsx';
 import Scard from './scard.tsx';
 
 export default () => {
-    const finish = async (d?: app.TDial) => {
-        app.go(d);
+    const finish = async () => {
+        app.go(app.sprint.value <= 0 ? '#search': undefined);
         await app.totalStats();
         await mem.syncTasks();
         app.totalStats();
@@ -29,7 +29,7 @@ export default () => {
     const player = useRef<HTMLAudioElement>(null);
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
-        if (++app.sprint.value <= 0) return finish('#search');
+        if (++app.sprint.value <= 0) return finish();
         const item = await mem.getEpisode(app.wlid.value);
         if (!item) return finish();
         app.citem.value = item;
@@ -126,7 +126,7 @@ export default () => {
         mwls.value = await mem.getWordlists(wl => wl.wlid.startsWith(app.user.value));
     }
     useEffect(() => { init() }, []);
-    return <Dialog onBackClick={()=>finish()} class="flex flex-col p-2"
+    return <Dialog onBackClick={finish} class="flex flex-col p-2"
         title={`学习${app.sprint.value > 0 ? `(${app.sprint.value})` : ''}`}>
         <div class="relative flex gap-4 text-[150%] justify-between items-end">
             <SButton disabled={!app.isPhaseAnswer.value} title="X/N"

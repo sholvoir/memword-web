@@ -1,6 +1,23 @@
 {
+    "name": "@sholvoir/memword-web",
+    "version": "0.13.3",
+    "tasks": {
+        "dev": "deno -A npm:rolldown-vite",
+        "force": "deno -A npm:rolldown-vite --force",
+        "build": "deno -A npm:rolldown-vite build",
+        "worker": "deno -A npm:rolldown-vite build --config vite.worker.config.ts",
+        "preview": "deno -A npm:rolldown-vite preview"
+    },
+    "imports": {
+        "@preact/signals": "npm:@preact/signals@^2.2.1",
+        "@sholvoir/generic": "jsr:@sholvoir/generic@^0.2.5",
+        "preact": "npm:preact@^10.26.9",
+        "unocss": "npm:unocss@^66.3.2"
+    },
     "compilerOptions": {
         "jsx": "react-jsx",
         "jsxImportSource": "preact"
-    }
+    },
+    "exports": "./src/main.tsx",
+    "nodeModulesDir": "auto"
 }
