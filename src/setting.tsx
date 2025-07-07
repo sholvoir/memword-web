@@ -45,6 +45,11 @@ export default () => {
         mwls.value = await mem.getWordlists(wl =>
             mem.setting.books.includes(wl.wlid));
     }
+    const handleSignoutClick = () => {
+        app.user.value = '';
+        app.go('#about');
+        mem.signout();
+    };
     useSignalEffect(() => {
         (async () => {
             const regex = new RegExp(filter.value);
@@ -77,12 +82,10 @@ export default () => {
                 activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="pb-3 flex justify-between gap-2">
-            <Button class="button btn-normal grow"
-                onClick={handleAddTaskClick}>添加任务</Button>
-            <Button class="button btn-normal grow"
-                onClick={() => app.go()}>取消</Button>
-            <Button class="button btn-prime grow"
-                onClick={handleOKClick}>保存</Button>
+            <Button class="button btn-normal grow" onClick={handleAddTaskClick}>添加任务</Button>
+            <Button class="button btn-normal grow" onClick={() => app.go()}>取消</Button>
+            <Button class="button btn-prime grow" onClick={handleOKClick}>保存</Button>
+            <Button class="button btn-normal grow" onClick={handleSignoutClick}>登出</Button>
         </div>
     </Dialog>
 }

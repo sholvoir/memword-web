@@ -34,7 +34,6 @@ export default () => {
     const init = async () => {
         if (app.user.value = (await mem.getUser()) ?? '') {
             app.go('#home');
-            app.showMenuButton.value = true;
             await mem.initSetting();
             await app.totalStats();
             const v = await mem.getVocabulary();

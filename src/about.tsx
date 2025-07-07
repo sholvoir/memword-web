@@ -11,15 +11,10 @@ import { version } from "../lib/version.ts";
 export default () => {
     const show = useSignal(false);
     const auth = useSignal('');
-    app.showMenuButton.value = false;
-    return <Dialog title="快乐背单词" class="about flex flex-col pb-4 font-extrabold"
-        onBackClick={app.user.value ? () => {
-            app.go('#home');app.showMenuButton.value = true;
-        } : undefined}>
-        {show.value && <><Input binding={auth}/><BButton
-            class="button btn-normal"
-            onClick={()=>idb.setMeta('_auth', auth.value)}
-        >OK</BButton></>}
+    return <Dialog title="快乐背单词" class="about flex flex-col pb-4 font-extrabold overflow-y-auto"
+        onBackClick={app.user.value ? () => app.go('#home') : undefined}>
+        {show.value && <><Input binding={auth}/><BButton class="button btn-normal"
+            onClick={()=>idb.setMeta('_auth', auth.value)}>OK</BButton></>}
         <div>
             <h1>快乐背单词</h1>
             <p>版本：{version}</p>
@@ -53,7 +48,7 @@ export default () => {
         <div>
             <h1>桌面</h1>
             <p>*提示二(iOS): 请使用「共享」-「添加到主屏幕」安装 <b>Web应用</b> 到桌面，以便下次直接<BButton
-                onClick={()=>show.value=true}>点击</BButton>进入。</p>
+                onClick={() => show.value = true}>点击</BButton>进入。</p>
             <p>*提示三(Android): 请使用「...」-「安装应用」安装 <b>Web应用</b> 到桌面，以便下次直接点击进入。</p>
         </div>
     </Dialog>
