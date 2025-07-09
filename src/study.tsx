@@ -15,7 +15,7 @@ import Scard from './scard.tsx';
 
 export default () => {
     const finish = async () => {
-        app.go(app.sprint.value <= 0 ? '#search': undefined);
+        app.go(app.sprint.value < 0 ? '#search': undefined);
         await app.totalStats();
         await mem.syncTasks();
         app.totalStats();
@@ -29,9 +29,10 @@ export default () => {
     const player = useRef<HTMLAudioElement>(null);
     const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
     const studyNext = async () => {
-        if (++app.sprint.value <= 0) return finish();
+        if (app.sprint.value < 0) return finish();
         const item = await mem.getEpisode(app.wlid.value);
         if (!item) return finish();
+        app.sprint.value++;
         app.citem.value = item;
         app.isPhaseAnswer.value = false;
         cindex.value = 0;
@@ -57,6 +58,7 @@ export default () => {
     };
     const handleDelete = async () => {
         app.showTips((await mem.deleteItem(app.citem.value!.word)) ? '删除成功' : '删除失败');
+        await studyNext();
     }
     const handleKeyPress = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
         e.stopPropagation()
