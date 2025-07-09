@@ -14,7 +14,6 @@ import Dict from './search.tsx';
 import Study from './study.tsx';
 import Signup from './signup.tsx';
 import Signin from './signin.tsx';
-import WordLists from './wordlists.tsx';
 import WordList from './wordlist.tsx';
 
 export default () => {
@@ -28,7 +27,6 @@ export default () => {
     dialogs.set('#study', <Study />);
     dialogs.set('#signup', <Signup />);
     dialogs.set('#signin', <Signin />);
-    dialogs.set('#wordlists', <WordLists />);
     dialogs.set('#wordlist', <WordList />);
 
     const init = async () => {

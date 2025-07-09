@@ -37,7 +37,7 @@ export default () => {
                 return app.showTips('未通过拼写检查');
             case STATUS_CODE.OK: {
                 app.showTips('词书上传成功');
-                app.go();
+                app.go("#setting");
             }
         }
     }
@@ -47,7 +47,7 @@ export default () => {
             if (app.wl.value.disc) disc.value = app.wl.value.disc;
         }
     }, [])
-    return <Dialog class="flex flex-col p-2" title="上传我的词书" onBackClick={()=>app.go()}>
+    return <Dialog class="flex flex-col p-2" title="上传我的词书">
         <label for="name">名称</label>
         <SInput name="name" binding={name} />
         <label for="disc" class="mt-2">描述</label>
@@ -61,6 +61,7 @@ export default () => {
         <div class="flex gap-2 my-2">
             <Checkbox binding={replace} label="Replace"/>
             <div class="grow"></div>
+            <Button class="w-24 button btn-normal" onClick={()=>app.go("#setting")}>取消</Button>
             <Button class="w-24 button btn-normal" onClick={handleDownloadClick}>下载</Button>
             <Button class="w-24 button btn-prime" onClick={handleOKClick}>上传</Button>
         </div>

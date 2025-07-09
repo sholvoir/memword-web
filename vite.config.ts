@@ -12,7 +12,7 @@ export default defineConfig({
     emptyOutDir: true,
     assetsDir: '',
     rollupOptions: {
-      input: ['index.html', 'admin.html']
+      input: ['/index.html', '/admin.html']
     }
   }
 })

@@ -4,8 +4,8 @@ import type { IItem } from "../lib/iitem.ts";
 import type { IWordList } from "../../memword-server/lib/iwordlist.ts";
 import * as mem from "../lib/mem.ts";
 
-const DIALS = ['', '#home', '#help', '#about', '#issue', '#setting', '#wordlist',
-    '#wordlists', '#search', '#study', '#signup', '#signin'] as const;
+const DIALS = ['', '#home', '#help', '#about', '#issue', '#setting',
+    '#wordlist', '#search', '#study', '#signup', '#signin'] as const;
 export type TDial = typeof DIALS[number];
 
 export const user = signal('');

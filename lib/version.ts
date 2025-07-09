@@ -1,2 +1,2 @@
-import { version } from '../deno.json' with { type: "json" };
+import { version } from '../package.json' with { type: "json" };
 export { version }
