@@ -9,7 +9,6 @@ export default ({ card, class: className }: {
     card: ICard
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
     const phonetic = useSignal(card.phonetic);
-    const trans = useSignal(card.trans);
     const def = useSignal(card.def)
     const sound = useSignal(card.sound)
     const player = useRef<HTMLAudioElement>(null);
@@ -20,12 +19,10 @@ export default ({ card, class: className }: {
     return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`}>
         <input name="phonetic" placeholder="phonetic" value={phonetic}
             onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
-        <textarea name="trans" placeholder="trans" class="h-32 grow" value={trans}
-            onInput={e => card.trans = trans.value = e.currentTarget.value} />
         <textarea name="def" placeholder="def" class="h-32 grow" value={def}
             onInput={e => card.def = def.value = e.currentTarget.value} />
-        <div class="flex">
-            <textarea name="sound" placeholder="sound" class="h-32 grow" value={sound}
+        <div class="shrink flex">
+            <textarea name="sound" placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} />
             <Button class="button ml-2"
                 onClick={handlePlayClick} disabled={!sound.value}>
