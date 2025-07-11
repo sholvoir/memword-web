@@ -22,7 +22,7 @@ export default ({ card, class: className }: {
         <textarea name="def" placeholder="def" class="h-32 grow" value={def}
             onInput={e => card.def = def.value = e.currentTarget.value} />
         <div class="shrink flex">
-            <textarea name="sound" placeholder="sound" class="grow" value={sound}
+            <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} />
             <Button class="button ml-2"
                 onClick={handlePlayClick} disabled={!sound.value}>
