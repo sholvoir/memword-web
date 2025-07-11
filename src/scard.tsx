@@ -1,9 +1,11 @@
+import { Fragment } from "preact";
 import { ICard } from "../../memword-server/lib/idict.ts";
 
 export default ({ card }: { card?: ICard }) =>
-    card?.def?.split('\n').map((t: string, i: number) => {
-        if (t.startsWith(' ')) {
-            const [e, c] = t.split('|');
-            return <p key={i} class="text-lg">&ensp;-{e}<b class="text-xl">{c}</b></p>
-        } else return <p key={i} class="text-xl font-bold">{t}</p>
-    })
+    card?.meanings?.map((meaning) => <Fragment key={meaning}>
+        {meaning.pos && <p class="text-xl font-bold">{meaning.pos}</p>}
+        {meaning.meaning?.map(item => <p key={item}>
+            <span class="text-lg">&ensp;-{item.def}</span>
+            <span class="text-xl">{item.trans}</span>
+        </p>)}
+    </Fragment>)

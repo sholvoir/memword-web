@@ -9,7 +9,7 @@ export default ({ card, class: className }: {
     card: ICard
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
     const phonetic = useSignal(card.phonetic);
-    const def = useSignal(card.def)
+    const meanings = useSignal(JSON.stringify(card.meanings));
     const sound = useSignal(card.sound)
     const player = useRef<HTMLAudioElement>(null);
     const handlePlayClick = () => {
@@ -19,8 +19,8 @@ export default ({ card, class: className }: {
     return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`}>
         <input name="phonetic" placeholder="phonetic" value={phonetic}
             onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
-        <textarea name="def" placeholder="def" class="h-32 grow" value={def}
-            onInput={e => card.def = def.value = e.currentTarget.value} />
+        <textarea name="meanings" placeholder="meanings" class="h-32 grow" value={meanings}
+            onChange={e => card.meanings = JSON.parse(meanings.value = e.currentTarget.value)} />
         <div class="shrink flex">
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} />
