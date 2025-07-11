@@ -9,7 +9,7 @@ export default ({ card, class: className }: {
     card: ICard
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
     const phonetic = useSignal(card.phonetic);
-    const meanings = useSignal(JSON.stringify(card.meanings));
+    const meanings = useSignal(JSON.stringify(card.meanings, undefined, 3));
     const sound = useSignal(card.sound)
     const player = useRef<HTMLAudioElement>(null);
     const handlePlayClick = () => {
