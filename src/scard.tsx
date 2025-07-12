@@ -8,6 +8,6 @@ export default ({ card }: { card?: ICard }) =>
             <span>&ensp;-&ensp;</span>
             {item.def && <span class="text-lg">{item.def}</span>}
             {item.def && item.trans && <span>&ensp;</span>}
-            {item.trans && <span class="text-2xl">{item.trans}</span>}
+            {item.trans && <span class="text-xl">{item.trans}</span>}
         </p>)}
     </Fragment>)
