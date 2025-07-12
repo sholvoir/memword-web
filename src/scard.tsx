@@ -5,7 +5,9 @@ export default ({ card }: { card?: ICard }) =>
     card?.meanings?.map((meaning) => <Fragment key={meaning}>
         {meaning.pos && <p class="text-xl font-bold">{meaning.pos}</p>}
         {meaning.meaning?.map(item => <p key={item}>
-            <span class="text-lg">&ensp;-&ensp;{item.def}&ensp;</span>
-            <span class="text-xl">{item.trans}</span>
+            <span>&ensp;-&ensp;</span>
+            {item.def && <span class="text-lg">{item.def}</span>}
+            {item.def && item.trans && <span>&ensp;</span>}
+            {item.trans && <span class="text-2xl">{item.trans}</span>}
         </p>)}
     </Fragment>)
