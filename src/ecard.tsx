@@ -9,18 +9,26 @@ export default ({ card, class: className }: {
     card: ICard
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
     const phonetic = useSignal(card.phonetic);
-    const meanings = useSignal(JSON.stringify(card.meanings, undefined, 3));
-    const sound = useSignal(card.sound)
+    const meanings = useSignal(JSON.stringify(card.meanings, undefined, 4));
+    const sound = useSignal(card.sound);
+    const parseError = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
     const handlePlayClick = () => {
         if (!sound.value) app.showTips('no sound to play!');
         else player.current?.play();
     }
+    const handleMeaningsChange = (e: JSX.TargetedInputEvent<HTMLTextAreaElement>) => {
+        try {
+            card.meanings = JSON.parse(meanings.value = e.currentTarget.value);
+            parseError.value = false;
+         }
+        catch { parseError.value = true }
+    }
     return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`}>
         <input name="phonetic" placeholder="phonetic" value={phonetic}
             onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
-        <textarea name="meanings" placeholder="meanings" class="h-32 grow" value={meanings}
-            onChange={e => card.meanings = JSON.parse(meanings.value = e.currentTarget.value)} />
+        <textarea name="meanings" placeholder="meanings" class={`h-32 grow ${parseError.value ? 'text-red' : ''}`} value={meanings}
+            onInput={handleMeaningsChange} />
         <div class="shrink flex">
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} />
