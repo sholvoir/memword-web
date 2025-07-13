@@ -31,7 +31,7 @@ export default function Admin() {
     const cards = useSignal<Array<ICard>>([]);
     const handleSearchClick = async () => {
         const w = encodeURIComponent(word.value);
-        window.open(`https://www.oxfordlearnersdictionaries.com/us/definition/english/${w}`, 'oxfordlearnersdictionaries');
+        window.open(`https://www.oxfordlearnersdictionaries.com/us/search/english/?q=${w}`, 'oxfordlearnersdictionaries');
         window.open(`https://www.merriam-webster.com/dictionary/${w}`, 'merriam-webster');
         const dict = await mem.getDict(word.value);
         if (!dict) return showTips('Not Found');
