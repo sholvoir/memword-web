@@ -6,6 +6,7 @@ import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
 import type { IIssue } from "../../memword-server/lib/iissue.ts";
 import * as mem from '../lib/mem.ts';
 import TextInput from "../components/input-text.tsx";
+import Input from "../components/input-simple.tsx";
 import Button from "../components/button-ripple.tsx";
 import Tab from "../components/tab.tsx";
 import Ecard from "./ecard.tsx";
@@ -39,8 +40,10 @@ export default function Admin() {
         currentCardIndex.value = 0;
         cards.value = dict?.cards ?? [];
     };
-    const handleAddCardClick = () => {
-        cards.value = [...cards.value, {}];
+    const oxfordId = useSignal('');
+    const handleAddCardClick = async () => {
+        const card = await mem.getDefinition(oxfordId.value);
+        if (card) cards.value = [...cards.value, card];
     };
     const handleDeleteCardClick = () => {
         if (cards.value.length > 1) cards.value = cards.value.toSpliced(currentCardIndex.value, 1);
@@ -112,6 +115,7 @@ export default function Admin() {
                     {cards.value.map((card) => <Ecard key={card} card={card} />)}
                 </Tab></div>
                 <div class="flex justify-between gap-2">
+                    <Input class="grow" binding={oxfordId}/>
                     <Button class="grow button btn-normal"
                         disabled={word.value!=currentWord.value} onClick={handleAddCardClick}>增卡</Button>
                     <Button class="grow button btn-normal"

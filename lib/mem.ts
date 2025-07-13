@@ -3,7 +3,7 @@ import { requestInit, getRes, getJson, STATUS_CODE } from '@sholvoir/generic/htt
 import { blobToBase64 } from "@sholvoir/generic/blob";
 import { JWT } from "@sholvoir/generic/jwt";
 import { defaultSetting, type ISetting } from "../../memword-server/lib/isetting.ts";
-import type { IDict } from "../../memword-server/lib/idict.ts";
+import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
 import type { IIssue } from "../../memword-server/lib/iissue.ts";
 import { type IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
 import { type IClientWordlist, getClientWordlist } from "./wordlists.ts";
@@ -56,6 +56,10 @@ export const itemUpdateDict = async (item: IItem) => {
 export const getUser = async () => {
     if (!auth) await getAuth();
     if (auth) return JWT.decode(auth)[1]?.aud as string;
+}
+
+export const getDefinition = async (oxfordId: string) => {
+    return await getJson<ICard>(`${API_URL}/pub/definition`, { q: oxfordId });
 }
 
 export const getDict = async (word: string) => {
