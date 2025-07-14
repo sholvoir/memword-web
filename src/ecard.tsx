@@ -5,7 +5,7 @@ import { useSignal } from "@preact/signals";
 import * as app from "./app.tsx";
 import Button from "../components/button-ripple.tsx";
 
-export default ({ card, class: className }: {
+export default ({ card, class: className, onClick }: {
     card: ICard
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
     const phonetic = useSignal(card.phonetic);
@@ -24,7 +24,7 @@ export default ({ card, class: className }: {
          }
         catch { parseError.value = true }
     }
-    return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`}>
+    return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`} onClick={onClick}>
         <input name="phonetic" placeholder="phonetic" value={phonetic}
             onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
         <textarea name="meanings" placeholder="meanings" class={`h-32 grow ${parseError.value ? 'text-red' : ''}`} value={meanings}

@@ -103,7 +103,7 @@ export default function Admin() {
     }
     useEffect(() => { init() }, []);
     return auth.value && <>
-        <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || `系统管理-${version} ˈʒɑɜæəɪʌʊʃˌ`}</div>
+        <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || `系统管理-${version} ˈʒɑɜæəɪʌʊʃˌ ${currentCardIndex.value}`}</div>
         <div class="body grow flex flex-col gap-2 p-2">
             <div class="h-4 grow-4 flex flex-col gap-2">
                 <div class="flex gap-2">
@@ -112,9 +112,9 @@ export default function Admin() {
                     <Button class="button btn-normal"
                         disabled={!word.value} onClick={handleSearchClick}>Search</Button>
                 </div>
-                <div class="flex flex-col grow"><Tab class="bg-[var(--bg-tab)]" cindex={currentCardIndex}>
-                    {cards.value.map((card) => <Ecard key={card} card={card} />)}
-                </Tab></div>
+                <div class="grow flex">
+                    {cards.value.map((card, i) => <Ecard class="grow" key={card} card={card} onClick={()=>currentCardIndex.value=i}/>)}
+                </div>
                 <div class="flex justify-between gap-2">
                     <Input class="grow" binding={oxfordId}/>
                     <Button class="grow button btn-normal"
