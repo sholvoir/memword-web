@@ -44,7 +44,12 @@ export default function Admin() {
     };
     const handleAddCardClick = async () => {
         const card = await mem.getDefinition(oxfordId.value);
-        if (card) cards.value = [...cards.value, card];
+        if (card) {
+            if (card.meanings) for (const m of card.meanings)
+                if (m.meaning) for (const x of m.meaning)
+                    x.trans = '';
+            cards.value = [...cards.value, card];
+        }
     };
     const handleDeleteCardClick = () => {
         if (cards.value.length > 1) cards.value = cards.value.toSpliced(currentCardIndex.value, 1);
@@ -103,7 +108,7 @@ export default function Admin() {
     }
     useEffect(() => { init() }, []);
     return auth.value && <>
-        <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || `系统管理-${version} ˈʒɑɜæəɪʌʊʃˌ ${currentCardIndex.value}`}</div>
+        <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || `系统管理-${currentCardIndex.value}-${version} ˈʒɑɜæəɪʌʊʃˌ`}</div>
         <div class="body grow flex flex-col gap-2 p-2">
             <div class="h-4 grow-4 flex flex-col gap-2">
                 <div class="flex gap-2">
@@ -112,7 +117,7 @@ export default function Admin() {
                     <Button class="button btn-normal"
                         disabled={!word.value} onClick={handleSearchClick}>Search</Button>
                 </div>
-                <div class="grow flex">
+                <div class="grow flex gap-2">
                     {cards.value.map((card, i) => <Ecard class="grow" key={card} card={card} onClick={()=>currentCardIndex.value=i}/>)}
                 </div>
                 <div class="flex justify-between gap-2">

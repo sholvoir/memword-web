@@ -6,7 +6,8 @@ import * as app from "./app.tsx";
 import Button from "../components/button-ripple.tsx";
 
 export default ({ card, class: className, onClick }: {
-    card: ICard
+    card: ICard;
+    onClick: () => void
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
     const phonetic = useSignal(card.phonetic);
     const meanings = useSignal(JSON.stringify(card.meanings, undefined, 4));
@@ -25,13 +26,13 @@ export default ({ card, class: className, onClick }: {
         catch { parseError.value = true }
     }
     return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`} onClick={onClick}>
-        <input name="phonetic" placeholder="phonetic" value={phonetic}
+        <input name="phonetic" placeholder="phonetic" value={phonetic} onFocus={onClick}
             onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
         <textarea name="meanings" placeholder="meanings" class={`h-32 grow ${parseError.value ? 'text-red' : ''}`} value={meanings}
-            onInput={handleMeaningsChange} />
+            onInput={handleMeaningsChange} onFocus={onClick}/>
         <div class="shrink flex">
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
-                onInput={e => card.sound = sound.value = e.currentTarget.value} />
+                onInput={e => card.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
             <Button class="button ml-2"
                 onClick={handlePlayClick} disabled={!sound.value}>
                 <span class="text-[150%] i-material-symbols-chevron-right"/>
