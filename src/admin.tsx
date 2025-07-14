@@ -30,6 +30,7 @@ export default function Admin() {
     const currentWord = useSignal('_')
     const currentCardIndex = useSignal(0);
     const cards = useSignal<Array<ICard>>([]);
+    const oxfordId = useSignal('');
     const handleSearchClick = async () => {
         const w = encodeURIComponent(word.value);
         window.open(`https://www.oxfordlearnersdictionaries.com/us/search/english/?q=${w}`, 'oxfordlearnersdictionaries');
@@ -39,8 +40,8 @@ export default function Admin() {
         currentWord.value = dict.word;
         currentCardIndex.value = 0;
         cards.value = dict?.cards ?? [];
+        oxfordId.value = dict.word;
     };
-    const oxfordId = useSignal('');
     const handleAddCardClick = async () => {
         const card = await mem.getDefinition(oxfordId.value);
         if (card) cards.value = [...cards.value, card];
