@@ -3,7 +3,7 @@ import { ICard } from "../../memword-server/lib/idict.ts";
 
 export default ({ card }: { card?: ICard }) =>
     card?.meanings?.map((meaning) => <Fragment key={meaning}>
-        {meaning.pos && <p class="text-xl font-bold">{meaning.pos}</p>}
+        {meaning.pos && <p class="text-xl font-bold text-[var(--accent-color)]">{meaning.pos}</p>}
         {meaning.meaning?.map(item => <p key={item}>
             <span>&ensp;-&ensp;</span>
             {item.def && <span class="text-lg">{item.def}</span>}

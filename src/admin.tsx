@@ -31,13 +31,18 @@ export default function Admin() {
     const cards = useSignal<Array<ICard>>([]);
     const handleSearchClick = async () => {
         const w = encodeURIComponent(word.value);
-        window.open(`https://www.oxfordlearnersdictionaries.com/us/search/english/?q=${w}`, 'oxfordlearnersdictionaries');
         window.open(`https://www.merriam-webster.com/dictionary/${w}`, 'merriam-webster');
+        window.open(`https://www.oxfordlearnersdictionaries.com/us/search/english/?q=${w}`, 'oxfordlearnersdictionaries');
         const dict = await mem.getDict(word.value);
         if (!dict) return showTips('Not Found');
         currentWord.value = dict.word;
         currentCardIndex.value = 0;
-        cards.value = dict?.cards ?? [];
+        if (dict.cards) for (const card of dict.cards)
+            if (card.meanings) for (const meaning of card.meanings)
+                if (meaning.meaning) for (const m of meaning.meaning)
+                    if (!m.trans) m.trans = '';
+        cards.value = dict.cards ?? [];
+        window.focus();
     };
     const handleAddCardClick = async () => {
         const card = await mem.getDefinition(word.value);
