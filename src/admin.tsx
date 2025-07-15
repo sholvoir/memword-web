@@ -8,7 +8,6 @@ import * as mem from '../lib/mem.ts';
 import TextInput from "../components/input-text.tsx";
 import Input from "../components/input-simple.tsx";
 import Button from "../components/button-ripple.tsx";
-import Tab from "../components/tab.tsx";
 import Ecard from "./ecard.tsx";
 import List from '../components/list.tsx';
 
@@ -30,7 +29,6 @@ export default function Admin() {
     const currentWord = useSignal('_')
     const currentCardIndex = useSignal(0);
     const cards = useSignal<Array<ICard>>([]);
-    const oxfordId = useSignal('');
     const handleSearchClick = async () => {
         const w = encodeURIComponent(word.value);
         window.open(`https://www.oxfordlearnersdictionaries.com/us/search/english/?q=${w}`, 'oxfordlearnersdictionaries');
@@ -40,10 +38,9 @@ export default function Admin() {
         currentWord.value = dict.word;
         currentCardIndex.value = 0;
         cards.value = dict?.cards ?? [];
-        oxfordId.value = dict.word;
     };
     const handleAddCardClick = async () => {
-        const card = await mem.getDefinition(oxfordId.value);
+        const card = await mem.getDefinition(word.value);
         if (card) {
             if (card.meanings) for (const m of card.meanings)
                 if (m.meaning) for (const x of m.meaning)
@@ -53,6 +50,7 @@ export default function Admin() {
     };
     const handleDeleteCardClick = () => {
         if (cards.value.length > 1) cards.value = cards.value.toSpliced(currentCardIndex.value, 1);
+        if (currentCardIndex.value >= cards.value.length) currentCardIndex.value = cards.value.length - 1;
     }
     const handleUpdateClick = async () => {
         const dict: IDict = { word: word.value, cards: cards.value };
@@ -121,7 +119,6 @@ export default function Admin() {
                     {cards.value.map((card, i) => <Ecard class="grow" key={card} card={card} onClick={()=>currentCardIndex.value=i}/>)}
                 </div>
                 <div class="flex justify-between gap-2">
-                    <Input class="grow" binding={oxfordId}/>
                     <Button class="grow button btn-normal"
                         disabled={word.value!=currentWord.value} onClick={handleAddCardClick}>增卡</Button>
                     <Button class="grow button btn-normal"
