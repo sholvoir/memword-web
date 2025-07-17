@@ -2,14 +2,14 @@
 import { requestInit, getRes, getJson, STATUS_CODE } from '@sholvoir/generic/http';
 import { blobToBase64 } from "@sholvoir/generic/blob";
 import { JWT } from "@sholvoir/generic/jwt";
-import { defaultSetting, type ISetting } from "../../memword-server/lib/isetting.ts";
-import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
-import type { IIssue } from "../../memword-server/lib/iissue.ts";
-import { type IWordList, splitID } from "../../memword-server/lib/iwordlist.ts";
+import { defaultSetting, type ISetting } from "@sholvoir/memword-common/isetting";
+import type { ICard, IDict } from "@sholvoir/memword-common/idict";
+import type { IIssue } from "@sholvoir/memword-common/iissue";
+import { type IWordList, splitID } from "@sholvoir/memword-common/iwordlist";
 import { type IClientWordlist, getClientWordlist } from "./wordlists.ts";
 import { type IStats, statsFormat } from './istat.ts';
 import { type IItem, item2task, newItem } from "./iitem.ts";
-import { B2_BASE_URL, now } from "../../memword-server/lib/common.ts";
+import { B2_BASE_URL, now } from "@sholvoir/memword-common/common";
 import { API_URL } from "./common.ts";
 import * as idb from './indexdb.ts';
 

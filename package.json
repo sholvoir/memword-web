@@ -1,7 +1,7 @@
 {
   "name": "memword-web",
   "private": true,
-  "version": "0.16.0",
+  "version": "0.16.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
   "dependencies": {
     "@preact/signals": "^2.2.1",
     "@sholvoir/generic": "npm:@jsr/sholvoir__generic",
+    "@sholvoir/memword-common": "npm:@jsr/sholvoir__memword-common",
     "preact": "^10.26.9"
   },
   "devDependencies": {

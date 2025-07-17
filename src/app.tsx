@@ -1,7 +1,7 @@
 import { signal } from "@preact/signals";
 import { type IStats, initStats } from "../lib/istat.ts";
 import type { IItem } from "../lib/iitem.ts";
-import type { IWordList } from "../../memword-server/lib/iwordlist.ts";
+import type { IWordList } from "@sholvoir/memword-common/iwordlist";
 import * as mem from "../lib/mem.ts";
 
 const DIALS = ['', '#home', '#help', '#about', '#issue', '#setting',

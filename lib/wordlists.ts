@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-cond-assign
-import { IWordList } from "../../memword-server/lib/iwordlist.ts";
+import { IWordList } from "@sholvoir/memword-common/iwordlist";
 import { getWordlists, getB2File } from "./mem.ts";
 
 export interface IClientWordlist extends IWordList {

@@ -1,7 +1,7 @@
 import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
-import { splitID } from "../../memword-server/lib/iwordlist.ts";
+import { splitID } from "@sholvoir/memword-common/iwordlist";
 import { getClientWordlist } from "../lib/wordlists.ts";
 import * as mem from '../lib/mem.ts';
 import * as app from "./app.tsx";

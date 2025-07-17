@@ -1,11 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
 import { type IStat, addTaskToStat, initStat } from "./istat.ts";
 import { type IItem, itemMergeDict, itemMergeTask, neverItem } from "./iitem.ts";
-import { type ITask, studyTask } from "../../memword-server/lib/itask.ts";
-import type { IWordList } from "../../memword-server/lib/iwordlist.ts";
-import type { IDict } from "../../memword-server/lib/idict.ts";
+import { type ITask, studyTask } from "@sholvoir/memword-common/itask";
+import type { IWordList } from "@sholvoir/memword-common/iwordlist";
+import type { IDict } from "@sholvoir/memword-common/idict";
 import type { IClientWordlist } from "./wordlists.ts";
-import { now } from "../../memword-server/lib/common.ts";
+import { now } from "@sholvoir/memword-common/common";
 
 export const tempItems = new Map<string, IItem>();
 type kvKey = '_sync-time' | '_setting' | '_auth' | '_wl-time';

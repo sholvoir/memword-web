@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { Fragment, type JSX } from "preact";
-import { splitID, type IWordList } from "../../memword-server/lib/iwordlist.ts";
+import { splitID, type IWordList } from "@sholvoir/memword-common/iwordlist";
 import { useEffect, useRef } from "preact/hooks";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import { useSignal } from "@preact/signals";
@@ -86,7 +86,7 @@ export default () => {
         e.preventDefault();
         if (app.isPhaseAnswer.value) {
             const diff = endX.value - startX.value;
-            if (Math.abs(diff) >= max / 3) {
+            if (Math.abs(diff) >= max / 4) {
                 if (diff > 0) {
                     await handleIKnown(0);
                     await continueMove(30);

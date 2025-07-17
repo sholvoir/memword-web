@@ -1,6 +1,6 @@
-import { now } from "../../memword-server/lib/common.ts";
-import type { IDict } from "../../memword-server/lib/idict.ts";
-import type { ITask } from '../../memword-server/lib/itask.ts';
+import { now } from "@sholvoir/memword-common/common";
+import type { IDict } from "@sholvoir/memword-common/idict";
+import type { ITask } from '@sholvoir/memword-common/itask';
 
 export interface IItem extends IDict, ITask {
     dictSync?: number

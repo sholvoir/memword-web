@@ -1,4 +1,4 @@
-import type { ITask } from "../../memword-server/lib/itask.ts";
+import type { ITask } from "@sholvoir/memword-common/itask";
 
 export const statsFormat = '0.2.1';
 

@@ -1,5 +1,5 @@
 import { Fragment } from "preact";
-import { ICard } from "../../memword-server/lib/idict.ts";
+import { ICard } from "@sholvoir/memword-common/idict";
 
 export default ({ card }: { card?: ICard }) =>
     card?.meanings?.map((meaning) => <Fragment key={meaning}>

@@ -1,5 +1,5 @@
 import type { JSX } from "preact";
-import type { ICard } from "../../memword-server/lib/idict.ts";
+import type { ICard } from "@sholvoir/memword-common/idict";
 import { useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import * as app from "./app.tsx";

@@ -2,8 +2,8 @@
 import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
 import { version } from "../lib/version.ts";
-import type { ICard, IDict } from "../../memword-server/lib/idict.ts";
-import type { IIssue } from "../../memword-server/lib/iissue.ts";
+import type { ICard, IDict } from "@sholvoir/memword-common/idict";
+import type { IIssue } from "@sholvoir/memword-common/iissue";
 import * as mem from '../lib/mem.ts';
 import TextInput from "../components/input-text.tsx";
 import Input from "../components/input-simple.tsx";
