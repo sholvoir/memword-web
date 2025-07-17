@@ -170,7 +170,7 @@ export default () => {
                 <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
                     {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
                 </Tab> :
-                <div class="grow"><Scard card={app.citem.value.cards?.[0]} /></div>)
+                <div class="grow"><Scard card={app.citem.value.cards?.[0]!} /></div>)
             }
             <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
         </div>

@@ -35,7 +35,7 @@ export default ({ card, class: className, onClick }: {
                 onInput={e => card.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
             <Button class="button btn-normal"
                 onClick={() => card.sound = sound.value = 'https://dict.youdao.com/dictvoice?type=2&audio='}>
-                <span class="text-[150%] i-material-symbols-chevron-right"/>
+                YDS
             </Button>
             <Button class="button btn-normal"
                 onClick={handlePlayClick} disabled={!sound.value}>

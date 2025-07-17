@@ -47,8 +47,8 @@ export default function Admin() {
         const card = await mem.getDefinition(word.value);
         if (card) {
             if (card.meanings) for (const means of Object.values(card.meanings))
-                if (means) for (const x of means)
-                    x.trans = '';
+                if (means) for (const m of means)
+                    if (!m.trans) m.trans = '';
             cards.value = [...cards.value, card];
         }
     };
