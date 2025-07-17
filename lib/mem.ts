@@ -58,8 +58,8 @@ export const getUser = async () => {
     if (auth) return JWT.decode(auth)[1]?.aud as string;
 }
 
-export const getDefinition = async (oxfordId: string) => {
-    return await getJson<ICard>(`${API_URL}/pub/definition`, { q: oxfordId });
+export const getDefinition = async (word: string) => {
+    return await getJson<ICard>(`${API_URL}/pub/definition`, { q: word });
 }
 
 export const getDict = async (word: string) => {

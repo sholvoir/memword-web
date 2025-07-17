@@ -6,7 +6,6 @@ import type { ICard, IDict } from "@sholvoir/memword-common/idict";
 import type { IIssue } from "@sholvoir/memword-common/iissue";
 import * as mem from '../lib/mem.ts';
 import TextInput from "../components/input-text.tsx";
-import Input from "../components/input-simple.tsx";
 import Button from "../components/button-ripple.tsx";
 import Ecard from "./ecard.tsx";
 import List from '../components/list.tsx';
@@ -38,8 +37,8 @@ export default function Admin() {
         currentWord.value = dict.word;
         currentCardIndex.value = 0;
         if (dict.cards) for (const card of dict.cards)
-            if (card.meanings) for (const meaning of card.meanings)
-                if (meaning.meaning) for (const m of meaning.meaning)
+            if (card.meanings) for (const means of Object.values(card.meanings))
+                if (means) for (const m of means)
                     if (!m.trans) m.trans = '';
         cards.value = dict.cards ?? [];
         window.focus();
@@ -47,8 +46,8 @@ export default function Admin() {
     const handleAddCardClick = async () => {
         const card = await mem.getDefinition(word.value);
         if (card) {
-            if (card.meanings) for (const m of card.meanings)
-                if (m.meaning) for (const x of m.meaning)
+            if (card.meanings) for (const means of Object.values(card.meanings))
+                if (means) for (const x of means)
                     x.trans = '';
             cards.value = [...cards.value, card];
         }
