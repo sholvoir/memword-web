@@ -11,7 +11,7 @@ export default ({ class: className, cindex, children }: {
                 onClick={(e) => (e.stopPropagation(), cindex.value = i)}>{child.props.title ?? i}
             </div>
         )}</header>
-        <section class={`grow h-0 p-2 overflow-y-auto ${className ?? ''}`}>
+        <section class={`grow p-2 ${className ?? ''}`}>
             {childs[cindex.value]}
         </section>
     </> : undefined;

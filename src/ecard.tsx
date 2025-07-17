@@ -33,7 +33,11 @@ export default ({ card, class: className, onClick }: {
         <div class="shrink flex">
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
-            <Button class="button ml-2"
+            <Button class="button btn-normal"
+                onClick={() => card.sound = sound.value = 'https://dict.youdao.com/dictvoice?type=2&audio='}>
+                <span class="text-[150%] i-material-symbols-chevron-right"/>
+            </Button>
+            <Button class="button btn-normal"
                 onClick={handlePlayClick} disabled={!sound.value}>
                 <span class="text-[150%] i-material-symbols-chevron-right"/>
             </Button>

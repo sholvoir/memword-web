@@ -22,8 +22,9 @@ export default () => {
     }
     if (!app.citem.value) return (app.go(), <div />);
     const cindex = useSignal(0);
-    const startY = useSignal(0);
-    const endY = useSignal(0);
+    const startX = useSignal(0);
+    const endX = useSignal(0);
+    const max = globalThis.innerWidth;
     const mwls = useSignal<Array<IWordList>>([]);
     const showAddToBookMenu = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
@@ -37,12 +38,12 @@ export default () => {
         app.isPhaseAnswer.value = false;
         cindex.value = 0;
     };
-    const continueMove = async (y: number, max: number) => {
-        endY.value += y;
-        const diff = Math.abs(endY.value - startY.value);
+    const continueMove = async (x: number) => {
+        endX.value += x;
+        const diff = Math.abs(endX.value - startX.value);
         if (diff < max) {
             await wait(30);
-            await continueMove(y, max);
+            await continueMove(x);
         };
     };
     const handleRefresh = async () => {
@@ -70,39 +71,33 @@ export default () => {
         }
     };
     const handleTouchStart = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.stopPropagation();
         e.preventDefault();
-        app.isPhaseAnswer.value && (endY.value = startY.value = e.touches[0].clientY);
+        app.isPhaseAnswer.value && (endX.value = startX.value = e.touches[0].clientX);
     }
     const handleTouchMove = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.stopPropagation();
         e.preventDefault();
-        app.isPhaseAnswer.value && (endY.value = e.touches[0].clientY);
+        app.isPhaseAnswer.value && (endX.value = e.touches[0].clientX);
     }
     const handleTouchCancel = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.stopPropagation();
         e.preventDefault();
-        app.isPhaseAnswer.value && (endY.value = startY.value = 0);
+        app.isPhaseAnswer.value && (endX.value = startX.value = 0);
     }
     const handleTouchEnd = async (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.stopPropagation();
         e.preventDefault();
         if (app.isPhaseAnswer.value) {
-            const h = e.currentTarget.scrollHeight + 60;
-            const diff = endY.value - startY.value;
-            const max = Math.max(globalThis.innerHeight, h);
-            if (Math.abs(diff) >= globalThis.innerHeight / 6) {
+            const diff = endX.value - startX.value;
+            if (Math.abs(diff) >= max / 3) {
                 if (diff > 0) {
                     await handleIKnown(0);
-                    await continueMove(60, max);
+                    await continueMove(30);
                 } else {
                     await handleIKnown();
-                    await continueMove(-60, max)
+                    await continueMove(-30)
                 }
                 await studyNext();
             } else if (Math.abs(diff) < 5) handleClick();
         } else handleClick();
-        endY.value = startY.value = 0;
+        endX.value = startX.value = 0;
     };
     const handleClick = (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
         e?.stopPropagation();
@@ -158,8 +153,8 @@ export default () => {
                 {mwls.value.length && <div/>}
             </div>}
         </div>
-        <div class="relative grow h-0 pb-4 flex flex-col outline-none" tabIndex={-1}
-            style={{ top: `${endY.value - startY.value}px` }}
+        <div class="relative grow h-0 pb-4 flex flex-col outline-none overflow-y-auto" tabIndex={-1}
+            style={{ left: `${endX.value - startX.value}px` }}
             onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}
             onClick={handleClick}  onKeyUp={handleKeyPress}>
@@ -175,7 +170,7 @@ export default () => {
                 <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
                     {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
                 </Tab> :
-                <div class="grow h-0 overflow-y-auto"><Scard card={app.citem.value.cards?.[0]} /></div>)
+                <div class="grow"><Scard card={app.citem.value.cards?.[0]} /></div>)
             }
             <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
         </div>
