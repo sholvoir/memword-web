@@ -71,19 +71,15 @@ export default () => {
         }
     };
     const handleTouchStart = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.preventDefault();
         app.isPhaseAnswer.value && (endX.value = startX.value = e.touches[0].clientX);
     }
     const handleTouchMove = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.preventDefault();
         app.isPhaseAnswer.value && (endX.value = e.touches[0].clientX);
     }
-    const handleTouchCancel = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.preventDefault();
+    const handleTouchCancel = () => {
         app.isPhaseAnswer.value && (endX.value = startX.value = 0);
     }
-    const handleTouchEnd = async (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        e.preventDefault();
+    const handleTouchEnd = async () => {
         if (app.isPhaseAnswer.value) {
             const diff = endX.value - startX.value;
             if (Math.abs(diff) >= max / 4) {

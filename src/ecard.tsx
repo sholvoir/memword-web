@@ -30,7 +30,7 @@ export default ({ card, class: className, onClick }: {
             onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
         <textarea name="meanings" placeholder="meanings" class={`h-32 grow ${parseError.value ? 'text-red' : ''}`} value={meanings}
             onInput={handleMeaningsChange} onFocus={onClick}/>
-        <div class="shrink flex">
+        <div class="shrink flex gap-2">
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
             <Button class="button btn-normal"

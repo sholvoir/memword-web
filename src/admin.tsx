@@ -88,7 +88,7 @@ export default function Admin() {
                 ...issues.value.slice(0, currentIssueIndex.value),
                 ...issues.value.slice(currentIssueIndex.value + 1)
             ];
-            if (currentIssueIndex.value >= issues.value.length)
+            if (issues.value.length && currentIssueIndex.value >= issues.value.length)
                 currentIssueIndex.value = issues.value.length - 1;
             if (issues.value.length) handleIssueClick();
             else {
