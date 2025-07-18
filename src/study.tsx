@@ -21,10 +21,9 @@ export default () => {
         app.totalStats();
     }
     if (!app.citem.value) return (app.go(), <div />);
+    const mainDiv = useRef<HTMLDivElement>(null);
     const cindex = useSignal(0);
-    const startX = useSignal(0);
-    const endX = useSignal(0);
-    const max = globalThis.innerWidth;
+    const touchPos = { startY: 0, endY: 0, cScrollTop: 0, moveTop: 0 }
     const mwls = useSignal<Array<IWordList>>([]);
     const showAddToBookMenu = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
@@ -38,12 +37,12 @@ export default () => {
         app.isPhaseAnswer.value = false;
         cindex.value = 0;
     };
-    const continueMove = async (x: number) => {
-        endX.value += x;
-        const diff = Math.abs(endX.value - startX.value);
+    const continueMove = async (x: number, max: number) => {
+        const diff = Math.abs(touchPos.moveTop += x);
+        mainDiv.current!.style.top = `${touchPos.moveTop}px`;
         if (diff < max) {
             await wait(30);
-            await continueMove(x);
+            await continueMove(x, max);
         };
     };
     const handleRefresh = async () => {
@@ -71,29 +70,59 @@ export default () => {
         }
     };
     const handleTouchStart = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        app.isPhaseAnswer.value && (endX.value = startX.value = e.touches[0].clientX);
+        if (e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer.value) return;
+        touchPos.endY = touchPos.startY = e.touches[0].clientY;
+        touchPos.cScrollTop = e.currentTarget.scrollTop;
     }
     const handleTouchMove = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
-        app.isPhaseAnswer.value && (endX.value = e.touches[0].clientX);
+        if (e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer.value) return;
+        const diff = (touchPos.endY = e.touches[0].clientY) - touchPos.startY;
+        const div = e.currentTarget;
+        console.log('diff', touchPos.endY, touchPos.startY, diff);
+        if (diff < 0) {
+            const topMax = div.scrollHeight - div.clientHeight;
+            if (touchPos.cScrollTop - diff < topMax) div.scrollTop = touchPos.cScrollTop - diff;
+            else {
+                div.scrollTop = topMax;
+                touchPos.moveTop = topMax - (touchPos.cScrollTop - diff);
+            }
+        } else {
+            if (touchPos.cScrollTop - diff > 0) div.scrollTop = touchPos.cScrollTop - diff;
+            else {
+                div.scrollTop = 0;
+                touchPos.moveTop = diff - touchPos.cScrollTop;
+            }
+        }
+        mainDiv.current!.style.top = `${touchPos.moveTop}px`;
+        console.log(div.scrollTop, touchPos.moveTop);
     }
-    const handleTouchCancel = () => {
-        app.isPhaseAnswer.value && (endX.value = startX.value = 0);
+    const handleTouchCancel = (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
+        if (e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer.value) return;
+        touchPos.moveTop = 0;
+        touchPos.cScrollTop = e.currentTarget.scrollTop;
+        mainDiv.current!.style.top = `${touchPos.moveTop}px`;
     }
-    const handleTouchEnd = async () => {
-        if (app.isPhaseAnswer.value) {
-            const diff = endX.value - startX.value;
-            if (Math.abs(diff) >= max / 4) {
-                if (diff > 0) {
-                    await handleIKnown(0);
-                    await continueMove(30);
-                } else {
-                    await handleIKnown();
-                    await continueMove(-30)
-                }
-                await studyNext();
-            } else if (Math.abs(diff) < 5) handleClick();
-        } else handleClick();
-        endX.value = startX.value = 0;
+    const handleTouchEnd = async (e: JSX.TargetedTouchEvent<HTMLDivElement>) => {
+        if (e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer.value) {
+            touchPos.moveTop = 0;
+            touchPos.cScrollTop = e.currentTarget.scrollTop;
+            mainDiv.current!.style.top = `${touchPos.moveTop}px`;
+            return handleClick();
+        }
+        const h = e.currentTarget.scrollHeight + 60;
+        const max = Math.max(globalThis.innerHeight, h);
+        if (Math.abs(touchPos.moveTop) >= globalThis.innerHeight / 6) {
+            if (touchPos.moveTop > 0) {
+                await handleIKnown(0);
+                await continueMove(60, max);
+            } else {
+                await handleIKnown();
+                await continueMove(-60, max)
+            }
+            await studyNext();
+        } else if (Math.abs(touchPos.moveTop) < 5) handleClick();
+        touchPos.moveTop = 0;
+        mainDiv.current!.style.top = `${touchPos.moveTop}px`;
     };
     const handleClick = (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
         e?.stopPropagation();
@@ -149,8 +178,8 @@ export default () => {
                 {mwls.value.length && <div/>}
             </div>}
         </div>
-        <div class="relative grow h-0 pb-4 flex flex-col outline-none overflow-y-auto" tabIndex={-1}
-            style={{ left: `${endX.value - startX.value}px` }}
+        <div class="relative grow h-0 pb-4 flex flex-col outline-none overflow-y-auto"
+            tabIndex={-1} ref={mainDiv}
             onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}
             onClick={handleClick}  onKeyUp={handleKeyPress}>

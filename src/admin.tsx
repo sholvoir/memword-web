@@ -141,7 +141,7 @@ export default function Admin() {
                     </div>
                 </div>
                 <div class="w-1 grow flex flex-col gap-2">
-                    <div class="grow border">
+                    <div class="grow border overflow-y-auto">
                         <List class="px-2" cindex={currentIssueIndex}
                             activeClass="bg-[var(--bg-title)]"
                             options={issues.value.map(is => `${is.reporter}: ${is.issue}`)}
