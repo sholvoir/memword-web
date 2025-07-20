@@ -1,7 +1,7 @@
 {
   "name": "memword-web",
   "private": true,
-  "version": "0.16.5",
+  "version": "0.16.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,11 +13,12 @@
     "@preact/signals": "^2.2.1",
     "@sholvoir/generic": "npm:@jsr/sholvoir__generic",
     "@sholvoir/memword-common": "npm:@jsr/sholvoir__memword-common",
-    "preact": "^10.26.9"
+    "preact": "^10.26.9",
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.2",
-    "@types/bun": "^1.2.18",
+    "@types/bun": "^1.2.19",
     "unocss": "^66.3.3",
     "vite": "npm:rolldown-vite@^7.0.9"
   }

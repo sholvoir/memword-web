@@ -133,11 +133,11 @@ export default function Admin() {
                         disabled={word.value!=currentWord.value} onClick={handleUpdateClick}>更新</Button>
                 </div>
             </div>
-            <div class="h-1 grow flex gap-2">
+            <div class="flex gap-2">
                 <div class="w-1 grow flex flex-col gap-2">
                     <textarea class="grow" value={ignoreWords} onChange={e => ignoreWords.value = e.currentTarget.value} />
                     <div class="flex justify-end">
-                        <Button class="w-24 button btn-normal" onClick={handleUploadIgnoreWordsClick}>拼写忽略</Button>
+                        <Button class="button btn-normal" onClick={handleUploadIgnoreWordsClick}>拼写忽略</Button>
                     </div>
                 </div>
                 <div class="w-1 grow flex flex-col gap-2">
@@ -148,8 +148,8 @@ export default function Admin() {
                             onClick={handleIssueClick} />
                     </div>
                     <div class="flex justify-end gap-2">
-                        <Button class="w-24 button btn-normal" onClick={handleLoadIssueClick}>加载问题</Button>
-                        <Button class="w-24 button btn-normal" onClick={handleProcessIssueClick}>处理问题</Button>
+                        <Button class="button btn-normal" onClick={handleLoadIssueClick}>加载问题</Button>
+                        <Button class="button btn-normal" onClick={handleProcessIssueClick}>处理问题</Button>
                     </div>
                 </div>
             </div>
