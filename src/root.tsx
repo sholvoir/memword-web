@@ -41,10 +41,10 @@ export default () => {
                 await mem.syncSetting();
                 await mem.syncTasks();
                 await app.totalStats();
-                for (const item of await idb.getPredict(3600, 500)) {
-                    await mem.itemUpdateDict(item);
-                    await wait(300);
-                }
+                // for (const item of await idb.getPredict(3600, 500)) {
+                //     await mem.itemUpdateDict(item);
+                //     await wait(300);
+                // }
             })();
         } else app.go('#about');
     };
