@@ -46,9 +46,10 @@ export default () => {
         };
     };
     const handleRefresh = async () => {
-        app.showTips("Get Server Data...");
+        app.showTips("Get Server Data...", false);
         const item = await mem.getUpdatedItem(app.citem.value!.word);
         if (!item) return app.showTips(`Not Found ${app.citem.value!.word}`);
+        app.hideTips();
         app.citem.value = item;
     };
     const handleReportIssue = async () => {
