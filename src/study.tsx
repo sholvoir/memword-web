@@ -149,7 +149,8 @@ export default () => {
         mwls.value = await mem.getWordlists(wl => wl.wlid.startsWith(app.user.value));
     }
     useEffect(() => { init() }, []);
-    return <Dialog onBackClick={finish} onKeyUp={handleKeyPress} class="flex flex-col p-2 outline-none"
+    return <Dialog onBackClick={finish} onKeyUp={handleKeyPress}
+        tabIndex={-1} class="flex flex-col p-2 outline-none"
         title={`学习${app.sprint.value > 0 ? `(${app.sprint.value})` : ''}`}>
         <div class="relative flex gap-4 text-[150%] justify-between items-end">
             <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
@@ -179,9 +180,8 @@ export default () => {
                 {mwls.value.length && <div/>}
             </div>}
         </div>
-        <div class="relative grow h-0 pb-4 flex flex-col overflow-y-auto"
-            tabIndex={-1} ref={mainDiv} onClick={handleClick}
-            onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
+        <div class="relative grow h-0 pb-4 flex flex-col overflow-y-auto" ref={mainDiv}
+            onClick={handleClick} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}>
             <div class="py-2 flex gap-2 flex-wrap justify-between">
                 <div class="text-4xl font-bold">{app.citem.value.word}</div>
