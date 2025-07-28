@@ -20,11 +20,11 @@ export default () => <Dialog class="flex flex-col" title="学习进度">
         <Button onClick={() => app.go('#setting')}>
             <i class="i-material-symbols-settings" /> 设置
         </Button>
-        <Button onClick={() => app.go('#issue')}>
-            <i class="i-material-symbols-volume-up" /> 问题
-        </Button>
         <Button onClick={() => app.go('#about')}>
             <i class="i-arcticons-goabout" /> 关于
+        </Button>
+        <Button onClick={() => app.go('#issue')}>
+            <i class="i-material-symbols-error" /> 问题
         </Button>
         <Button onClick={() => app.go('#help')}>
             <i class="i-material-symbols-help-outline" /> 帮助

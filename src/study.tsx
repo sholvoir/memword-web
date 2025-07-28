@@ -20,21 +20,23 @@ export default () => {
         await mem.syncTasks();
         app.totalStats();
     }
-    if (!app.citem.value) return (app.go(), <div />);
     const mainDiv = useRef<HTMLDivElement>(null);
     const cindex = useSignal(0);
     const touchPos = { startY: 0, endY: 0, cScrollTop: 0, moveTop: 0 }
     const mwls = useSignal<Array<IWordList>>([]);
     const showAddToBookMenu = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
-    const handleIKnown = (level?: number) => mem.studied(app.citem.value!.word, level);
+    const handleIKnown = async (level?: number) => {
+        if (app.citem.value) await mem.studied(app.citem.value.word, level);
+    }
     const studyNext = async () => {
         if (app.sprint.value < 0) return finish();
+        app.sprint.value++;
+        app.citem.value = undefined;
+        app.isPhaseAnswer.value = false;
         const item = await mem.getEpisode(app.wlid.value);
         if (!item) return finish();
-        app.sprint.value++;
         app.citem.value = item;
-        app.isPhaseAnswer.value = false;
         cindex.value = 0;
     };
     const continueMove = async (x: number, max: number) => {
@@ -152,52 +154,54 @@ export default () => {
     return <Dialog onBackClick={finish} onKeyUp={handleKeyPress}
         tabIndex={-1} class="flex flex-col p-2 outline-none"
         title={`学习${app.sprint.value > 0 ? `(${app.sprint.value})` : ''}`}>
-        <div class="relative flex gap-4 text-[150%] justify-between items-end">
-            <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
-                onClick={() => handleIKnown().then(studyNext)}
-                class="i-material-symbols-check-circle text-green" />
-            <SButton disabled={!app.isPhaseAnswer.value} title="Z/M"
-                onClick={() => handleIKnown(0).then(studyNext)}
-                class="i-gridicons-cross-circle text-fuchsia" />
-            <SButton disabled={!app.isPhaseAnswer.value}
-                onClick={() => handleIKnown(13).then(studyNext)}
-                class="i-material-symbols-light-family-star text-yellow" />
-            <SButton disabled={!app.isPhaseAnswer.value} onClick={handleDelete}
-                class="i-material-symbols-delete-outline text-orange" />
-            <SButton onClick={() => player.current?.play()}
-                class="i-material-symbols-volume-up text-blue" />
-            <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
-                class="i-material-symbols-error text-red" />
-            <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
-                class="i-material-symbols-refresh text-purple" />
-            <SButton disabled={!app.isPhaseAnswer.value}
-                onClick={()=>showAddToBookMenu.value = !showAddToBookMenu.value}
-                class="i-material-symbols-dictionary-outline text-cyan">
-            </SButton>
-            <div class="text-lg">{app.citem.value.level}</div>
-            {showAddToBookMenu.value && <div class="menu absolute top-[100%] right-[36px] text-lg text-right bg-[var(--bg-body)] z-1">
-                {mwls.value.map(wl => <Fragment key={wl}><div/><menu onClick={()=>handleAddToBook(wl)}>{wl.disc??wl.wlid}</menu></Fragment>)}
-                {mwls.value.length && <div/>}
-            </div>}
-        </div>
-        <div class="relative grow h-0 pb-4 flex flex-col overflow-y-auto" ref={mainDiv}
-            onClick={handleClick} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}>
-            <div class="py-2 flex gap-2 flex-wrap justify-between">
-                <div class="text-4xl font-bold">{app.citem.value.word}</div>
-                {app.isPhaseAnswer.value &&
-                    <div class="text-2xl flex items-center">
-                        {app.citem.value.cards?.[cindex.value].phonetic}
-                    </div>
-                }
+        {app.citem.value && <>
+            <div class="relative flex gap-4 text-[150%] justify-between items-end">
+                <SButton disabled={!app.isPhaseAnswer.value} title="X/N"
+                    onClick={() => handleIKnown().then(studyNext)}
+                    class="i-material-symbols-check-circle text-green" />
+                <SButton disabled={!app.isPhaseAnswer.value} title="Z/M"
+                    onClick={() => handleIKnown(0).then(studyNext)}
+                    class="i-gridicons-cross-circle text-fuchsia" />
+                <SButton disabled={!app.isPhaseAnswer.value}
+                    onClick={() => handleIKnown(13).then(studyNext)}
+                    class="i-material-symbols-light-family-star text-yellow" />
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleDelete}
+                    class="i-material-symbols-delete-outline text-orange" />
+                <SButton onClick={() => player.current?.play()}
+                    class="i-material-symbols-volume-up text-blue" />
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleReportIssue}
+                    class="i-material-symbols-error text-red" />
+                <SButton disabled={!app.isPhaseAnswer.value} onClick={handleRefresh}
+                    class="i-material-symbols-refresh text-purple" />
+                <SButton disabled={!app.isPhaseAnswer.value}
+                    onClick={()=>showAddToBookMenu.value = !showAddToBookMenu.value}
+                    class="i-material-symbols-dictionary-outline text-cyan">
+                </SButton>
+                <div class="text-lg">{app.citem.value.level}</div>
+                {showAddToBookMenu.value && <div class="menu absolute top-[100%] right-[36px] text-lg text-right bg-[var(--bg-body)] z-1">
+                    {mwls.value.map(wl => <Fragment key={wl}><div/><menu onClick={()=>handleAddToBook(wl)}>{wl.disc??wl.wlid}</menu></Fragment>)}
+                    {mwls.value.length && <div/>}
+                </div>}
             </div>
-            {app.isPhaseAnswer.value && ((app.citem.value.cards?.length ?? 0) > 1 ?
-                <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
-                    {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
-                </Tab> :
-                <div class="grow"><Scard card={app.citem.value.cards?.[0]!} /></div>)
-            }
-            <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
-        </div>
+            <div class="relative grow h-0 pb-4 flex flex-col overflow-y-auto" ref={mainDiv}
+                onClick={handleClick} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}>
+                <div class="py-2 flex gap-2 flex-wrap justify-between">
+                    <div class="text-4xl font-bold">{app.citem.value.word}</div>
+                    {app.isPhaseAnswer.value &&
+                        <div class="text-2xl flex items-center">
+                            {app.citem.value.cards?.[cindex.value].phonetic}
+                        </div>
+                    }
+                </div>
+                {app.isPhaseAnswer.value && ((app.citem.value.cards?.length ?? 0) > 1 ?
+                    <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
+                        {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
+                    </Tab> :
+                    <div class="grow"><Scard card={app.citem.value.cards?.[0]!} /></div>)
+                }
+                <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
+            </div>
+        </>}
     </Dialog>;
 }
