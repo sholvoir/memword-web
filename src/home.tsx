@@ -21,7 +21,7 @@ export default () => <Dialog class="flex flex-col" title="学习进度">
             <i class="i-material-symbols-settings" /> 设置
         </Button>
         <Button onClick={() => app.go('#about')}>
-            <i class="i-arcticons-goabout" /> 关于
+            <i class="i-tabler-info-octagon-filled" /> 关于
         </Button>
         <Button onClick={() => app.go('#issue')}>
             <i class="i-material-symbols-error" /> 问题
