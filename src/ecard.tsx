@@ -2,11 +2,12 @@ import type { JSX } from "preact";
 import { parse, stringify } from 'yaml';
 import type { ICard } from "@sholvoir/memword-common/idict";
 import { useRef } from "preact/hooks";
-import { useSignal } from "@preact/signals";
+import { Signal, useSignal } from "@preact/signals";
 import * as app from "./app.tsx";
 import Button from "../components/button-ripple.tsx";
 
-export default ({ card, class: className, onClick }: {
+export default ({word, card, class: className, onClick }: {
+    word: Signal<string>
     card: ICard;
     onClick: () => void
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
@@ -35,7 +36,7 @@ export default ({ card, class: className, onClick }: {
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
             <Button class="button btn-normal"
-                onClick={() => card.sound = sound.value = 'https://dict.youdao.com/dictvoice?type=2&audio='}>
+                onClick={() => card.sound = sound.value = `https://dict.youdao.com/dictvoice?type=2&audio=${encodeURIComponent(word.value)}`}>
                 YDS
             </Button>
             <Button class="button btn-normal"

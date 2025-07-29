@@ -120,7 +120,7 @@ export default function Admin() {
                         disabled={!word.value} onClick={handleSearchClick}>Search</Button>
                 </div>
                 <div class="grow flex gap-2">
-                    {cards.value.map((card, i) => <Ecard class="grow" key={card} card={card} onClick={()=>currentCardIndex.value=i}/>)}
+                    {cards.value.map((card, i) => <Ecard class="grow" key={card} word={word} card={card} onClick={()=>currentCardIndex.value=i}/>)}
                 </div>
                 <div class="flex justify-between gap-2">
                     <Button class="grow button btn-normal"
