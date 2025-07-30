@@ -36,7 +36,7 @@ export default ({word, card, class: className, onClick }: {
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
                 onInput={e => card.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
             <Button class="button btn-normal"
-                onClick={() => card.sound = sound.value = `https://dict.youdao.com/dictvoice?type=2&audio=${encodeURIComponent(word.value)}`}>
+                onClick={() => card.sound = sound.value = `https://dict.youdao.com/dictvoice?type=2&audio=${word.value.replaceAll(' ', '+')}`}>
                 YDS
             </Button>
             <Button class="button btn-normal"

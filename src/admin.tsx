@@ -110,7 +110,9 @@ export default function Admin() {
     }
     useEffect(() => { init() }, []);
     return auth.value && <>
-        <div class="text-center bg-[var(--bg-title)] p-1">{tips.value || `系统管理-${currentCardIndex.value}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`}</div>
+        <div class={`text-center ${tips.value?'bg-[var(--bg-button-prime)]':'bg-[var(--bg-title)]'} p-1}`}>
+            {tips.value || `系统管理-${currentCardIndex.value}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`}
+        </div>
         <div class="body grow flex flex-col gap-2 p-2">
             <div class="h-4 grow-4 flex flex-col gap-2">
                 <div class="flex gap-2">
