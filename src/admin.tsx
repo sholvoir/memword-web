@@ -82,6 +82,7 @@ export default function Admin() {
     }
     const handleProcessIssueClick = async () => {
         const issue = issues.value[currentIssueIndex.value];
+        if (!issue) return;
         const result = await mem.deleteServerIssue(issue._id) as any;
         if (result.acknowledged && result.deletedCount > 0) {
             issues.value = [
@@ -110,7 +111,7 @@ export default function Admin() {
     }
     useEffect(() => { init() }, []);
     return auth.value && <>
-        <div class={`text-center ${tips.value?'bg-[var(--bg-button-prime)]':'bg-[var(--bg-title)]'} p-1}`}>
+        <div class={`text-center p-2 ${tips.value?'bg-[var(--bg-button-prime)]':'bg-[var(--bg-title)]'}`}>
             {tips.value || `系统管理-${currentCardIndex.value}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`}
         </div>
         <div class="body grow flex flex-col gap-2 p-2">
