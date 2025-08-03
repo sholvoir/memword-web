@@ -1,84 +1,28 @@
-// deno-lint-ignore-file no-empty
-import { requestInit, getRes, getJson, STATUS_CODE } from '@sholvoir/generic/http';
+// deno-lint-ignore-file no-empty no-cond-assign
+import { STATUS_CODE } from '@sholvoir/generic/http';
 import { blobToBase64 } from "@sholvoir/generic/blob";
 import { JWT } from "@sholvoir/generic/jwt";
-import { defaultSetting, type ISetting } from "@sholvoir/memword-common/isetting";
-import type { ICard, IDict } from "@sholvoir/memword-common/idict";
-import type { IIssue } from "@sholvoir/memword-common/iissue";
-import { type IWordList, splitID } from "@sholvoir/memword-common/iwordlist";
-import { type IClientWordlist, getClientWordlist } from "./wordlists.ts";
+import { dictExpire } from "./common.ts";
+import { type ISetting, defaultSetting } from "@sholvoir/memword-common/isetting";
+import { type IBook, splitID } from "@sholvoir/memword-common/ibook";
 import { type IStats, statsFormat } from './istat.ts';
-import { type IItem, item2task, newItem } from "./iitem.ts";
-import { B2_BASE_URL, now } from "@sholvoir/memword-common/common";
-import { API_URL } from "./common.ts";
+import { type IItem, item2task, itemMergeDict, newItem } from "./iitem.ts";
+import { now } from "@sholvoir/memword-common/common";
 import * as idb from './indexdb.ts';
-
-const dictExpire = 7 * 24 * 60 * 60;
-let auth: string;
-const authHead = () => ({ "Authorization": `Bearer ${auth}` });
-const getAuth = async () => auth ?? (auth = await idb.getMeta('_auth'));
-
-const getServerDict = (word: string) =>
-    getJson<IDict>(`${API_URL}/pub/dict?q=${encodeURIComponent(word)}`, undefined, { cache: 'reload' });
-
-const getServerAndUpdateLocalDict = async (word: string) => {
-    const item = await idb.getItem(word);
-    const dict = await getServerDict(word);
-    if (!dict) return item;
-    if (!item) return newItem(dict);
-    if (item.version !== undefined && dict.version !== undefined && item.version >= dict.version)
-        return (await idb.updateDict(item));
-    if (dict.cards) for (const card of dict.cards) if (card.sound) {
-        const resp = await fetch(`${API_URL}/pub/sound?q=${encodeURIComponent(card.sound)}`,
-            { cache: 'force-cache' });
-        if (resp.ok) card.sound = await blobToBase64(await resp.blob());
-    }
-    return (await idb.updateDict(dict));
-}
-
-const submitIssues = async () => {
-    const issues = await idb.getIssues();
-    for (const issue of issues) {
-        const res = await fetch(`${API_URL}/api/issue`, requestInit(issue, 'POST', authHead()));
-        if (!res.ok) break;
-        await idb.deleteIssue(issue.id);
-    }
-};
-
-export let setting: ISetting = defaultSetting();
-
-export const itemUpdateDict = async (item: IItem) => {
-    if (!item.dictSync) return (await getServerAndUpdateLocalDict(item.word!)) ?? item;
-    if (item.dictSync + dictExpire < now()) getServerAndUpdateLocalDict(item.word!);
-    return item;
-}
+import * as srv from './server.ts';
 
 export const getUser = async () => {
-    if (!auth) await getAuth();
+    let auth;
+    if (srv.authHead.Authorization)
+        auth = srv.authHead.Authorization.split(' ')[1];
+    else {
+        auth = await idb.getMeta('_auth');
+        if (auth) srv.authHead.Authorization = `Bearer ${auth}`;
+    }
     if (auth) return JWT.decode(auth)[1]?.aud as string;
 }
 
-export const getDefinition = async (word: string) => {
-    return await getJson<ICard>(`${API_URL}/pub/definition`, { q: word });
-}
-
-export const getDict = async (word: string) => {
-    try { return await getServerDict(word); } catch { }
-}
-
-export const putDict = async (dict: IDict) => {
-    try {
-        const res = await fetch(`${API_URL}/admin/dict`, requestInit(dict, 'PUT', authHead()));
-        return res.ok;
-    } catch { return false; }
-}
-
-export const deleteDict = async (word: string) => {
-    try {
-        const res = await getRes(`${API_URL}/admin/dict`, { q: word }, { method: 'DELETE', headers: authHead() });
-        return res.ok;
-    } catch { return false; }
-}
+export let setting: ISetting = defaultSetting();
 
 export const initSetting = async () => {
     const s = await idb.getMeta('_setting');
@@ -91,7 +35,7 @@ export const syncSetting = async (cSetting?: ISetting) => {
     if (lSetting && lSetting.version > setting.version) setting = lSetting;
     else await idb.setMeta('_setting', setting);
     try {
-        const res = await fetch(`${API_URL}/api/setting`, requestInit(setting, 'POST', authHead()));
+        const res = await srv.postSetting(setting);
         if (!res.ok) return;
         const sSetting: ISetting = await res.json();
         if (sSetting.version > setting.version)
@@ -99,12 +43,31 @@ export const syncSetting = async (cSetting?: ISetting) => {
     } catch { }
 }
 
+export const updateDict = async (item: IItem) => {
+    const dict = await srv.getDict(item.word);
+    if (!dict) return item;
+    if (item.version !== undefined && dict.version !== undefined && item.version >= dict.version)
+        return item;
+    if (dict.entries) for (const entry of dict.entries) if (entry.sound) {
+        const resp = await srv.getSound(entry.sound);
+        if (resp.ok) entry.sound = await blobToBase64(await resp.blob());
+    }
+    idb.putItem(itemMergeDict(item, dict));
+    return item;
+}
+
+const itemUpdateDict = async (item: IItem) => {
+    if (!item.dictSync) return await updateDict(item);
+    if (item.dictSync + dictExpire < now()) updateDict(item);
+    return item;
+}
+
 export const search = async (word: string) => {
     if (idb.tempItems.has(word)) return idb.tempItems.get(word)!;
     const item = await idb.getItem(word);
     if (!item) {
         try {
-            const dict = await getServerDict(word);
+            const dict = await srv.getDict(word);
             if (!dict) return;
             const nitem = newItem(dict);
             idb.tempItems.set(word, nitem);
@@ -114,29 +77,35 @@ export const search = async (word: string) => {
     return await itemUpdateDict(item);
 }
 
-export const getUpdatedItem = (word: string) => getServerAndUpdateLocalDict(word);
-
-export const getEpisode = async (wlid?: string) => {
-    const item = await idb.getEpisode(wlid ? (await getClientWordlist(wlid))?.wordSet : undefined);
+export const getEpisode = async (bid?: string) => {
+    let item: IItem | undefined;
+    if (bid) {
+        const wordSet = (await getBook(bid))?.content as Set<string>;
+        item = await idb.getEpisode((word) => wordSet.has(word));
+    }
+    item = await idb.getEpisode();
     if (item) return await itemUpdateDict(item);
 }
 
 export const deleteItem = async (word: string) => {
     try {
-        const resp = await fetch(`${API_URL}/api/task`, requestInit([word], 'DELETE', authHead()));
-        if (!resp.ok) return console.error('Network Error: get sync task data error.');
+        const resp = await srv.deleteTask([word]);
+        if (!resp.ok) return console.error('Fail for delete task');
         await idb.deleteItem(word);
         return true;
-    } catch { return false }
+    } catch {
+        console.error('Network Error: delete task data error.');
+        return false;
+    }
 }
 
-export const studied = (word: string, level?: number) => idb.studied(word, level);
-
-export const addTasks = async (wlid: string) => {
-    const wordlist = await getClientWordlist(wlid);
-    if (!wordlist) return false;
-    await idb.addTasks(wordlist.wordSet);
-    return true;
+export const addTasks = async (bid: string) => {
+    const book = await getBook(bid);
+    if (book?.content) {
+        await idb.addTasks(book.content);
+        return true;
+    }
+    return false;
 }
 
 export const syncTasks = async () => {
@@ -144,7 +113,7 @@ export const syncTasks = async () => {
         const thisTime = now();
         const lastTime: number = (await idb.getMeta('_sync-time')) ?? 1;
         const tasks = (await idb.getItems(lastTime)).map(item2task);
-        const resp = await fetch(`${API_URL}/api/task`, requestInit(tasks, 'POST', authHead()));
+        const resp = await srv.postTasks(tasks);
         if (!resp.ok) return console.error('Network Error: get sync task data error.');
         const ntasks = await resp.json();
         await idb.mergeTasks(ntasks);
@@ -153,110 +122,82 @@ export const syncTasks = async () => {
     } catch { return false }
 }
 
+const submitIssues = async () => {
+    const issues = await idb.getIssues();
+    for (const issue of issues) {
+        const res = await srv.postIssue(issue.issue)
+        if (!res.ok) break;
+        await idb.deleteIssue(issue.id);
+    }
+};
+
 export const submitIssue = async (issue: string) => {
     await idb.addIssue(issue);
     submitIssues();
 }
 
-export const getServerIssues = () =>
-    getJson<Array<IIssue>>(`${API_URL}/admin/issue`, undefined, {
-        method: 'GET',  headers: authHead()
-    });
-
-export const deleteServerIssue = (id: string) =>
-    getJson(`${API_URL}/admin/issue`, {id}, {
-        method: 'DELETE', headers: authHead()
-    });
-
 export const totalStats = async () => {
-    const cwls: Array<IClientWordlist | undefined> = [];
-    for (const wlid of setting.books) cwls.push(await getClientWordlist(wlid));
-    return { format: statsFormat, stats: await idb.getStats(cwls) } as IStats;
+    const books: Array<IBook> = [];
+    for (const bid of setting.books) {
+        const book = await getBook(bid);
+        if (book) books.push(book);
+    }
+    return { format: statsFormat, stats: await idb.getStats(books) } as IStats;
 }
 
-export const getVocabulary = async () => {
-    const wordlist = await getClientWordlist('system/vocabulary');
-    if (wordlist) return Array.from(wordlist.wordSet).sort();
-}
-
-export const postVocabulary = async (words: string) => {
-    try {
-        const res = await getRes(`${API_URL}/admin/vocabulary`, undefined,
-            { body: words, method: 'POST', headers: authHead() });
-        return res.ok
-    } catch { return false }
-}
-
-export const getServerWordlist = async () => {
-    const wls = await getJson<Array<IWordList>>(`${API_URL}/pub/wordlist`);
-    if (!wls) return [];
-    (async () => {
+export const getServerBooks = async () => {
+    const books = await srv.getBooks();
+    if (books) {
         const time = now();
-        await idb.setMeta('_wl-time', time);
-        const deleted = await idb.syncWordlists(wls);
+        const deleted = await idb.syncBooks(books);
         const setting = await idb.getMeta('_setting') as ISetting;
-        const nbooks = setting.books.filter(wlid => !deleted.has(wlid));
+        const nbooks = setting.books.filter(bid => !deleted.has(bid));
         if (nbooks.length !== setting.books.length) {
             setting.books = nbooks;
             setting.version = time;
             await idb.setMeta('_setting', setting);
         }
-    })();
-    return wls;
+    }
 }
 
-export const getWordlists = async (filter: (wl: IWordList) => unknown) => {
-    try {
-        const owlTime = await idb.getMeta('_wl-time') as number;
-        const nwlTime = now();
-        if (nwlTime - owlTime > 3600 * 24)
-            return (await getServerWordlist()).filter(filter);
-    } catch { }
-    return idb.getWordlists(filter);
+export const getBook = async (bid: string) => {
+    const book = await idb.getBook(bid);
+    if (!book) return undefined;
+    if (book.content) return book;
+    const res = await srv.getBook(bid);
+    if (!res.ok) return book;
+    const text = await res.text();
+    const content = new Set<string>();
+    for (let word of text.split('\n')) if (word = word.trim()) content.add(word);
+    book.content = content;
+    idb.putBook(book);
+    return book;
 }
 
-export const postMyWordList = async (name: string, words: string, disc?: string, replace?: '1') => {
-    const res = await getRes(`${API_URL}/api/wordlist`, { name, disc, replace },
-        { body: words, method: 'POST', headers: authHead() });
+export const getVocabulary = async () =>
+    (await getBook('system/vocabulary'))?.content;
+
+export const uploadBook = async (name: string, words: string, disc?: string, replace?: boolean) => {
+    const res = replace ? await srv.putBook(name, words, disc) : await srv.postBook(name, words, disc);
     switch (res.status) {
         case STATUS_CODE.NotAcceptable: return [res.status, await res.json()];
-        case STATUS_CODE.OK: idb.putWordlist(await res.json()); return [res.status];
+        case STATUS_CODE.OK: idb.putBook(await res.json()); return [res.status];
         default: return [res.status]
     }
 }
 
-export const deleteWordList = async (wlid: string) => {
+export const deleteBook = async (bid: string) => {
     try {
-        const name = splitID(wlid)[1];
-        const res = await getRes(`${API_URL}/api/wordlist`, { name },
-            { method: 'DELETE', headers: authHead() });
-        if (res.ok) await idb.deleteWordlist(wlid);
+        const name = splitID(bid)[1];
+        const res = await srv.deleteBook(name);
+        if (res.ok) await idb.deleteBook(bid);
         return res.ok;
     } catch { return false }
 }
 
-export const otp = async (name: string) => {
-    try {
-        const res = await getRes(`${API_URL}/pub/otp`, { name });
-        return res.status;
-    } catch { return -1 }
-}
-
-export const signup = async (phone: string, name: string) => {
-    try {
-        const res = await getRes(`${API_URL}/pub/signup`, { phone, name });
-        return res.status;
-    } catch { return -1 }
-}
-
 export const signin = async (name: string, code: string) => {
-    try {
-        const res = await getRes(`${API_URL}/pub/signin`, { name, code });
-        if (res.ok) await idb.setMeta('_auth', (await res.json()).auth);
-        console.log(`signin ${res.status}`);
-        return res.status;
-    } catch { return -1 }
+    const res = await srv.signin(name, code);
+    if (res.ok) await idb.setMeta('_auth', (await res.json()).auth);
+    console.log(`signin ${res.status}`);
+    return res.status;
 }
-export const signout = idb.clear;
-
-export const getB2File = (fileName: string) => fetch(`${B2_BASE_URL}/${fileName}`);

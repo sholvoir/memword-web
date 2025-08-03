@@ -2,6 +2,7 @@ import { useSignal } from "@preact/signals";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
+import * as srv from '../lib/server.ts';
 import Button from '../components/button-ripple.tsx';
 import AButton from '../components/button-base.tsx';
 import SInput from '../components/input-simple.tsx';
@@ -24,36 +25,46 @@ export default () => {
                 canSendOTP.value = true;
             }
         }, 1000);
-        switch (await mem.otp(app.name.value)) {
-            case STATUS_CODE.BadRequest:
-                return app.showTips('请输入用户名');
-            case STATUS_CODE.NotFound:
-                return app.showTips('未找到用户');
-            case STATUS_CODE.FailedDependency:
-                return app.showTips('此用户未注册手机号码');
-            case STATUS_CODE.TooEarly:
-                return app.showTips('请求OTP过于频繁');
-            case STATUS_CODE.OK:
-                return app.showTips('OTP已发送');
-            default: return app.showTips('未知服务器错误');
+        try {
+            switch ((await srv.otp(app.name.value)).status) {
+                case STATUS_CODE.BadRequest:
+                    return app.showTips('请输入用户名');
+                case STATUS_CODE.NotFound:
+                    return app.showTips('未找到用户');
+                case STATUS_CODE.FailedDependency:
+                    return app.showTips('此用户未注册手机号码');
+                case STATUS_CODE.TooEarly:
+                    return app.showTips('请求OTP过于频繁');
+                case STATUS_CODE.OK:
+                    return app.showTips('OTP已发送');
+                default: app.showTips('未知服务器错误');
+            }
+        } catch {
+            app.showTips('网络错误');
         }
     };
 
     const handleClickLogin = async () => {
-        switch (await mem.signin(app.name.value, code.value)) {
-            case STATUS_CODE.BadRequest:
-                return app.showTips('请输入用户名和密码');
-            case STATUS_CODE.NotFound:
-                return app.showTips('未找到用户');
-            case STATUS_CODE.Unauthorized:
-                return app.showTips('错误的密码');
-            case STATUS_CODE.OK:
-                app.showTips('已登录');
-                if (timer) clearInterval(timer);
-                location.reload();
+        try {
+            switch (await mem.signin(app.name.value, code.value)) {
+                case STATUS_CODE.BadRequest:
+                    return app.showTips('请输入用户名和密码');
+                case STATUS_CODE.NotFound:
+                    return app.showTips('未找到用户');
+                case STATUS_CODE.Unauthorized:
+                    return app.showTips('错误的密码');
+                case STATUS_CODE.OK:
+                    app.showTips('已登录');
+                    if (timer) clearInterval(timer);
+                    location.reload();
+                    break;
+                default: app.showTips('未知服务器错误');
+            }
+        } catch {
+            app.showTips('网络错误');
         }
     };
-    return <Dialog class="p-2 flex flex-col" title="登录" onBackClick={()=>app.go()}>
+    return <Dialog class="p-2 flex flex-col" title="登录" onBackClick={() => app.go()}>
         <div class="w-64 m-auto flex flex-col">
             <label for="name">用户名</label>
             <SInput name="name" class="mb-3" placeholder="name" autoCapitalize="none" binding={app.name} />

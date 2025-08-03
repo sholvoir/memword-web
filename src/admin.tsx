@@ -1,9 +1,11 @@
 // deno-lint-ignore-file
 import { useEffect } from 'preact/hooks';
 import { useSignal } from "@preact/signals";
-import { version } from "../lib/version.ts";
-import type { ICard, IDict } from "@sholvoir/memword-common/idict";
+import { version } from "../lib/common.ts";
+import type { IEntry, IDict } from "@sholvoir/memword-common/idict";
 import type { IIssue } from "@sholvoir/memword-common/iissue";
+import * as srv from '../lib/server.ts';
+import * as idb from '../lib/indexdb.ts';
 import * as mem from '../lib/mem.ts';
 import TextInput from "../components/input-text.tsx";
 import Button from "../components/button-ripple.tsx";
@@ -12,7 +14,7 @@ import List from '../components/list.tsx';
 
 export default function Admin() {
     const auth = useSignal(false);
-    const vocabulary = useSignal<Array<string>>([]);
+    const vocabulary = useSignal<Iterable<string>>([]);
     const tips = useSignal('');
     const hideTips = () => tips.value = '';
     const showTips = (content: string, autohide = true) =>
@@ -20,54 +22,54 @@ export default function Admin() {
 
     const ignoreWords = useSignal('');
     const handleUploadIgnoreWordsClick = async () => {
-        const result = await mem.postVocabulary(ignoreWords.value);
+        const result = await srv.postVocabulary(ignoreWords.value);
         showTips(result ? '上传成功' : '上传失败');
     }
 
     const word = useSignal('');
     const currentWord = useSignal('_')
     const currentCardIndex = useSignal(0);
-    const cards = useSignal<Array<ICard>>([]);
+    const entries = useSignal<Array<IEntry>>([]);
     const handleSearchClick = async () => {
         const w = encodeURIComponent(word.value);
         window.open(`https://www.merriam-webster.com/dictionary/${w}`, 'merriam-webster');
         window.open(`https://www.oxfordlearnersdictionaries.com/us/search/english/?q=${w}`, 'oxfordlearnersdictionaries');
-        const dict = await mem.getDict(word.value);
+        const dict = await srv.getDict(word.value);
         if (!dict) return showTips('Not Found');
         currentWord.value = dict.word;
         currentCardIndex.value = 0;
-        if (dict.cards) for (const card of dict.cards)
-            if (card.meanings) for (const means of Object.values(card.meanings))
-                if (means) for (const m of means)
-                    if (!m.trans) m.trans = '';
-        cards.value = dict.cards ?? [];
+        if (dict.entries) for (const entry of dict.entries)
+            if (entry.meanings) for (const means of Object.values(entry.meanings))
+                if (means) for (const mean of means)
+                    if (!mean.trans) mean.trans = '';
+        entries.value = dict.entries ?? [];
         window.focus();
     };
     const handleAddCardClick = async () => {
-        const card = await mem.getDefinition(word.value);
+        const card = await srv.getDefinition(word.value);
         if (card) {
             if (card.meanings) for (const means of Object.values(card.meanings))
                 if (means) for (const m of means)
                     if (!m.trans) m.trans = '';
-            cards.value = [...cards.value, card];
+            entries.value = [...entries.value, card];
         }
     };
     const handleDeleteCardClick = () => {
-        if (cards.value.length > 1) cards.value = cards.value.toSpliced(currentCardIndex.value, 1);
-        if (currentCardIndex.value >= cards.value.length) currentCardIndex.value = cards.value.length - 1;
+        if (entries.value.length > 1) entries.value = entries.value.toSpliced(currentCardIndex.value, 1);
+        if (currentCardIndex.value >= entries.value.length) currentCardIndex.value = entries.value.length - 1;
     }
     const handleUpdateClick = async () => {
-        const dict: IDict = { word: word.value, cards: cards.value };
-        showTips((await mem.putDict(dict)) ? `success update word "${word.value}"!` : 'Error');
+        const dict: IDict = { word: word.value, entries: entries.value };
+        showTips((await srv.putDict(dict)) ? `success update word "${word.value}"!` : 'Error');
     };
     const handleDeleteClick = async () => {
-        showTips((await mem.deleteDict(word.value)) ? `success delete word "${word.value}"!` : 'Error')
+        showTips((await srv.deleteDict(word.value)) ? `success delete word "${word.value}"!` : 'Error')
     };
 
     const currentIssueIndex = useSignal(0);
     const issues = useSignal<Array<IIssue>>([]);
     const handleLoadIssueClick = async () => {
-        const is = await mem.getServerIssues();
+        const is = await srv.getIssues();
         if (is) {
             issues.value = is;
             handleIssueClick();
@@ -83,7 +85,7 @@ export default function Admin() {
     const handleProcessIssueClick = async () => {
         const issue = issues.value[currentIssueIndex.value];
         if (!issue) return;
-        const result = await mem.deleteServerIssue(issue._id) as any;
+        const result = await srv.deleteIssue(issue._id) as any;
         if (result.acknowledged && result.deletedCount > 0) {
             issues.value = [
                 ...issues.value.slice(0, currentIssueIndex.value),
@@ -95,7 +97,7 @@ export default function Admin() {
             else {
                 word.value = '';
                 currentWord.value = '_';
-                cards.value = [];
+                entries.value = [];
                 currentCardIndex.value = 0;
                 handleLoadIssueClick();
             }
@@ -118,18 +120,18 @@ export default function Admin() {
             <div class="h-4 grow-4 flex flex-col gap-2">
                 <div class="flex gap-2">
                     <TextInput name="word" placeholder="word" class="grow"
-                        binding={word} options={vocabulary.value} onChange={handleSearchClick} />
+                        binding={word} options={vocabulary} onChange={handleSearchClick} />
                     <Button class="button btn-normal"
                         disabled={!word.value} onClick={handleSearchClick}>Search</Button>
                 </div>
                 <div class="grow flex gap-2">
-                    {cards.value.map((card, i) => <Ecard class="grow" key={card} word={word} card={card} onClick={()=>currentCardIndex.value=i}/>)}
+                    {entries.value.map((card, i) => <Ecard class="grow" key={card} word={word} entry={card} onClick={()=>currentCardIndex.value=i}/>)}
                 </div>
                 <div class="flex justify-between gap-2">
                     <Button class="grow button btn-normal"
                         disabled={word.value!=currentWord.value} onClick={handleAddCardClick}>增卡</Button>
                     <Button class="grow button btn-normal"
-                        disabled={(word.value!=currentWord.value) || cards.value.length <= 1} onClick={handleDeleteCardClick}>删卡</Button>
+                        disabled={(word.value!=currentWord.value) || entries.value.length <= 1} onClick={handleDeleteCardClick}>删卡</Button>
                     <Button class="grow button btn-normal"
                         disabled={word.value!=currentWord.value} onClick={handleDeleteClick}>删除</Button>
                     <Button class="grow button btn-normal"

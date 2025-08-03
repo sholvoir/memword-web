@@ -1,39 +1,39 @@
 import { useEffect } from "preact/hooks";
 import { useSignal, useSignalEffect } from "@preact/signals";
 import * as mem from "../lib/mem.ts";
+import * as idb from "../lib/indexdb.ts";
 import * as app from "./app.tsx";
 import { settingFormat } from "@sholvoir/memword-common/isetting";
 import { now } from "@sholvoir/memword-common/common";
-import { compareWL, type IWordList } from "@sholvoir/memword-common/iwordlist";
+import { compareWL, type IBook } from "@sholvoir/memword-common/ibook";
 import Dialog from './dialog.tsx';
 import Input from '../components/input-simple.tsx';
 import Button from '../components/button-ripple.tsx';
 import List from '../components/list.tsx';
 
 export default () => {
+    const myBooks = useSignal<Array<IBook>>([]);
     const myIndex = useSignal(0);
-    const myBooks = useSignal<Array<IWordList>>([]);
-    const bookFilter = useSignal('^common');
+    const subBooks = useSignal<Array<IBook>>([]);
     const subIndex = useSignal(0);
-    const wls = useSignal<Array<IWordList>>([]);
+    const books = useSignal<Array<IBook>>([]);
     const cindex = useSignal(0);
-    const subBooks = useSignal<Array<IWordList>>([]);
+    const bookFilter = useSignal('^common');
     const handleNewBookClick = () => {
-        app.wl.value = undefined;
-        app.go('#wordlist');
-    }
-    const handleDeleteBookClick = async () => {
-        app.showTips(await mem.deleteWordList(myBooks.value[myIndex.value].wlid) ?
-            '删除成功': '删除失败');
-        myBooks.value = [...myBooks.value.slice(0, myIndex.value),
-            ...myBooks.value.slice(myIndex.value + 1)];
+        app.book.value = undefined;
+        app.go('#book');
     }
     const handleUpdateBookClick = () => {
-        app.wl.value = myBooks.value[myIndex.value];
-        app.go('#wordlist');
+        app.book.value = myBooks.value[myIndex.value];
+        app.go('#book');
+    }
+    const handleDeleteBookClick = async () => {
+        const success = await mem.deleteBook(myBooks.value[myIndex.value].bid);
+        app.showTips(success ? '删除成功': '删除失败');
+        if (success) myBooks.value = myBooks.value.filter((_, i) => i != myIndex.value);
     }
     const handleAddSubClick = () => {
-        subBooks.value = [...subBooks.value, wls.value[cindex.value]];
+        subBooks.value = [...subBooks.value, books.value[cindex.value]];
     }
     const handleDeleteSubClick = () => {
         subBooks.value = [...subBooks.value.slice(0, subIndex.value),
@@ -41,7 +41,7 @@ export default () => {
     }
     const handleAddTaskClick = async () => {
         app.showLoading.value = true;
-        await mem.addTasks(subBooks.value[subIndex.value].wlid);
+        await mem.addTasks(subBooks.value[subIndex.value].bid);
         await app.totalStats();
         app.showLoading.value = false;
     }
@@ -49,7 +49,7 @@ export default () => {
         await mem.syncSetting({
             format: settingFormat,
             version: now(),
-            books: subBooks.value.map(wl => wl.wlid)
+            books: subBooks.value.map(wl => wl.bid)
         });
         await app.totalStats();
         app.go();
@@ -57,22 +57,17 @@ export default () => {
     const handleSignoutClick = () => {
         app.user.value = '';
         app.go('#about');
-        mem.signout();
+        idb.clear();
     };
     const init = async () => {
-        wls.value = (await mem.getServerWordlist())
-            .filter(wl => wl.wlid.startsWith('common'))
-            .sort(compareWL);
-        subBooks.value = await mem.getWordlists(wl =>
-            mem.setting.books.includes(wl.wlid));
-        myBooks.value = (await mem.getServerWordlist())
-            .filter(wl => wl.wlid.startsWith(app.user.value))
-            .sort(compareWL);
+        books.value = (await idb.getBooks(wl => wl.bid.startsWith('common'))).sort(compareWL);
+        subBooks.value = await idb.getBooks(wl =>mem.setting.books.includes(wl.bid));
+        myBooks.value = (await idb.getBooks(wl => wl.bid.startsWith(app.user.value)));
     }
     useSignalEffect(() => {
         (async () => {
             const regex = new RegExp(bookFilter.value);
-            wls.value = (await mem.getWordlists(wl => regex.test(wl.wlid) ||
+            books.value = (await idb.getBooks(wl => regex.test(wl.bid) ||
                 (wl.disc && regex.test(wl.disc)))).sort(compareWL);
         })()
     });
@@ -80,7 +75,7 @@ export default () => {
     return <Dialog class="p-2 gap-2 flex flex-col" title="设置">
         <fieldset class="border rounded shrink-0 overflow-y-auto px-2">
             <legend>我的词书</legend>
-            <List cindex={myIndex} options={myBooks.value.map(wl=>wl.disc??wl.wlid)}
+            <List cindex={myIndex} options={myBooks.value.map(wl=>wl.disc??wl.bid)}
                 class="px-2" activeClass="bg-[var(--bg-title)]"/>
         </fieldset>
         <div class="flex justify-between gap-2">
@@ -95,7 +90,7 @@ export default () => {
         <fieldset class="border rounded max-h-[70%] grow shrink overflow-y-auto px-2">
             <legend>可用的词书</legend>
             <List class="px-2" cindex={cindex}
-                options={wls.value.map(wl => wl.disc ?? wl.wlid)}
+                options={books.value.map(wl => wl.disc ?? wl.bid)}
                 activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="flex justify-between gap-2">
@@ -107,7 +102,7 @@ export default () => {
         <fieldset class="border rounded shrink-0 overflow-y-auto px-2">
             <legend>我订阅的词书</legend>
             <List class="px-2" cindex={subIndex}
-                options={subBooks.value.map(wl => wl.disc ?? wl.wlid)}
+                options={subBooks.value.map(wl => wl.disc ?? wl.bid)}
                 activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="pb-3 flex justify-between gap-2">

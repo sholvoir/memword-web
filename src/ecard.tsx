@@ -1,19 +1,19 @@
 import type { JSX } from "preact";
 import { parse, stringify } from 'yaml';
-import type { ICard } from "@sholvoir/memword-common/idict";
+import type { IEntry } from "@sholvoir/memword-common/idict";
 import { useRef } from "preact/hooks";
 import { Signal, useSignal } from "@preact/signals";
 import * as app from "./app.tsx";
 import Button from "../components/button-ripple.tsx";
 
-export default ({word, card, class: className, onClick }: {
+export default ({word, entry, class: className, onClick }: {
     word: Signal<string>
-    card: ICard;
+    entry: IEntry;
     onClick: () => void
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
-    const phonetic = useSignal(card.phonetic);
-    const meanings = useSignal(stringify(card.meanings, { lineWidth: 0 }));
-    const sound = useSignal(card.sound);
+    const phonetic = useSignal(entry.phonetic);
+    const meanings = useSignal(stringify(entry.meanings, { lineWidth: 0 }));
+    const sound = useSignal(entry.sound);
     const parseError = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
     const handlePlayClick = () => {
@@ -22,21 +22,21 @@ export default ({word, card, class: className, onClick }: {
     }
     const handleMeaningsChange = (e: JSX.TargetedInputEvent<HTMLTextAreaElement>) => {
         try {
-            card.meanings = parse(meanings.value = e.currentTarget.value);
+            entry.meanings = parse(meanings.value = e.currentTarget.value);
             parseError.value = false;
          }
         catch { parseError.value = true }
     }
     return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`} onClick={onClick}>
         <input name="phonetic" placeholder="phonetic" value={phonetic} onFocus={onClick}
-            onInput={e => card.phonetic = phonetic.value = e.currentTarget.value} />
+            onInput={e => entry.phonetic = phonetic.value = e.currentTarget.value} />
         <textarea name="meanings" placeholder="meanings" class={`h-32 grow font-mono ${parseError.value ? 'text-red' : ''}`} value={meanings}
             onInput={handleMeaningsChange} onFocus={onClick}/>
         <div class="shrink flex gap-2">
             <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
-                onInput={e => card.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
+                onInput={e => entry.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
             <Button class="button btn-normal"
-                onClick={() => card.sound = sound.value = `https://dict.youdao.com/dictvoice?type=2&audio=${word.value.replaceAll(' ', '+')}`}>
+                onClick={() => entry.sound = sound.value = `https://dict.youdao.com/dictvoice?type=2&audio=${word.value.replaceAll(' ', '+')}`}>
                 YDS
             </Button>
             <Button class="button btn-normal"

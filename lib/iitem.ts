@@ -11,8 +11,8 @@ export const neverItem = (word: string, time: number): IItem =>
 
 export const newItem = (dict: IDict): IItem => {
     const time = now();
-    return { word: dict.word, cards: dict.cards, level: 0,
-        last: time, next: time, dictSync: time
+    return { word: dict.word, entries: dict.entries, version: dict.version,
+        level: 0, last: time, next: time, dictSync: time
     }
 };
 
@@ -26,7 +26,8 @@ export const itemMergeTask = (item: IItem, task: ITask) => {
 };
 
 export const itemMergeDict = (item: IItem, dict: IDict) => {
-    item.cards = dict.cards;
+    if (item.word != dict.word) throw Error("Can not merge!")
+    item.entries = dict.entries;
     if (dict.version !== undefined) item.version = dict.version;
     return item;
 }

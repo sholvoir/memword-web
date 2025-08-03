@@ -1,10 +1,8 @@
 // deno-lint-ignore-file
 import type { JSX } from "preact";
 import { useEffect } from "preact/hooks";
-import { wait } from "@sholvoir/generic/wait";
 import * as app from "./app.tsx";
 import * as mem from "../lib/mem.ts";
-import * as idb from "../lib/indexdb.ts";
 import Home from "./home.tsx";
 import Help from './help.tsx';
 import About from './about.tsx';
@@ -14,7 +12,7 @@ import Dict from './search.tsx';
 import Study from './study.tsx';
 import Signup from './signup.tsx';
 import Signin from './signin.tsx';
-import WordList from './wordlist.tsx';
+import Book from './book.tsx';
 
 export default () => {
     const dialogs = new Map<app.TDial, JSX.Element>();
@@ -27,17 +25,16 @@ export default () => {
     dialogs.set('#study', <Study />);
     dialogs.set('#signup', <Signup />);
     dialogs.set('#signin', <Signin />);
-    dialogs.set('#wordlist', <WordList />);
+    dialogs.set('#book', <Book />);
 
     const init = async () => {
         if (app.user.value = (await mem.getUser()) ?? '') {
             app.go('#home');
             await mem.initSetting();
             await app.totalStats();
-            const v = await mem.getVocabulary();
-            if (v) app.vocabulary.value = v;
             (async () => {
-                mem.getServerWordlist();
+                await mem.getServerBooks();
+                app.vocabulary.value = (await mem.getVocabulary())??[];
                 await mem.syncSetting();
                 await mem.syncTasks();
                 await app.totalStats();

@@ -1,11 +1,11 @@
 import { signal } from "@preact/signals";
 import { type IStats, initStats } from "../lib/istat.ts";
 import type { IItem } from "../lib/iitem.ts";
-import type { IWordList } from "@sholvoir/memword-common/iwordlist";
+import type { IBook } from "@sholvoir/memword-common/ibook";
 import * as mem from "../lib/mem.ts";
 
 const DIALS = ['', '#home', '#help', '#about', '#issue', '#setting',
-    '#wordlist', '#search', '#study', '#signup', '#signin'] as const;
+    '#book', '#search', '#study', '#signup', '#signin'] as const;
 export type TDial = typeof DIALS[number];
 
 export const user = signal('');
@@ -13,13 +13,13 @@ export const stats = signal<IStats>(initStats());
 export const tips = signal('');
 export const isPhaseAnswer = signal(false);
 export const citem = signal<IItem>();
-export const wlid = signal<string>();
+export const bid = signal<string>();
 export const sprint = signal(-1);
 export const name = signal('');
-export const wl = signal<IWordList>();
+export const book = signal<IBook>();
 export const showLoading = signal(false);
 export const loca = signal<TDial>('');
-export const vocabulary = signal<Array<string>>([]);
+export const vocabulary = signal<Iterable<string>>([]);
 
 export const totalStats = async () => stats.value = await mem.totalStats();
 export const hideTips = () => tips.value = '';
@@ -29,7 +29,7 @@ export const showTips = (content: string, autohide = true) =>
 
 export const startStudy = async (wl?: string) => {
     showLoading.value = true;
-    const item = await mem.getEpisode(wlid.value = wl);
+    const item = await mem.getEpisode(bid.value = wl);
     showLoading.value = false;
     if (item) {
         citem.value = item;

@@ -1,4 +1,4 @@
-import { splitID } from "@sholvoir/memword-common/iwordlist";
+import { splitID } from "@sholvoir/memword-common/ibook";
 import { aggrToBAggr, BLevelName, type IStat } from "../lib/istat.ts";
 import * as app from './app.tsx';
 

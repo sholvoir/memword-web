@@ -20,7 +20,7 @@ export default () => {
         <TInput autoCapitalize="none" type="search" name="word"
             placeholder="word" class="m-2 w-[calc(100%-16px)]"
             binding={word} onChange={handleSearchClick}
-            options={app.vocabulary.value}
+            options={app.vocabulary}
         />
     </Dialog>;
 }

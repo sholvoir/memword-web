@@ -2,13 +2,12 @@
 import { type IStat, addTaskToStat, initStat } from "./istat.ts";
 import { type IItem, itemMergeDict, itemMergeTask, neverItem } from "./iitem.ts";
 import { type ITask, studyTask } from "@sholvoir/memword-common/itask";
-import type { IWordList } from "@sholvoir/memword-common/iwordlist";
+import type { IBook } from "@sholvoir/memword-common/ibook";
 import type { IDict } from "@sholvoir/memword-common/idict";
-import type { IClientWordlist } from "./wordlists.ts";
 import { now } from "@sholvoir/memword-common/common";
 
 export const tempItems = new Map<string, IItem>();
-type kvKey = '_sync-time' | '_setting' | '_auth' | '_wl-time';
+type kvKey = '_sync-time' | '_setting' | '_auth';
 let db: IDBDatabase;
 
 const run = (reject: (reason?: any) => void, func: (db: IDBDatabase) => void) => {
@@ -19,8 +18,8 @@ const run = (reject: (reason?: any) => void, func: (db: IDBDatabase) => void) =>
     request.onupgradeneeded = () => {
         const d = request.result;
         d.createObjectStore('mata', { keyPath: 'key' });
-        d.createObjectStore('wordlist', { keyPath: 'wlid' });
-        d.createObjectStore('issue', { keyPath: 'id', autoIncrement: true });
+        d.createObjectStore('book', { keyPath: 'bid' });
+        d.createObjectStore('issue', { keyPath: 'iid', autoIncrement: true });
         const iStore = d.createObjectStore('item', { keyPath: 'word' });
         iStore.createIndex('last', 'last');
         iStore.createIndex('next', 'next');
@@ -70,70 +69,76 @@ export const deleteIssue = (id: number) =>
         request.onsuccess = () => resolve();
     }));
 
-export const getWordlist = (wlid: string) =>
-    new Promise<IWordList | undefined>((resolve, reject) => run(reject, db => {
-        const request = db.transaction('wordlist', 'readonly').objectStore('wordlist').get(wlid);
+export const getBook = (bid: string) =>
+    new Promise<IBook | undefined>((resolve, reject) => run(reject, db => {
+        const request = db.transaction('book', 'readonly').objectStore('book').get(bid);
         request.onerror = reject;
-        request.onsuccess = () => resolve(request.result);
+        request.onsuccess = () => {
+            const book = request.result as IBook;
+            if (!book) return resolve(undefined)
+            //if (book.content) book.content = new Set<string>(book.content);
+            resolve(book);
+        }
     }));
 
-export const putWordlist = (wl: IWordList) =>
+export const putBook = (book: IBook) =>
     new Promise<void>((resolve, reject) => run(reject, db => {
-        const request = db.transaction('wordlist', 'readwrite').objectStore('wordlist').put(wl);
+        // const nbook: IBook = { ...book }
+        // if (nbook.content) book.content = Array.from(nbook.content);
+        const request = db.transaction('book', 'readwrite').objectStore('book').put(book);
         request.onerror = reject;
         request.onsuccess = () => resolve();
     }));
 
-export const getWordlists = (filter: (wl: IWordList) => unknown) =>
-    new Promise<Array<IWordList>>((resolve, reject) => run(reject, db => {
-        const wls: Array<IWordList> = [];
-        const transaction = db.transaction('wordlist', 'readonly');
+export const deleteBook = (bid: string) =>
+    new Promise<void>((resolve, reject) => run(reject, db => {
+        const request = db.transaction('book', 'readwrite').objectStore('book').delete(bid);
+        request.onerror = reject;
+        request.onsuccess = () => resolve();
+    }));
+
+export const getBooks = (filter: (book: IBook) => unknown) =>
+    new Promise<Array<IBook>>((resolve, reject) => run(reject, db => {
+        const books: Array<IBook> = [];
+        const transaction = db.transaction('book', 'readonly');
         transaction.onerror = reject;
-        transaction.oncomplete = () => resolve(wls);
-        transaction.objectStore('wordlist').openCursor().onsuccess = e => {
+        transaction.oncomplete = () => resolve(books);
+        transaction.objectStore('book').openCursor().onsuccess = e => {
             const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
             if (!cursor) return;
-            const wl = cursor.value as IWordList;
-            if (filter(wl)) wls.push(wl);
+            const wl = cursor.value as IBook;
+            if (filter(wl)) books.push(wl);
             cursor.continue();
         };
     }))
 
-export const syncWordlists = (wls: Array<IWordList>) =>
+export const syncBooks = (books: Array<IBook>) =>
     new Promise<Set<string>>((resolve, reject) => run(reject, db => {
-        const wlMap = new Map<string, IWordList>();
-        for (const wl of wls) wlMap.set(wl.wlid, wl);
+        const bookMap = new Map<string, IBook>();
+        for (const book of books) bookMap.set(book.bid, book);
         const deleted = new Set<string>();
-        const transaction = db.transaction('wordlist', 'readwrite');
+        const transaction = db.transaction('book', 'readwrite');
         transaction.onerror = reject;
         transaction.oncomplete = () => resolve(deleted);
-        const wStore = transaction.objectStore('wordlist');
-        wStore.openCursor().onsuccess = e => {
+        const bStore = transaction.objectStore('book');
+        bStore.openCursor().onsuccess = e => {
             const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
             if (!cursor) {
-                for (const [_, wl] of wlMap)
-                    wStore.add(wl);
+                for (const [_, book] of bookMap)
+                    bStore.add(book);
                 return;
             }
-            const cwl = cursor.value as IWordList;
-            if (wlMap.has(cwl.wlid)) {
-                const swl = wlMap.get(cwl.wlid)!;
-                if (swl.version !== cwl.version)
-                    wStore.put(swl);
-                wlMap.delete(cwl.wlid);
+            const cbook = cursor.value as IBook;
+            if (bookMap.has(cbook.bid)) {
+                const sbook = bookMap.get(cbook.bid)!;
+                if (sbook.version > cbook.version) cursor.update(sbook);
+                bookMap.delete(cbook.bid);
             } else {
-                deleted.add(cwl.wlid);
+                deleted.add(cbook.bid);
                 cursor.delete();
             }
             cursor.continue();
         }
-    }));
-
-export const deleteWordlist = (wlid: string) =>
-    new Promise<void>((resolve, reject) => run(reject, db => {
-        const request = db.transaction('wordlist', 'readwrite').objectStore('wordlist').delete(wlid);
-        request.onerror = reject;
-        request.onsuccess = () => resolve();
     }));
 
 export const getItem = (word: string) =>
@@ -157,9 +162,10 @@ export const deleteItem = (word: string) =>
         request.onsuccess = () => resolve();
     }))
 
-export const getItems = (last: number) =>
+export const getItems = (lastgte: number) =>
     new Promise<Array<IItem>>((resolve, reject) => run(reject, db => {
-        const request = db.transaction('item', 'readonly').objectStore('item').index('last').getAll(IDBKeyRange.lowerBound(last));
+        const request = db.transaction('item', 'readonly').objectStore('item').index('last')
+            .getAll(IDBKeyRange.lowerBound(lastgte));
         request.onerror = reject;
         request.onsuccess = () => resolve(request.result);
     }));
@@ -177,7 +183,7 @@ export const addTasks = (words: Iterable<string>) =>
         }
     }));
 
-export const mergeTasks = (tasks: Array<ITask>) =>
+export const mergeTasks = (tasks: Iterable<ITask>) =>
     new Promise<void>((resolve, reject) => run(reject, db => {
         const taskMap = new Map<string, ITask>();
         for (const task of tasks) taskMap.set(task.word, task);
@@ -214,7 +220,7 @@ export const updateDict = (dict: IDict) =>
         }
     }));
 
-export const getEpisode = (wordList?: Set<string>) =>
+export const getEpisode = (filter?: (word: string) => boolean) =>
     new Promise<IItem | undefined>((resolve, reject) => run(reject, db => {
         let result: IItem;
         const transaction = db.transaction('item', 'readonly');
@@ -226,7 +232,7 @@ export const getEpisode = (wordList?: Set<string>) =>
                 const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
                 if (!cursor) return;
                 const item = cursor.value as IItem;
-                if (!wordList || wordList.has(item.word))
+                if (!filter || filter(item.word))
                     return result = item;
                 cursor.continue();
             }
@@ -249,12 +255,12 @@ export const getPredict = (time: number, sprint: number) =>
             }
     }));
 
-export const getStats = (wls: Array<IClientWordlist | undefined>) =>
+export const getStats = (books: Array<IBook>) =>
     new Promise<Array<IStat>>((resolve, reject) => run(reject, db => {
         const time = now();
         const tstat = initStat(time, undefined, '全部词汇');
-        const stats: Array<IStat> = wls.map((wl) => initStat(time, wl?.wlid, wl?.disc));
-        const wordSets = wls.map(wl => new Set<string>(wl?.wordSet));
+        const stats: Array<IStat> = books.map((book) => initStat(time, book.bid, book.disc));
+        const wordSets = books.map(book => new Set<string>(book.content));
         const transaction = db.transaction('item', 'readonly');
         transaction.onerror = reject;
         transaction.oncomplete = () => resolve([tstat, ...stats]);

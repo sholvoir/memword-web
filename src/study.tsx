@@ -1,12 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
 import { Fragment, type JSX } from "preact";
-import { splitID, type IWordList } from "@sholvoir/memword-common/iwordlist";
+import { splitID, type IBook } from "@sholvoir/memword-common/ibook";
 import { useEffect, useRef } from "preact/hooks";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import { useSignal } from "@preact/signals";
-import { getClientWordlist } from "../lib/wordlists.ts";
 import { wait } from "@sholvoir/generic/wait";
 import * as app from "./app.tsx";
+import * as idb from "../lib/indexdb.ts";
 import * as mem from '../lib/mem.ts';
 import Tab from '../components/tab.tsx';
 import SButton from '../components/button-base.tsx';
@@ -23,18 +23,18 @@ export default () => {
     const mainDiv = useRef<HTMLDivElement>(null);
     const cindex = useSignal(0);
     const touchPos = { startY: 0, endY: 0, cScrollTop: 0, moveTop: 0 }
-    const mwls = useSignal<Array<IWordList>>([]);
+    const mwls = useSignal<Array<IBook>>([]);
     const showAddToBookMenu = useSignal(false);
     const player = useRef<HTMLAudioElement>(null);
     const handleIKnown = async (level?: number) => {
-        if (app.citem.value) await mem.studied(app.citem.value.word, level);
+        if (app.citem.value) await idb.studied(app.citem.value.word, level);
     }
     const studyNext = async () => {
         if (app.sprint.value < 0) return finish();
         app.sprint.value++;
         app.citem.value = undefined;
         app.isPhaseAnswer.value = false;
-        const item = await mem.getEpisode(app.wlid.value);
+        const item = await mem.getEpisode(app.bid.value);
         if (!item) return finish();
         app.citem.value = item;
         cindex.value = 0;
@@ -49,10 +49,9 @@ export default () => {
     };
     const handleRefresh = async () => {
         app.showTips("Get Server Data...", false);
-        const item = await mem.getUpdatedItem(app.citem.value!.word);
-        if (!item) return app.showTips(`Not Found ${app.citem.value!.word}`);
+        const item = await mem.updateDict(app.citem.value!);
         app.hideTips();
-        app.citem.value = item;
+        app.citem.value = { ...item };
     };
     const handleReportIssue = async () => {
         app.showTips('Submiting...', false);
@@ -130,25 +129,25 @@ export default () => {
     const handleClick = (e?: JSX.TargetedMouseEvent<HTMLDivElement>) => {
         e?.stopPropagation();
         if (showAddToBookMenu.value) return showAddToBookMenu.value = false;
-        const cardsN = app.citem.value?.cards?.length ?? 0;
+        const cardsN = app.citem.value?.entries?.length ?? 0;
         if (cardsN === 0) return;
         if (!app.isPhaseAnswer.value) (app.isPhaseAnswer.value = true) && player.current?.play();
         else if (cardsN === 1) player.current?.play();
         else if (cindex.value < cardsN - 1) cindex.value++;
         else cindex.value = 0;
     }
-    const handleAddToBook = async (wl: IWordList) => {
+    const handleAddToBook = async (book: IBook) => {
         showAddToBookMenu.value = false;
         const word = app.citem.value!.word;
-        const wordSet = (await getClientWordlist(wl.wlid))?.wordSet;
+        const wordSet = (await mem.getBook(book.bid))?.content as Set<string>;
         if (wordSet?.has(word)) return app.showTips("已包含");
-        const [_, bookName] = splitID(wl.wlid);
-        const [status] = await mem.postMyWordList(bookName, word);
+        const [_, bookName] = splitID(book.bid);
+        const [status] = await mem.uploadBook(bookName, word);
         app.showTips(status == STATUS_CODE.OK? "添加成功" : "添加失败");
         wordSet?.add(app.citem.value!.word);
     }
     const init = async () => {
-        mwls.value = await mem.getWordlists(wl => wl.wlid.startsWith(app.user.value));
+        mwls.value = await idb.getBooks(wl => wl.bid.startsWith(app.user.value));
     }
     useEffect(() => { init() }, []);
     return <Dialog onBackClick={finish} onKeyUp={handleKeyPress}
@@ -179,7 +178,7 @@ export default () => {
                 </SButton>
                 <div class="text-lg">{app.citem.value.level}</div>
                 {showAddToBookMenu.value && <div class="menu absolute top-[100%] right-[36px] text-lg text-right bg-[var(--bg-body)] z-1">
-                    {mwls.value.map(wl => <Fragment key={wl}><div/><menu onClick={()=>handleAddToBook(wl)}>{wl.disc??wl.wlid}</menu></Fragment>)}
+                    {mwls.value.map(wl => <Fragment key={wl}><div/><menu onClick={()=>handleAddToBook(wl)}>{wl.disc??wl.bid}</menu></Fragment>)}
                     {mwls.value.length && <div/>}
                 </div>}
             </div>
@@ -190,17 +189,17 @@ export default () => {
                     <div class="text-4xl font-bold">{app.citem.value.word}</div>
                     {app.isPhaseAnswer.value &&
                         <div class="text-2xl flex items-center">
-                            {app.citem.value.cards?.[cindex.value].phonetic}
+                            {app.citem.value.entries?.[cindex.value].phonetic}
                         </div>
                     }
                 </div>
-                {app.isPhaseAnswer.value && ((app.citem.value.cards?.length ?? 0) > 1 ?
+                {app.isPhaseAnswer.value && ((app.citem.value.entries?.length ?? 0) > 1 ?
                     <Tab class="bg-[var(--bg-tab)]" cindex={cindex}>
-                        {app.citem.value.cards?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} card={card} />)}
+                        {app.citem.value.entries?.map((card, i) => <Scard key={`${app.citem.value?.word}${i}`} entry={card} />)}
                     </Tab> :
-                    <div class="grow"><Scard card={app.citem.value.cards?.[0]!} /></div>)
+                    <div class="grow"><Scard entry={app.citem.value.entries?.[0]!} /></div>)
                 }
-                <audio ref={player} autoPlay src={app.citem.value.cards?.at(cindex.value)?.sound??''} />
+                <audio ref={player} autoPlay src={app.citem.value.entries?.at(cindex.value)?.sound??''} />
             </div>
         </>}
     </Dialog>;

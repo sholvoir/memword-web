@@ -1,8 +1,8 @@
 import { Fragment } from "preact";
-import { ICard } from "@sholvoir/memword-common/idict";
+import { IEntry } from "@sholvoir/memword-common/idict";
 
-export default ({ card }: { card: ICard }) =>
-    Object.entries(card.meanings!).map(([pos, means]) => <Fragment key={pos}>
+export default ({ entry }: { entry: IEntry }) =>
+    Object.entries(entry.meanings!).map(([pos, means]) => <Fragment key={pos}>
         {pos && <p class="text-xl font-bold text-[var(--accent-color)]">{pos}</p>}
         {means?.map(item => <p key={item}>
             <span>&ensp;-&ensp;</span>

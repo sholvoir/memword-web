@@ -3,7 +3,7 @@ import { Signal, useSignal } from "@preact/signals";
 
 export default ({ binding, options, maxSuggest, class: className, onChange, ...rest}: {
     binding: Signal<string|undefined>;
-    options: Array<string>;
+    options: Signal<Iterable<string>>;
     maxSuggest?: number;
     onChange?: () => void;
 } & JSX.InputHTMLAttributes<HTMLInputElement>): VNode<HTMLDivElement> => {
@@ -19,7 +19,7 @@ export default ({ binding, options, maxSuggest, class: className, onChange, ...r
         if (!text) return suggestions.value = [];
         const first: Array<string> = [];
         const second: Array<string> = [];
-        for (const option of options) {
+        for (const option of options.value) {
             if (option.startsWith(text)) first.push(option);
             else if (option.includes(text)) second.push(option);
             if (first.length >= max) break;

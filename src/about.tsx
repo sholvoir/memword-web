@@ -6,7 +6,7 @@ import BButton from '../components/button-base.tsx';
 import RButton from '../components/button-ripple.tsx';
 import Input from '../components/input-simple.tsx';
 import { useSignal } from "@preact/signals";
-import { version } from "../lib/version.ts";
+import { version } from "../lib/common.ts";
 
 export default () => {
     const show = useSignal(false);
