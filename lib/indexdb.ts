@@ -4,6 +4,7 @@ import { type IItem, itemMergeDict, itemMergeTask, neverItem } from "./iitem.ts"
 import { type ITask, studyTask } from "@sholvoir/memword-common/itask";
 import type { IBook } from "@sholvoir/memword-common/ibook";
 import type { IDict } from "@sholvoir/memword-common/idict";
+import type { IIssue } from "@sholvoir/memword-common/iissue";
 import { now } from "@sholvoir/memword-common/common";
 
 export const tempItems = new Map<string, IItem>();
@@ -49,7 +50,7 @@ export const setMeta = (key: kvKey, value: any) =>
     }));
 
 export const getIssues = () =>
-    new Promise<Array<{ id: number, issue: string }>>((resolve, reject) => run(reject, db => {
+    new Promise<Array<IIssue>>((resolve, reject) => run(reject, db => {
         const request = db.transaction('issue', 'readonly').objectStore('issue').getAll();
         request.onerror = reject;
         request.onsuccess = () => resolve(request.result);
@@ -62,9 +63,9 @@ export const addIssue = (issue: string) =>
         request.onsuccess = () => resolve();
     }));
 
-export const deleteIssue = (id: number) =>
+export const deleteIssue = (iid: number) =>
     new Promise<void>((resolve, reject) => run(reject, db => {
-        const request = db.transaction('issue', 'readwrite').objectStore('issue').delete(id);
+        const request = db.transaction('issue', 'readwrite').objectStore('issue').delete(iid);
         request.onerror = reject;
         request.onsuccess = () => resolve();
     }));

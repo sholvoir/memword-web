@@ -127,7 +127,7 @@ const submitIssues = async () => {
     for (const issue of issues) {
         const res = await srv.postIssue(issue.issue)
         if (!res.ok) break;
-        await idb.deleteIssue(issue.id);
+        await idb.deleteIssue(issue.iid!);
     }
 };
 

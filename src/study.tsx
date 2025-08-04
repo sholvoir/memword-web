@@ -152,28 +152,24 @@ export default () => {
     return <Dialog onBackClick={finish} onKeyUp={handleKeyPress}
         tabIndex={-1} class="flex flex-col p-2 outline-none"
         title={`学习${app.sprint[0]() > 0 ? `(${app.sprint[0]()})` : ''}`}>
-        {app.citem[0]() && <>
+        <Show when={app.citem[0]()}>
             <div class="relative flex gap-4 text-[150%] justify-between items-end">
-                <SButton disabled={!app.isPhaseAnswer[0]()} title="X/N"
-                    onClick={() => handleIKnown().then(studyNext)}
-                    class="icon-[material-symbols--check-circle] iconify text-green-500" />
-                <SButton disabled={!app.isPhaseAnswer[0]()} title="Z/M"
-                    onClick={() => handleIKnown(0).then(studyNext)}
-                    class="icon-[mdi--cross-circle] iconify text-fuchsia-500" />
-                <SButton disabled={!app.isPhaseAnswer[0]()}
-                    onClick={() => handleIKnown(13).then(studyNext)}
-                    class="icon-[material-symbols--family-star] iconify text-yellow-500" />
-                <SButton disabled={!app.isPhaseAnswer[0]()} onClick={handleDelete}
-                    class="icon-[material-symbols--delete-outline] iconify text-orange-500" />
+                <SButton onClick={() => handleIKnown().then(studyNext)} title="X/N"
+                    class="iconify icon-[material-symbols--check-circle] text-green-500" />
+                <SButton onClick={() => handleIKnown(0).then(studyNext)} title="Z/M"
+                    class="iconify icon-[mdi--cross-circle] text-fuchsia-500" />
+                <SButton onClick={() => handleIKnown(13).then(studyNext)}
+                    class="iconify icon-[material-symbols--family-star] text-yellow-500" />
+                <SButton onClick={handleDelete}
+                    class="iconify icon-[material-symbols--delete-outline] text-orange-500" />
                 <SButton onClick={() => player.play()}
-                    class="icon-[material-symbols--volume-up] iconify text-blue-500" />
-                <SButton disabled={!app.isPhaseAnswer[0]()} onClick={handleReportIssue}
-                    class="icon-[material-symbols--error] iconify text-red-500" />
-                <SButton disabled={!app.isPhaseAnswer[0]()} onClick={handleRefresh}
-                    class="icon-[material-symbols--refresh] iconify text-purple-500" />
-                <SButton disabled={!app.isPhaseAnswer[0]()}
-                    onClick={()=>showAddToBookMenu[1](!showAddToBookMenu[0]())}
-                    class="icon-[material-symbols--dictionary-outline] iconify text-cyan-500">
+                    class="iconify icon-[material-symbols--volume-up] text-blue-500" />
+                <SButton onClick={handleReportIssue}
+                    class="iconify icon-[material-symbols--error] text-red-500" />
+                <SButton onClick={handleRefresh}
+                    class="iconify icon-[material-symbols--refresh] text-purple-500" />
+                <SButton onClick={()=>showAddToBookMenu[1](s=>!s)}
+                    class="iconify icon-[material-symbols--dictionary-outline] text-cyan-500">
                 </SButton>
                 <div class="text-lg">{app.citem[0]()?.level}</div>
                 <Show when={showAddToBookMenu[0]()}>
@@ -209,6 +205,6 @@ export default () => {
                 </Show>
                 <audio ref={player} autoplay src={app.citem[0]()?.entries?.at(cindex[0]())?.sound??''} />
             </div>
-        </>}
+        </Show>
     </Dialog>;
 }
