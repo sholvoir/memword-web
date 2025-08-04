@@ -1,4 +1,4 @@
-import { useSignal } from "@preact/signals";
+import { createSignal } from "solid-js";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as srv from '../lib/server.ts';
@@ -10,18 +10,18 @@ const namePattern = /^[_\w-]+$/;
 const fonePattern = /^\+\d+$/;
 
 export default () => {
-    const phone = useSignal('');
+    const phone = createSignal('');
     const handleSignin = () => {
         app.go('#signin');
     }
     const handleSignup = async () => {
-        if (!namePattern.test(app.name.value))
+        if (!namePattern.test(app.name[0]()))
             return app.showTips('Name can only include _, letter, number and -');
-        const fone = phone.value.replaceAll(/[\(\) -]/g, '');
+        const fone = phone[0]().replaceAll(/[\(\) -]/g, '');
         if (!fonePattern.test(fone))
             return app.showTips('Invalid phone number!');
         try {
-            switch ((await srv.signup(fone, app.name.value)).status) {
+            switch ((await srv.signup(fone, app.name[0]())).status) {
                 case STATUS_CODE.BadRequest:
                     return app.showTips('用户名已注册');
                 case STATUS_CODE.Conflict:

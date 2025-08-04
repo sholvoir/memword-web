@@ -1,4 +1,4 @@
-import { useSignal } from "@preact/signals";
+import { createSignal } from "solid-js";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import * as app from "./app.tsx";
 import * as mem from '../lib/mem.ts';
@@ -8,25 +8,25 @@ import AButton from '../components/button-base.tsx';
 import SInput from '../components/input-simple.tsx';
 import Dialog from './dialog.tsx';
 
-let timer: number | undefined;
+let timer: any;
 
 export default () => {
-    const code = useSignal('');
-    const counter = useSignal(0);
-    const canSendOTP = useSignal(true);
+    const [code, setCode] = createSignal('');
+    const [counter, setCounter] = createSignal(0);
+    const [canSendOTP, setCanSendOTP] = createSignal(true);
 
     const handleSend = async () => {
-        canSendOTP.value = false;
-        counter.value = 60;
+        setCanSendOTP(false);
+        setCounter(60);
         timer = setInterval(() => {
-            if (--counter.value <= 0) {
+            if (setCounter(c=>c-1) <= 0) {
                 clearInterval(timer);
                 timer = undefined;
-                canSendOTP.value = true;
+                setCanSendOTP(true);
             }
         }, 1000);
         try {
-            switch ((await srv.otp(app.name.value)).status) {
+            switch ((await srv.otp(app.name[0]())).status) {
                 case STATUS_CODE.BadRequest:
                     return app.showTips('请输入用户名');
                 case STATUS_CODE.NotFound:
@@ -46,7 +46,7 @@ export default () => {
 
     const handleClickLogin = async () => {
         try {
-            switch (await mem.signin(app.name.value, code.value)) {
+            switch (await mem.signin(app.name[0](), code())) {
                 case STATUS_CODE.BadRequest:
                     return app.showTips('请输入用户名和密码');
                 case STATUS_CODE.NotFound:
@@ -69,9 +69,9 @@ export default () => {
             <label for="name">用户名</label>
             <SInput name="name" class="mb-3" placeholder="name" autoCapitalize="none" binding={app.name} />
             <label for="code">临时密码</label>
-            <SInput name="code" placeholder="code" autoCapitalize="none" binding={code} />
-            <AButton class="btn-anchor block text-right mb-3" onClick={handleSend} disabled={!canSendOTP.value}>
-                Send One-Time Passcode {counter.value > 0 ? `(${counter.value})` : ''}
+            <SInput name="code" placeholder="code" autoCapitalize="none" binding={[code, setCode]} />
+            <AButton class="btn-anchor block text-right mb-3" onClick={handleSend} disabled={!canSendOTP()}>
+                Send One-Time Passcode {counter() > 0 ? `(${counter()})` : ''}
             </AButton>
             <Button class="button btn-prime" onClick={handleClickLogin}>登录</Button>
         </div>

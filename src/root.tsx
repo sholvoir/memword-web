@@ -1,6 +1,7 @@
 // deno-lint-ignore-file
-import type { JSX } from "preact";
-import { useEffect } from "preact/hooks";
+import { // @ts-types="solid-js"
+type Component, createEffect } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import * as app from "./app.tsx";
 import * as mem from "../lib/mem.ts";
 import Home from "./home.tsx";
@@ -15,26 +16,26 @@ import Signin from './signin.tsx';
 import Book from './book.tsx';
 
 export default () => {
-    const dialogs = new Map<app.TDial, JSX.Element>();
-    dialogs.set('#home', <Home />);
-    dialogs.set('#help', <Help />);
-    dialogs.set('#about', <About />);
-    dialogs.set('#issue', <Issue />);
-    dialogs.set('#setting', <Setting  />);
-    dialogs.set('#search', <Dict />);
-    dialogs.set('#study', <Study />);
-    dialogs.set('#signup', <Signup />);
-    dialogs.set('#signin', <Signin />);
-    dialogs.set('#book', <Book />);
+    const dialogs = new Map<app.TDial, Component>();
+    dialogs.set('#home', Home);
+    dialogs.set('#help', Help);
+    dialogs.set('#about', About);
+    dialogs.set('#issue', Issue);
+    dialogs.set('#setting', Setting );
+    dialogs.set('#search', Dict);
+    dialogs.set('#study', Study);
+    dialogs.set('#signup', Signup);
+    dialogs.set('#signin', Signin);
+    dialogs.set('#book', Book);
 
     const init = async () => {
-        if (app.user.value = (await mem.getUser()) ?? '') {
+        if (app.user[1]((await mem.getUser()) ?? '')) {
             app.go('#home');
             await mem.initSetting();
             await app.totalStats();
             (async () => {
                 await mem.getServerBooks();
-                app.vocabulary.value = (await mem.getVocabulary())??[];
+                app.vocabulary[1]((await mem.getVocabulary())??[]);
                 await mem.syncSetting();
                 await mem.syncTasks();
                 await app.totalStats();
@@ -46,6 +47,6 @@ export default () => {
         } else app.go('#about');
     };
 
-    useEffect(() => { init() }, []);
-    return dialogs.get(app.loca.value);
+    createEffect(() => { init() });
+    return <Dynamic component={dialogs.get(app.loca[0]())}></Dynamic> ;
 }

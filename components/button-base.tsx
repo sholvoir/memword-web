@@ -1,16 +1,16 @@
-import { JSX, VNode } from "preact";
-import { useSignal } from "@preact/signals";
+import { type JSX, createSignal } from "solid-js";
+import { type ButtonTargeted } from "./targeted.ts";
 
-export default ({ class: className, children, disabled, onClick, ...rest}:
+export default ({ class: className, children, disabled, onClick, ...rest }:
     JSX.ButtonHTMLAttributes<HTMLButtonElement>
-): VNode<HTMLButtonElement> => {
-    const enabled = useSignal(true);
-    const handleClick = async (e: JSX.TargetedMouseEvent<HTMLButtonElement>) => {
+) => {
+    const [enabled, setEnabled] = createSignal(true);
+    const handleClick = async (e: MouseEvent & ButtonTargeted) => {
         e.stopPropagation()
-        enabled.value = false;
-        if (onClick) await onClick(e);
-        enabled.value = true;
+        setEnabled(false);
+        if (onClick) await (typeof onClick === 'function' ? onClick(e) : onClick[0](onClick[1], e));
+        setEnabled(true);
     };
-    return <button type="button" class={`disabled:opacity-50 ${className??''}`} {...rest}
-        onClick={handleClick} disabled={!enabled.value || disabled}>{children}</button>
-;}
+    return <button type="button" class={`disabled:opacity-50 ${className ?? ''}`} {...rest}
+        onClick={handleClick} disabled={!enabled() || disabled}>{children}</button>
+}

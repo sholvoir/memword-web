@@ -1,3 +1,5 @@
+@import "tailwindcss";
+@plugin "@iconify/tailwind4";
 :root, :host {
   --slate-200: oklch(0.929 0.013 255.508);
   --slate-300: oklch(0.869 0.022 252.894);

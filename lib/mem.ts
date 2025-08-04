@@ -151,11 +151,13 @@ export const getServerBooks = async () => {
         const time = now();
         const deleted = await idb.syncBooks(books);
         const setting = await idb.getMeta('_setting') as ISetting;
-        const nbooks = setting.books.filter(bid => !deleted.has(bid));
-        if (nbooks.length !== setting.books.length) {
-            setting.books = nbooks;
-            setting.version = time;
-            await idb.setMeta('_setting', setting);
+        if (setting?.books.length) {
+            const nbooks = setting.books.filter(bid => !deleted.has(bid));
+            if (nbooks.length !== setting.books.length) {
+                setting.books = nbooks;
+                setting.version = time;
+                await idb.setMeta('_setting', setting);
+            }
         }
     }
 }

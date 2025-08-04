@@ -1,17 +1,21 @@
-// deno-lint-ignore-file no-explicit-any
-import { VNode } from "preact";
-import { Signal } from "@preact/signals";
+import { For, type Signal } from "solid-js";
+import type { DivTargeted } from "./targeted.ts";
 
 export default ({ options, indices }: {
     indices: Signal<Array<number>>
     options: Array<string>
-}): Array<VNode<HTMLDivElement>> => options.map((option, i) =>
-    <div class="flex gap-1 cursor-pointer items-center" key={i}
-        onClick={e => (e.stopPropagation(), indices.value = indices.value.includes(i) ?
-            indices.value.filter(n => n != i) : [...indices.value, i])}>
-        <span class={indices.value.includes(i) ?
-            "i-material-symbols-check-box-outline" :
-            "i-material-symbols-check-box-outline-blank"} />
-        <span>{option}</span>
-    </div>
-)
+}) => {
+    const handleClick = (i: number, e: MouseEvent & DivTargeted) => {
+        e.stopPropagation();
+        indices[1]((c) => c.includes(i) ? c.filter(n => n != i) : [...c, i])
+    }
+    return <For each={options}>{
+        (option, i) => <div class="flex gap-1 cursor-pointer items-center"
+            onClick={[handleClick, i()]}>
+            <span class={indices[0]().includes(i()) ?
+                "icon-[material-symbols--check-box-outline]" :
+                "icon-[material-symbols--check-box-outline-blank]"} />
+            <span>{option}</span>
+        </div>
+    }</For>
+}

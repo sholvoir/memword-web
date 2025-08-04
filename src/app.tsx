@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals";
+import { createSignal } from "solid-js";
 import { type IStats, initStats } from "../lib/istat.ts";
 import type { IItem } from "../lib/iitem.ts";
 import type { IBook } from "@sholvoir/memword-common/ibook";
@@ -8,33 +8,33 @@ const DIALS = ['', '#home', '#help', '#about', '#issue', '#setting',
     '#book', '#search', '#study', '#signup', '#signin'] as const;
 export type TDial = typeof DIALS[number];
 
-export const user = signal('');
-export const stats = signal<IStats>(initStats());
-export const tips = signal('');
-export const isPhaseAnswer = signal(false);
-export const citem = signal<IItem>();
-export const bid = signal<string>();
-export const sprint = signal(-1);
-export const name = signal('');
-export const book = signal<IBook>();
-export const showLoading = signal(false);
-export const loca = signal<TDial>('');
-export const vocabulary = signal<Iterable<string>>([]);
+export const user = createSignal('');
+export const stats = createSignal<IStats>(initStats());
+export const tips = createSignal('');
+export const isPhaseAnswer = createSignal(false);
+export const citem = createSignal<IItem>();
+export const bid = createSignal<string>();
+export const sprint = createSignal(-1);
+export const name = createSignal('');
+export const book = createSignal<IBook>();
+export const showLoading = createSignal(false);
+export const loca = createSignal<TDial>('');
+export const vocabulary = createSignal<Iterable<string>>([]);
 
-export const totalStats = async () => stats.value = await mem.totalStats();
-export const hideTips = () => tips.value = '';
-export const go = (d?: TDial) => loca.value = d ?? (user.value ? '#home' : '#about');
+export const totalStats = async () => stats[1](await mem.totalStats());
+export const hideTips = () => tips[1]('');
+export const go = (d?: TDial) => loca[1](d ?? (user[0]() ? '#home' : '#about'));
 export const showTips = (content: string, autohide = true) =>
-    (tips.value = content, autohide && setTimeout(hideTips, 3000));
+    (tips[1](content), autohide && setTimeout(hideTips, 3000));
 
 export const startStudy = async (wl?: string) => {
-    showLoading.value = true;
-    const item = await mem.getEpisode(bid.value = wl);
-    showLoading.value = false;
+    showLoading[1](true);
+    const item = await mem.getEpisode(bid[1](wl));
+    showLoading[1](false);
     if (item) {
-        citem.value = item;
-        isPhaseAnswer.value = false;
-        sprint.value = 0;
+        citem[1](item);
+        isPhaseAnswer[1](false);
+        sprint[1](0);
         go('#study');
     } else {
         showTips('No More Task');

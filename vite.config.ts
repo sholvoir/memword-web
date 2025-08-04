@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite'
-import preact from '@preact/preset-vite'
-import UnoCSS from 'unocss/vite'
+import solid from 'vite-plugin-solid'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
   base: '',
-  plugins: [preact(), UnoCSS()],
+  plugins: [solid(), tailwindcss()],
   build: {
     target: 'esnext',
     outDir: '../sholvoir.github.io/memword',

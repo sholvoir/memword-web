@@ -1,7 +1,6 @@
-import { JSX, VNode } from "preact";
-import { Signal } from "@preact/signals";
+import type { JSX, Signal } from "solid-js";
 
 export default ({ binding, ...rest }: {
-    binding: Signal<string | undefined>
-} & JSX.TextareaHTMLAttributes<HTMLTextAreaElement>): VNode<HTMLTextAreaElement> =>
-    <textarea {...rest} value={binding.value} onInput={e => binding.value = e.currentTarget.value} />;
+    binding: Signal<string>
+} & JSX.TextareaHTMLAttributes<HTMLTextAreaElement>) =>
+    <textarea {...rest} value={binding[0]()} onInput={e => binding[1](e.currentTarget.value)} />;

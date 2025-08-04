@@ -1,7 +1,6 @@
-import { render } from 'preact'
+import { render } from "solid-js/web"
 import '../components/tailwind.css'
 import './index.css'
-import 'virtual:uno.css'
 import Admin from './admin.tsx'
 
-render(<Admin />, document.getElementById('root') as HTMLElement)
+render(() => <Admin />, document.getElementById('root')!)

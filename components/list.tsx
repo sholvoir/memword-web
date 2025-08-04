@@ -1,19 +1,26 @@
-import { JSX, VNode } from "preact";
-import { Signal } from "@preact/signals";
+import { type Accessor, For, type JSX, type Signal } from "solid-js";
+import type { DivTargeted } from "./targeted.ts";
 
 export default ({
     options,
     cindex,
     class: className,
     activeClass,
-    onClick }: {
+    onClick
+}: {
     options: Array<string>
     cindex: Signal<number>
     activeClass?: string
-    onClick?: (e: JSX.TargetedMouseEvent<HTMLDivElement>) => void
-} & JSX.HTMLAttributes<HTMLDivElement>): Array<VNode<HTMLDivElement>> =>
-    options.map((option, i) => <div key={i}
-        onClick={(e) => (e.stopPropagation(), cindex.value = i, onClick?.(e))}
-        class={`${className ?? ''} ${cindex.value == i ? activeClass : ''}`}>
+} & JSX.HTMLAttributes<HTMLDivElement>) => {
+    const handleClick = (i: Accessor<number>, e: MouseEvent & DivTargeted) => {
+        e.stopPropagation();
+        cindex[1](i());
+        if (onClick) typeof onClick === 'function' ? onClick(e) : onClick[0](onClick[1], e)
+    }
+    return <For each={options}>{
+        (option, i) => <div onClick={[handleClick, i]}
+            class={`${className ?? ''} ${cindex[0]() == i() ? activeClass : ''}`}>
             {option}
-        </div>)
+        </div>
+    }</For>
+}

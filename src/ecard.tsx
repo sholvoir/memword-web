@@ -1,8 +1,7 @@
-import type { JSX } from "preact";
-import { parse, stringify } from 'yaml';
+import { type JSX, type Signal, createSignal } from "solid-js";
 import type { IEntry } from "@sholvoir/memword-common/idict";
-import { useRef } from "preact/hooks";
-import { Signal, useSignal } from "@preact/signals";
+import type { TextAreaTargeted } from "../components/targeted.ts";
+import { parse, stringify } from 'yaml';
 import * as app from "./app.tsx";
 import Button from "../components/button-ripple.tsx";
 
@@ -11,39 +10,39 @@ export default ({word, entry, class: className, onClick }: {
     entry: IEntry;
     onClick: () => void
 } & JSX.HTMLAttributes<HTMLDivElement>) => {
-    const phonetic = useSignal(entry.phonetic);
-    const meanings = useSignal(stringify(entry.meanings, { lineWidth: 0 }));
-    const sound = useSignal(entry.sound);
-    const parseError = useSignal(false);
-    const player = useRef<HTMLAudioElement>(null);
+    const phonetic = createSignal(entry.phonetic);
+    const meanings = createSignal(stringify(entry.meanings, { lineWidth: 0 }));
+    const sound = createSignal(entry.sound);
+    const parseError = createSignal(false);
+    let player!: HTMLAudioElement;
     const handlePlayClick = () => {
-        if (!sound.value) app.showTips('no sound to play!');
-        else player.current?.play();
+        if (!sound[0]()) app.showTips('no sound to play!');
+        else player.play();
     }
-    const handleMeaningsChange = (e: JSX.TargetedInputEvent<HTMLTextAreaElement>) => {
+    const handleMeaningsChange = (e: InputEvent & TextAreaTargeted) => {
         try {
-            entry.meanings = parse(meanings.value = e.currentTarget.value);
-            parseError.value = false;
-         }
-        catch { parseError.value = true }
+            entry.meanings = parse(meanings[1](e.currentTarget.value));
+            parseError[1](false);
+        }
+        catch { parseError[1](true) }
     }
     return <div class={`flex flex-col h-full gap-2 ${className ?? ''}`} onClick={onClick}>
-        <input name="phonetic" placeholder="phonetic" value={phonetic} onFocus={onClick}
-            onInput={e => entry.phonetic = phonetic.value = e.currentTarget.value} />
-        <textarea name="meanings" placeholder="meanings" class={`h-32 grow font-mono ${parseError.value ? 'text-red' : ''}`} value={meanings}
+        <input name="phonetic" placeholder="phonetic" value={phonetic[0]()} onFocus={onClick}
+            onInput={e => entry.phonetic = phonetic[1](e.currentTarget.value)} />
+        <textarea name="meanings" placeholder="meanings" class={`h-32 grow font-mono ${parseError[0]() ? 'text-red' : ''}`} value={meanings[0]()}
             onInput={handleMeaningsChange} onFocus={onClick}/>
         <div class="shrink flex gap-2">
-            <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound}
-                onInput={e => entry.sound = sound.value = e.currentTarget.value} onFocus={onClick}/>
+            <textarea name="sound" rows={1} placeholder="sound" class="grow" value={sound[0]()}
+                onInput={e => entry.sound = sound[1](e.currentTarget.value)} onFocus={onClick}/>
             <Button class="button btn-normal"
-                onClick={() => entry.sound = sound.value = `https://dict.youdao.com/dictvoice?type=2&audio=${word.value.replaceAll(' ', '+')}`}>
+                onClick={() => entry.sound = sound[1](`https://dict.youdao.com/dictvoice?type=2&audio=${word[0]().replaceAll(' ', '+')}`)}>
                 YDS
             </Button>
             <Button class="button btn-normal"
-                onClick={handlePlayClick} disabled={!sound.value}>
-                <span class="text-[150%] i-material-symbols-chevron-right"/>
+                onClick={handlePlayClick} disabled={!sound[0]()}>
+                <span class="text-[150%] icon-[material-symbols--chevron-right]"/>
             </Button>
         </div>
-        <audio ref={player} src={sound} />
+        <audio ref={player} src={sound[0]()} />
     </div>;
 }

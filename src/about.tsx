@@ -5,16 +5,18 @@ import Dialog from './dialog.tsx';
 import BButton from '../components/button-base.tsx';
 import RButton from '../components/button-ripple.tsx';
 import Input from '../components/input-simple.tsx';
-import { useSignal } from "@preact/signals";
+import { createSignal, Show } from "solid-js";
 import { version } from "../lib/common.ts";
 
 export default () => {
-    const show = useSignal(false);
-    const auth = useSignal('');
+    const [show, setShow] = createSignal(false);
+    const [auth, setAuth] = createSignal('');
     return <Dialog title="快乐背单词" class="about flex flex-col pb-4 font-extrabold overflow-y-auto"
-        onBackClick={app.user.value ? () => app.go('#home') : undefined}>
-        {show.value && <><Input binding={auth}/><BButton class="button btn-normal"
-            onClick={()=>idb.setMeta('_auth', auth.value)}>OK</BButton></>}
+        onBackClick={app.user[0]() ? () => app.go('#home') : undefined}>
+        <Show when={show()}>
+            <Input binding={[auth, setAuth]} />
+            <BButton class="button btn-normal" onClick={() => idb.setMeta('_auth', auth())}>OK</BButton>
+        </Show>
         <div>
             <h1>快乐背单词</h1>
             <p>版本：{version}</p>
@@ -48,7 +50,7 @@ export default () => {
         <div>
             <h1>桌面</h1>
             <p>*提示二(iOS): 请使用「共享」-「添加到主屏幕」安装 <b>Web应用</b> 到桌面，以便下次直接<BButton
-                onClick={() => show.value = true}>点击</BButton>进入。</p>
+                onClick={() => setShow(true)}>点击</BButton>进入。</p>
             <p>*提示三(Android): 请使用「...」-「安装应用」安装 <b>Web应用</b> 到桌面，以便下次直接点击进入。</p>
         </div>
     </Dialog>

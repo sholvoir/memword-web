@@ -25,13 +25,13 @@ export default () => <Dialog class="flex flex-col pb-4" title="帮助" onBackCli
             <br />答：完全不必操心这个事情，让系统决定，系统自动根据「艾宾浩斯」遗忘曲线来决定此时的最佳复习内容，
             你要做的事是每天利用碎片时间，拿出手机，开始「学习」。
         </li>
-        <li>界面上的按钮是什么意思？
-            <br /><span class="text-[150%] i-material-symbols-check-circle text-green"></span>我认识这个词；
-            <br /><span class="text-[150%] i-gridicons-cross-circle text-fuchsia"></span>我不认识这个词；
-            <br /><span class="text-[150%] i-material-symbols-volume-up text-blue"></span>: 再播一遍声音；
-            <br /><span class="text-[150%] i-material-symbols-light-family-star text-yellow"></span>: 这个词我已经掌握，直接标记为「已完成」；
-            <br /><span class="text-[150%] i-material-symbols-error text-red"></span>: 这个词的翻译/声音/音标，有问题/错误，请人工处理。
-            <br /><span class="text-[150%] i-material-symbols-refresh text-purple"></span>: 忽略本地词典缓冲，从服务器重新下载这个词的翻译/声音/音标。
+        <li class="[&>span]:align-[-20%]">界面上的按钮是什么意思？
+            <br /><span class="text-[150%] icon-[material-symbols--check-circle] iconify text-green-500"></span>: 我认识这个词；
+            <br /><span class="text-[150%] icon-[gridicons--cross-circle] iconify text-fuchsia-500"></span>: 我不认识这个词；
+            <br /><span class="text-[150%] icon-[material-symbols--volume-up] iconify text-blue-500"></span>: 再播一遍声音；
+            <br /><span class="text-[150%] icon-[material-symbols--family-star] iconify text-yellow-500"></span>: 这个词我已经掌握，直接标记为「已完成」；
+            <br /><span class="text-[150%] icon-[material-symbols--error] iconify text-red-500"></span>: 这个词的翻译/声音/音标，有问题/错误，请人工处理。
+            <br /><span class="text-[150%] icon-[material-symbols--refresh] iconify text-purple-500"></span>: 忽略本地词典缓冲，从服务器重新下载这个词的翻译/声音/音标。
         </li>
         <li>关于「学习词书」
             <br />答：学习词书将一本词书的全部词添加进我的学习任务。但我们通常并不会直接开始学这些新词，而是优先复习旧词，

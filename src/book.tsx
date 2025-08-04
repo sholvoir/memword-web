@@ -1,5 +1,4 @@
-import { useEffect } from 'preact/hooks';
-import { useSignal } from "@preact/signals";
+import { createSignal, createEffect } from "solid-js";
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import { splitID } from "@sholvoir/memword-common/ibook";
 import * as mem from '../lib/mem.ts';
@@ -11,29 +10,29 @@ import TaInput from "../components/input-textarea.tsx"
 import Checkbox from '../components/checkbox.tsx'
 
 export default () => {
-    const name = useSignal('');
-    const disc = useSignal('');
-    const words = useSignal('');
-    const replace = useSignal(false);
-    const revision = useSignal('');
+    const name = createSignal('');
+    const disc = createSignal('');
+    const words = createSignal('');
+    const replace = createSignal(false);
+    const revision = createSignal('');
     const handleDownloadClick = async () => {
-        const bid = `${app.user.value}/${name}`;
+        const bid = `${app.user[0]()}/${name}`;
         const book = await mem.getBook(bid);
         if (!book?.content) return;
-        words.value = Array.from(book.content).sort().join('\n');
+        words[1](Array.from(book.content).sort().join('\n'));
     }
     const handleOKClick = async () => {
-        name.value = name.value.replaceAll('/', '-');
+        name[1](name[0]().replaceAll('/', '-'));
         try {
             const [status, result] = await mem.uploadBook(
-                name.value, words.value, disc.value, replace.value
+                name[0](), words[0](), disc[0](), replace[0]()
             );
             switch (status) {
                 case STATUS_CODE.BadRequest: return app.showTips('Error: 无名称或无内容');
                 case STATUS_CODE.NotAcceptable:
-                    revision.value = Object.entries(result as Record<string, string[]>)
+                    revision[1](Object.entries(result as Record<string, string[]>)
                         .map(([key, value]) => `${key}: ${value.join(',')}`)
-                        .join('\n');
+                        .join('\n'));
                     return app.showTips('未通过拼写检查');
                 case STATUS_CODE.OK: {
                     app.showTips('词书上传成功');
@@ -44,10 +43,10 @@ export default () => {
             app.showTips('网络错误');
         }
     }
-    useEffect(()=>{
-        if (app.book.value) {
-            name.value = splitID(app.book.value.bid)[1];
-            if (app.book.value.disc) disc.value = app.book.value.disc;
+    createEffect(()=>{
+        if (app.book[0]()) {
+            name[1](splitID(app.book[0]()!.bid)[1]);
+            if (app.book[0]()!.disc) disc[1](app.book[0]()!.disc!);
         }
     }, [])
     return <Dialog class="flex flex-col p-2" title="上传我的词书">
@@ -57,9 +56,9 @@ export default () => {
         <SInput name="disc" binding={disc} />
         <label for='words' class="mt-2">词表</label>
         <TaInput name="words" class="grow" binding={words} />
-        {revision.value.length ? <>
+        {revision[0]().length ? <>
             <label for="replace" class="text-red-500 mt-2">请考虑用下面的词替换</label>
-            <textarea name="replace" class="grow" value={revision} onChange={e=>revision.value=e.currentTarget.value} />
+            <textarea name="replace" class="grow" value={revision[0]()} onChange={e=>revision[1](e.currentTarget.value)} />
         </>:undefined}
         <div class="flex gap-2 my-2">
             <Checkbox binding={replace} label="Replace"/>

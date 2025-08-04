@@ -1,13 +1,15 @@
-import { Fragment } from "preact";
-import { IEntry } from "@sholvoir/memword-common/idict";
+import { For, Show } from "solid-js";
+import type { IEntry } from "@sholvoir/memword-common/idict";
 
 export default ({ entry }: { entry: IEntry }) =>
-    Object.entries(entry.meanings!).map(([pos, means]) => <Fragment key={pos}>
-        {pos && <p class="text-xl font-bold text-[var(--accent-color)]">{pos}</p>}
-        {means?.map(item => <p key={item}>
+    <For each={Object.entries(entry.meanings!)}>{([pos, means]) => <>
+        <Show when={pos}>
+            <p class="text-xl font-bold text-[var(--accent-color)]">{pos}</p>
+        </Show>
+        <For each={means}>{(item) => <p>
             <span>&ensp;-&ensp;</span>
-            {item.def && <span class="text-lg">{item.def}</span>}
-            {item.def && item.trans && <span>&ensp;</span>}
-            {item.trans && <span class="text-xl font-bold">{item.trans}</span>}
-        </p>)}
-    </Fragment>)
+            <Show when={item.def}><span class="text-lg">{item.def}</span></Show>
+            <Show when={item.def && item.trans}><span>&ensp;</span></Show>
+            <Show when={item.trans}><span class="text-xl font-bold">{item.trans}</span></Show>
+        </p>}</For>
+    </>}</For>
