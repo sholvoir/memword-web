@@ -28,7 +28,7 @@ export default () => {
     }
     const handleDeleteBookClick = async () => {
         const success = await mem.deleteBook(myBooks[0]()[myIndex[0]()].bid);
-        app.showTips(success ? '删除成功': '删除失败');
+        app.showTips(success ? '删除成功' : '删除失败');
         if (success) myBooks[1](myBooks[0]().filter((_, i) => i != myIndex[0]()));
     }
     const handleAddSubClick = () => {
@@ -65,14 +65,15 @@ export default () => {
     });
     createResource(async () => {
         books[1]((await idb.getBooks(wl => wl.bid.startsWith('common'))).sort(compareWL));
-        subBooks[1](await idb.getBooks(wl =>mem.setting.books.includes(wl.bid)));
+        subBooks[1](await idb.getBooks(wl => mem.setting.books.includes(wl.bid)));
         myBooks[1](await idb.getBooks(wl => wl.bid.startsWith(app.user[0]())));
     });
     return <Dialog class="p-2 gap-2 flex flex-col" title="设置">
         <fieldset class="border rounded shrink-0 overflow-y-auto px-2">
             <legend>我的词书</legend>
-            <List cindex={myIndex} options={myBooks[0]().map(wl=>wl.disc??wl.bid)}
-                class="px-2" activeClass="bg-[var(--bg-title)]"/>
+            <List cindex={myIndex} options={myBooks[0]}
+                func={wl => wl.disc ?? wl.bid}
+                class="px-2" activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="flex justify-between gap-2">
             <Button class="button btn-normal grow" name="new" onClick={handleNewBookClick}>新建</Button>
@@ -86,7 +87,8 @@ export default () => {
         <fieldset class="border rounded max-h-[70%] grow shrink overflow-y-auto px-2">
             <legend>可用的词书</legend>
             <List class="px-2" cindex={cindex}
-                options={books[0]().map(wl => wl.disc ?? wl.bid)}
+                options={books[0]}
+                func={wl => wl.disc ?? wl.bid}
                 activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="flex justify-between gap-2">
@@ -98,7 +100,8 @@ export default () => {
         <fieldset class="border rounded shrink-0 overflow-y-auto px-2">
             <legend>我订阅的词书</legend>
             <List class="px-2" cindex={subIndex}
-                options={subBooks[0]().map(wl => wl.disc ?? wl.bid)}
+                options={subBooks[0]}
+                func={wl => wl.disc ?? wl.bid}
                 activeClass="bg-[var(--bg-title)]" />
         </fieldset>
         <div class="pb-3 flex justify-between gap-2">

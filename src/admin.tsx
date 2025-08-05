@@ -146,7 +146,8 @@ export default function Admin() {
                     <div class="grow border overflow-y-auto">
                         <List class="px-2" cindex={currentIssueIndex}
                             activeClass="bg-[var(--bg-title)]"
-                            options={issues[0]().map(is => `${is.reporter}: ${is.issue}`)}
+                            options={issues[0]}
+                            func={is => `${is.reporter}: ${is.issue}`}
                             onClick={handleIssueClick} />
                     </div>
                     <div class="flex justify-end gap-2">
