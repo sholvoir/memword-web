@@ -1,23 +1,46 @@
-import type { JSX, Signal } from "solid-js";
+import { type JSX, type Signal, splitProps } from "solid-js";
 import type { DivTargeted } from "./targeted.ts";
 
-export default ({ label, binding, disabled, class: className, onChange, ...rest }: {
-    binding: Signal<boolean>;
-    label?: string;
-    disabled?: boolean;
-} & JSX.HTMLAttributes<HTMLDivElement>) => {
-    const handleClick = (e: MouseEvent & DivTargeted) => {
-        e.stopPropagation();
-        if (!disabled) {
-            binding[1](s=>!s);
-            if (onChange) typeof onChange === 'function' ? onChange(e) : onChange[0](onChange[1], e);
-        }
-    }
-    return <div class={`${disabled ? 'opacity-50' : ''} ${className ?? ''}`}
-        aria-disabled={disabled} onClick={handleClick} {...rest}>
-        <span class={`text-[150%] ${binding[0]() ?
-            "icon-[material-symbols--check-box-outline]" :
-            "icon-[material-symbols--check-box-outline-blank]"}`} />
-        {label}
-    </div>
-}
+export default (
+	props: {
+		binding: Signal<boolean>;
+		label?: string;
+		disabled?: boolean;
+	} & JSX.HTMLAttributes<HTMLDivElement>,
+) => {
+	const [local, others] = splitProps(props, [
+		"class",
+		"binding",
+		"label",
+		"disabled",
+		"onChange",
+	]);
+	const [value, setValue] = local.binding;
+	const handleClick = (e: MouseEvent & DivTargeted) => {
+		e.stopPropagation();
+		if (!local.disabled) {
+			setValue((v) => !v);
+			if (local.onChange)
+				typeof local.onChange === "function"
+					? local.onChange(e)
+					: local.onChange[0](local.onChange[1], e);
+		}
+	};
+	return (
+		<div
+			class={`${local.disabled ? "opacity-50" : ""} ${local.class ?? ""}`}
+			{...others}
+			aria-disabled={local.disabled}
+			onClick={handleClick}
+		>
+			<span
+				class={`text-[150%] align-bottom ${
+					value()
+						? "icon-[material-symbols--check-box-outline]"
+						: "icon-[material-symbols--check-box-outline-blank]"
+				}`}
+			/>
+			{local.label}
+		</div>
+	);
+};

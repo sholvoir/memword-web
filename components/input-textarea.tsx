@@ -1,6 +1,17 @@
-import type { JSX, Signal } from "solid-js";
+import { type JSX, type Signal, splitProps } from "solid-js";
 
-export default ({ binding, ...rest }: {
-    binding: Signal<string>
-} & JSX.TextareaHTMLAttributes<HTMLTextAreaElement>) =>
-    <textarea {...rest} value={binding[0]()} onInput={e => binding[1](e.currentTarget.value)} />;
+export default (
+	props: {
+		binding: Signal<string>;
+	} & JSX.TextareaHTMLAttributes<HTMLTextAreaElement>,
+) => {
+	const [local, others] = splitProps(props, ["binding"]);
+    const [value, setValue] = local.binding;
+	return (
+		<textarea
+			{...others}
+			value={value()}
+			onInput={(e) => setValue(e.currentTarget.value)}
+		/>
+	);
+};

@@ -1,6 +1,17 @@
-import type { JSX, Signal } from "solid-js";
+import { type JSX, type Signal, splitProps } from "solid-js";
 
-export default ({ binding, ...rest }: {
-    binding: Signal<string>;
-} & JSX.InputHTMLAttributes<HTMLInputElement>) =>
-    <input {...rest} value={binding[0]()} onInput={e => binding[1](e.currentTarget.value)} />
+export default (
+	props: JSX.InputHTMLAttributes<HTMLInputElement> & {
+		binding: Signal<string>;
+	},
+) => {
+	const [local, others] = splitProps(props, ["binding"]);
+    const [value, setValue] = local.binding;
+	return (
+		<input
+			{...others}
+			value={value()}
+			onInput={(e) => setValue(e.currentTarget.value)}
+		/>
+	);
+};

@@ -41,7 +41,7 @@
 
     :root,
     :host {
-      --bg-ripple: oklch(from var(--slate-800), L, C, H, / .8);
+      --bg-ripple: oklch(from var(--slate-800) L C H / .8);
       --bg-title: var(--slate-800);
       --bg-body: var(--slate-900);
       --bg-button: var(--slate-800);

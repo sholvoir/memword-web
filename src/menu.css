@@ -1,10 +1,10 @@
 .menu {
-    &>menu {
-        cursor: pointer;
-        padding-inline: 8px;
-    }
-    &>div {
-        height: 1px;
-        background-color: var(--color-neutral);
-    }
+	& > menu {
+		cursor: pointer;
+		padding-inline: 8px;
+	}
+	& > div {
+		height: 1px;
+		background-color: var(--color-neutral);
+	}
 }

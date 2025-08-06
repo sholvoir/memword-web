@@ -10,14 +10,14 @@ export interface IStat {
     time: number;
     total: TAggr;
     task: TAggr;
-    wlid?: string;
+    bid?: string;
     disc?: string;
 }
-export const initStat = (time: number, wlid?: string, disc?: string): IStat => ({
+export const initStat = (time: number, bid?: string, disc?: string): IStat => ({
     time,
     total: newAggr(),
     task: newAggr(),
-    wlid,
+    bid,
     disc
 });
 
