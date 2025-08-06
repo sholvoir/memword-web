@@ -24,7 +24,8 @@ export default () => {
 	let mainDiv!: HTMLDivElement;
 	const [cindex, setCIndex] = createSignal(0);
 	const touchPos = { startY: 0, endY: 0, cScrollTop: 0, moveTop: 0 };
-	const mwls = createSignal<Array<IBook>>([]);
+
+	const [myBooks, setMyBooks] = createSignal<Array<IBook>>([]);
 	const showAddToBookMenu = createSignal(false);
 	let player!: HTMLAudioElement;
 	const handleIKnown = async (level?: number) => {
@@ -169,10 +170,11 @@ export default () => {
 		const [_, bookName] = splitID(book.bid);
 		const [status] = await mem.uploadBook(bookName, word);
 		app.showTips(status === STATUS_CODE.OK ? "添加成功" : "添加失败");
-		wordSet?.add(app.citem()!.word);
+		wordSet?.add(word);
+		((await mem.getVocabulary()) as Set<string>).add(word);
 	};
 	createResource(async () => {
-		mwls[1](await idb.getBooks((wl) => wl.bid.startsWith(app.user())));
+		setMyBooks(await idb.getBooks((book) => splitID(book.bid)[0] === app.user()));
 	});
 	return (
 		<Dialog
@@ -228,7 +230,7 @@ export default () => {
 					<div class="text-lg">{app.citem()?.level}</div>
 					<Show when={showAddToBookMenu[0]()}>
 						<div class="menu absolute top-[100%] right-[36px] text-lg text-right bg-[var(--bg-body)] z-1">
-							<For each={mwls[0]()}>
+							<For each={myBooks()}>
 								{(wl) => (
 									<>
 										<div />
@@ -238,7 +240,7 @@ export default () => {
 									</>
 								)}
 							</For>
-							{mwls[0]().length && <div />}
+							{myBooks().length && <div />}
 						</div>
 					</Show>
 				</div>
