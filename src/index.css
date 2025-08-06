@@ -78,7 +78,6 @@
     width: env(titlebar-area-width, 100%);
     height: env(titlebar-area-height, 38px);
     margin-left: env(titlebar-area-x, 0);
-    background-color: var(--bg-title);
   }
 
   .body {

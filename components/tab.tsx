@@ -31,7 +31,7 @@ export default (
 							}`}
 							onClick={[handleClick, i]}
 						>
-							{(child as HTMLElement).title ?? i}
+							{(child as HTMLElement).title ?? i()}
 						</div>
 					)}
 				</For>

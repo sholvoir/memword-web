@@ -89,15 +89,13 @@ export default () => {
 		}
 	};
 	const handleTouchStart = (e: TouchEvent & DivTargeted) => {
-		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer()))
-			return;
+		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer())) return;
 		touchPos.endY = touchPos.startY = e.touches[0].clientY;
 		touchPos.cScrollTop = e.currentTarget.scrollTop;
 	};
 	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
-		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer()))
-			return;
-		touchPos.endY = e.touches[0].clientY
+		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer())) return;
+		touchPos.endY = e.touches[0].clientY;
 		const diff = touchPos.endY - touchPos.startY;
 		const div = e.currentTarget;
 		console.log("diff", touchPos.endY, touchPos.startY, diff);
@@ -121,8 +119,7 @@ export default () => {
 		console.log(div.scrollTop, touchPos.moveTop);
 	};
 	const handleTouchCancel = (e: TouchEvent & DivTargeted) => {
-		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer()))
-			return;
+		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer())) return;
 		touchPos.moveTop = 0;
 		touchPos.cScrollTop = e.currentTarget.scrollTop;
 		mainDiv.style.top = `${touchPos.moveTop}px`;
@@ -153,12 +150,11 @@ export default () => {
 		e?.stopPropagation();
 		if (showAddToBookMenu[0]()) return showAddToBookMenu[1](false);
 		const cardsN = app.citem()?.entries?.length ?? 0;
-		if (cardsN === 0) return;
+		//if (cardsN === 0) return;
 		if (!app.isPhaseAnswer()) {
 			app.setPhaseAnswer(true);
 			player.play();
-		}
-		else if (cardsN === 1) player.play();
+		} else if (cardsN === 1) player.play();
 		else if (cindex() < cardsN - 1) setCIndex((c) => c + 1);
 		else setCIndex(0);
 	};
@@ -174,7 +170,9 @@ export default () => {
 		((await mem.getVocabulary()) as Set<string>).add(word);
 	};
 	createResource(async () => {
-		setMyBooks(await idb.getBooks((book) => splitID(book.bid)[0] === app.user()));
+		setMyBooks(
+			await idb.getBooks((book) => splitID(book.bid)[0] === app.user()),
+		);
 	});
 	return (
 		<Dialog
@@ -272,7 +270,11 @@ export default () => {
 						>
 							<Tab class="bg-[var(--bg-tab)]" cindex={[cindex, setCIndex]}>
 								<For each={app.citem()?.entries}>
-									{(card) => <Scard entry={card} />}
+									{(card) => (
+										<div class="grow">
+											<Scard entry={card} />
+										</div>
+									)}
 								</For>
 							</Tab>
 						</Show>

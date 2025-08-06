@@ -22,7 +22,11 @@ export default (
 	]);
 	return (
 		<>
-			<div class="title shrink-0 px-2 flex justify-between items-center font-bold">
+			<div
+				class={`title shrink-0 px-2 flex justify-between items-center font-bold ${
+					app.tips() ? "bg-(--bg-button-prime)" : "bg-(--bg-title)"
+				}`}
+			>
 				<div class="w-7 [app-region:no-drag]">
 					<Show when={!local.leftElem} fallback={local.leftElem}>
 						<Show when={local.onBackClick}>
