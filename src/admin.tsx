@@ -13,6 +13,8 @@ import * as srv from "../lib/server.ts";
 import Ecard from "./ecard.tsx";
 
 export default () => {
+	const [hide, setHide] = createSignal(false);
+
 	const [auth, setAuth] = createSignal(false);
 	const [vocabulary, setVocabulary] = createSignal<Iterable<string>>([]);
 
@@ -20,7 +22,7 @@ export default () => {
 	const hideTips = () => setTips("");
 	const showTips = (content: string, autohide = true) => {
 		setTips(content);
-		autohide && setTimeout(hideTips, 3000)
+		autohide && setTimeout(hideTips, 3000);
 	};
 
 	const [ignoreWords, setIgnoreWords] = createSignal("");
@@ -53,7 +55,7 @@ export default () => {
 					for (const means of Object.values(entry.meanings))
 						if (means)
 							for (const mean of means) if (!mean.trans) mean.trans = "";
-		setEntries((dict.entries ?? []).map(e => createSignal(e)));
+		setEntries((dict.entries ?? []).map((e) => createSignal(e)));
 		window.focus();
 	};
 	const handleAddCardClick = async () => {
@@ -72,11 +74,9 @@ export default () => {
 			setCurrentCardIndex(entries().length - 1);
 	};
 	const handleUpdateClick = async () => {
-		const dict: IDict = { word: word(), entries: entries().map(e=>e[0]()) };
+		const dict: IDict = { word: word(), entries: entries().map((e) => e[0]()) };
 		showTips(
-			(await srv.putDict(dict))
-				? `success update word "${word()}"!`
-				: "Error",
+			(await srv.putDict(dict)) ? `success update word "${word()}"!` : "Error",
 		);
 	};
 	const handleDeleteClick = async () => {
@@ -108,7 +108,7 @@ export default () => {
 		if (!issue) return;
 		const result = (await srv.deleteIssue(issue._id)) as any;
 		if (result.acknowledged && result.deletedCount > 0) {
-			setIssues(issues => issues.filter((_, i) => i !== currentIssueIndex()));
+			setIssues((issues) => issues.filter((_, i) => i !== currentIssueIndex()));
 			if (issues().length && currentIssueIndex() >= issues().length)
 				setCurrentIssueIndex(issues().length - 1);
 			if (issues().length) handleIssueClick();
@@ -133,8 +133,7 @@ export default () => {
 			<div
 				class={`text-center p-2 ${tips() ? "bg-[var(--bg-button-prime)]" : "bg-[var(--bg-title)]"}`}
 			>
-				{tips() ||
-					`系统管理-${currentCardIndex()}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`}
+				{tips() || `系统管理-${currentCardIndex()}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`}
 			</div>
 			<div class="body grow flex flex-col gap-2 p-2">
 				<div class="h-4 grow-4 flex flex-col gap-2">
@@ -177,9 +176,7 @@ export default () => {
 						</Button>
 						<Button
 							class="grow button btn-normal"
-							disabled={
-								word() !== currentWord() || entries().length <= 1
-							}
+							disabled={word() !== currentWord() || entries().length <= 1}
 							onClick={handleDeleteCardClick}
 						>
 							删卡
@@ -198,48 +195,63 @@ export default () => {
 						>
 							更新
 						</Button>
-					</div>
-				</div>
-				<div class="flex gap-2">
-					<div class="w-1 grow flex flex-col gap-2">
-						<textarea
-							class="grow"
-							value={ignoreWords()}
-							onChange={(e) => setIgnoreWords(e.currentTarget.value)}
-						/>
-						<div class="flex justify-end">
-							<Button
-								class="button btn-normal"
-								onClick={handleUploadIgnoreWordsClick}
-							>
-								拼写忽略
-							</Button>
-						</div>
-					</div>
-					<div class="w-1 grow flex flex-col gap-2">
-						<div class="grow border overflow-y-auto">
-							<List
-								class="px-2"
-								cindex={[currentIssueIndex, setCurrentIssueIndex]}
-								activeClass="bg-[var(--bg-title)]"
-								options={issues()}
-								func={(issue) => `${issue.reporter}: ${issue.issue}`}
-								onClick={handleIssueClick}
+						<Button
+							class="button btn-normal"
+							onClick={() => setHide((h) => !h)}
+						>
+							<span
+								class={`text-[150%] align-bottom ${
+									hide() ? "icon-[mdi--chevron-up]" : "icon-[mdi--chevron-down]"
+								}`}
 							/>
-						</div>
-						<div class="flex justify-end gap-2">
-							<Button class="button btn-normal" onClick={handleLoadIssueClick}>
-								加载问题
-							</Button>
-							<Button
-								class="button btn-normal"
-								onClick={handleProcessIssueClick}
-							>
-								处理问题
-							</Button>
-						</div>
+						</Button>
 					</div>
 				</div>
+				<Show when={!hide()}>
+					<div class="flex gap-2">
+						<div class="w-1 grow flex flex-col gap-2">
+							<textarea
+								class="grow"
+								value={ignoreWords()}
+								onChange={(e) => setIgnoreWords(e.currentTarget.value)}
+							/>
+							<div class="flex justify-end">
+								<Button
+									class="button btn-normal"
+									onClick={handleUploadIgnoreWordsClick}
+								>
+									拼写忽略
+								</Button>
+							</div>
+						</div>
+						<div class="w-1 grow flex flex-col gap-2">
+							<div class="grow border overflow-y-auto">
+								<List
+									class="px-2"
+									cindex={[currentIssueIndex, setCurrentIssueIndex]}
+									activeClass="bg-[var(--bg-title)]"
+									options={issues()}
+									func={(issue) => `${issue.reporter}: ${issue.issue}`}
+									onClick={handleIssueClick}
+								/>
+							</div>
+							<div class="flex justify-end gap-2">
+								<Button
+									class="button btn-normal"
+									onClick={handleLoadIssueClick}
+								>
+									加载问题
+								</Button>
+								<Button
+									class="button btn-normal"
+									onClick={handleProcessIssueClick}
+								>
+									处理问题
+								</Button>
+							</div>
+						</div>
+					</div>
+				</Show>
 			</div>
 		</Show>
 	);

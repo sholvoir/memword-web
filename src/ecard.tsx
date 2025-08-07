@@ -33,29 +33,21 @@ export default (
 			class={`flex flex-col h-full gap-2 ${props.class ?? ""}`}
 			onClick={props.onClick}
 		>
-			<input
-				name="phonetic"
-				placeholder="phonetic"
-				value={entry().phonetic}
-				onFocus={props.onClick}
-				onInput={(e) =>
-					setEntry((en) => ({ ...en, phonetic: e.currentTarget.value }))
-				}
-			/>
-			<textarea
-				name="meanings"
-				placeholder="meanings"
-				class={`h-32 grow font-mono ${parseError[0]() ? "text-red" : ""}`}
-				value={stringify(entry().meanings, { lineWidth: 0 })}
-				onInput={handleMeaningsChange}
-				onFocus={props.onClick}
-			/>
 			<div class="shrink flex gap-2">
+				<input
+					name="phonetic"
+					placeholder="phonetic"
+					value={entry().phonetic}
+					onFocus={props.onClick}
+					onInput={(e) =>
+						setEntry((en) => ({ ...en, phonetic: e.currentTarget.value }))
+					}
+				/>
 				<textarea
 					name="sound"
 					rows={1}
 					placeholder="sound"
-					class="grow"
+					class="grow-5"
 					value={entry().sound}
 					onInput={(e) => setEntry(en => ({...en, sound: e.currentTarget.value}))}
 					onFocus={props.onClick}
@@ -76,6 +68,14 @@ export default (
 					<span class="text-[150%] align-bottom icon-[material-symbols--chevron-right]" />
 				</Button>
 			</div>
+			<textarea
+				name="meanings"
+				placeholder="meanings"
+				class={`h-32 grow font-mono ${parseError[0]() ? "text-red" : ""}`}
+				value={stringify(entry().meanings, { lineWidth: 0 })}
+				onInput={handleMeaningsChange}
+				onFocus={props.onClick}
+			/>
 			<audio ref={player} src={entry().sound} />
 		</div>
 	);
