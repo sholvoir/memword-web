@@ -71,7 +71,7 @@ export default (
 			<textarea
 				name="meanings"
 				placeholder="meanings"
-				class={`h-32 grow font-mono ${parseError() ? "text-red-500" : ""}`}
+				class={`h-32 grow font-mono ${parseError() ? "text-(--accent-color)" : ""}`}
 				value={stringify(entry().meanings, { lineWidth: 0 })}
 				onInput={handleMeaningsChange}
 				onFocus={props.onClick}

@@ -15,18 +15,18 @@
         }
     }
     &>div:nth-child(odd) {
-        background-color: var(--slate-200);
-        color: var(--slate-800);
+        background-color: var(--color-slate-200);
+        color: var(--color-slate-800);
         & b {
-            color: var(--orange-600);
+            color: var(--color-orange-600);
         }
     }
     &>div:nth-child(even) {
-        background-color: var(--slate-800);
-        color: var(--slate-200);
+        background-color: var(--color-slate-800);
+        color: var(--color-slate-200);
         text-align: right;
         & b {
-            color: var(--orange-400)
+            color: var(--color-orange-400)
         }
     }
 }

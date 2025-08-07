@@ -131,7 +131,7 @@ export default () => {
 	return (
 		<Show when={auth()}>
 			<div
-				class={`text-center p-2 ${tips() ? "bg-[var(--bg-button-prime)]" : "bg-[var(--bg-title)]"}`}
+				class={`text-center p-2 ${tips() ? "bg-(--bg-accent)" : "bg-(--bg-title)"}`}
 			>
 				{tips() || `系统管理-${currentCardIndex()}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`}
 			</div>
@@ -225,7 +225,7 @@ export default () => {
 							</div>
 						</div>
 						<div class="w-1 grow flex flex-col gap-2 max-h-48">
-							<div class="grow border overflow-y-auto">
+							<div class="grow border overflow-y-auto [scrollbar-width:none]">
 								<List
 									class="px-2"
 									cindex={[currentIssueIndex, setCurrentIssueIndex]}

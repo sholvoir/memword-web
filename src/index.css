@@ -5,34 +5,22 @@
 
   :root,
   :host {
-    --slate-200: oklch(0.929 0.013 255.508);
-    --slate-300: oklch(0.869 0.022 252.894);
-    --slate-400: oklch(0.704 0.04 256.788);
-    --slate-500: oklch(0.554 0.046 257.417);
-    --slate-700: oklch(0.372 0.044 257.287);
-    --slate-800: oklch(0.279 0.041 260.031);
-    --slate-900: oklch(0.208 0.042 265.755);
-    --orange-300: oklch(0.837 0.128 66.29);
-    --orange-400: oklch(0.75 0.183 55.934);
-    --orange-500: oklch(0.705 0.213 47.604);
-    --orange-700: oklch(0.553 0.195 38.402);
-    --orange-800: oklch(0.47 0.157 37.304);
-    --orange-900: oklch(0.408 0.123 38.172);
-    --color-neutral: var(--slate-500);
+    --color-neutral: var(--color-slate-500);
     --border-color: var(--color-neutral);
-    --bg-ripple: oklch(from var(--slate-300) l c h / .8);
-    --bg-title: var(--slate-300);
-    --bg-body: var(--slate-200);
-    --bg-button: var(--slate-300);
-    --bg-btn-hover: var(--slate-200);
-    --bg-btn-active: var(--slate-400);
-    --bg-button-prime: var(--orange-400);
-    --bg-btn-prime-hover: var(--orange-300);
-    --bg-btn-prime-active: var(--orange-500);
+    --bg-ripple: oklch(from var(--color-slate-300) l c h / .8);
+    --bg-title: var(--color-slate-300);
+    --bg-body: var(--color-slate-200);
+    --bg-button: var(--color-slate-300);
+    --bg-btn-hover: var(--color-slate-200);
+    --bg-btn-active: var(--color-slate-400);
+    --bg-button-prime: var(--color-orange-400);
+    --bg-btn-prime-hover: var(--color-orange-300);
+    --bg-btn-prime-active: var(--color-orange-500);
     --bg-half: oklch(from var(--bg-body) l c h / .7);
     --bg-tab: var(--bg-title);
-    --text-color: var(--slate-800);
-    --accent-color: var(--orange-700);
+    --text-color: var(--color-slate-800);
+    --accent-color: var(--color-orange-700);
+    --bg-accent: var(--color-orange-200);
     outline: none;
     fill: currentColor;
   }
@@ -41,17 +29,18 @@
 
     :root,
     :host {
-      --bg-ripple: oklch(from var(--slate-800) L C H / .8);
-      --bg-title: var(--slate-800);
-      --bg-body: var(--slate-900);
-      --bg-button: var(--slate-800);
-      --bg-btn-hover: var(--slate-900);
-      --bg-btn-active: var(--slate-700);
-      --bg-button-prime: var(--orange-800);
-      --bg-btn-prime-hover: var(--orange-900);
-      --bg-btn-prime-active: var(--orange-700);
-      --text-color: var(--slate-300);
-      --accent-color: var(--orange-300);
+      --bg-ripple: oklch(from var(--color-slate-800) L C H / .8);
+      --bg-title: var(--color-slate-800);
+      --bg-body: var(--color-slate-900);
+      --bg-button: var(--color-slate-800);
+      --bg-btn-hover: var(--color-slate-900);
+      --bg-btn-active: var(--color-slate-700);
+      --bg-button-prime: var(--color-orange-800);
+      --bg-btn-prime-hover: var(--color-orange-900);
+      --bg-btn-prime-active: var(--color-orange-700);
+      --text-color: var(--color-slate-300);
+      --accent-color: var(--color-orange-300);
+      --bg-accent: var(--color-orange-900);
     }
   }
 

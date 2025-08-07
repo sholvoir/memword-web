@@ -4,6 +4,7 @@ import type { InputTargeted } from "./targeted.ts";
 export default (
 	props: {
 		binding: Signal<number | undefined>;
+		invalidClass?: string;
 	} & JSX.InputHTMLAttributes<HTMLInputElement>,
 ) => {
 	const [local, others] = splitProps(props, ["binding", "class"]);
@@ -16,7 +17,9 @@ export default (
 	};
 	return (
 		<input
-			class={`${invalid() ? "text-red" : ""} ${local.class ?? ""}`}
+			class={`${
+				invalid() ? (props.invalidClass ?? "text-red-500") : ""
+			} ${local.class ?? ""}`}
 			{...others}
 			value={value()}
 			onInput={handleInput}

@@ -69,7 +69,7 @@ export default () => {
 			<TaInput name="words" class="grow" binding={[words, setWords]} />
 			{revision().length ? (
 				<>
-					<label for="replace" class="text-red-500 mt-2">
+					<label for="replace" class="text-(--accent-color) mt-2">
 						请考虑用下面的词替换
 					</label>
 					<textarea

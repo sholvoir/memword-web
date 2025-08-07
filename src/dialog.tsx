@@ -24,7 +24,7 @@ export default (
 		<>
 			<div
 				class={`title shrink-0 px-2 flex justify-between items-center font-bold ${
-					app.tips() ? "bg-(--bg-button-prime)" : "bg-(--bg-title)"
+					app.tips() ? "bg-(--bg-accent)" : "bg-(--bg-title)"
 				}`}
 			>
 				<div class="w-7 [app-region:no-drag]">
