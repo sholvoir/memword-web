@@ -89,20 +89,19 @@ export default () => {
 		}
 	};
 	const handleTouchStart = (e: TouchEvent & DivTargeted) => {
-		e.stopImmediatePropagation();
+		e.stopPropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = touchPos.startY = e.touches[0].clientY;
 		touchPos.cScrollTop = e.currentTarget.scrollTop;
 	};
 	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
-		e.stopImmediatePropagation();
+		e.stopPropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = e.touches[0].clientY;
 		const diff = touchPos.endY - touchPos.startY;
 		const div = e.currentTarget;
-		console.log("diff", touchPos.endY, touchPos.startY, diff);
 		if (diff < 0) {
 			const topMax = div.scrollHeight - div.clientHeight;
 			if (touchPos.cScrollTop - diff < topMax)
@@ -120,10 +119,9 @@ export default () => {
 			}
 		}
 		mainDiv.style.top = `${touchPos.moveTop}px`;
-		console.log(div.scrollTop, touchPos.moveTop);
 	};
 	const handleTouchCancel = (e: TouchEvent & DivTargeted) => {
-		e.stopImmediatePropagation();
+		e.stopPropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
 		touchPos.moveTop = 0;
@@ -131,7 +129,7 @@ export default () => {
 		mainDiv.style.top = `${touchPos.moveTop}px`;
 	};
 	const handleTouchEnd = async (e: TouchEvent & DivTargeted) => {
-		e.stopImmediatePropagation();
+		e.stopPropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) {
 			touchPos.moveTop = 0;
@@ -155,7 +153,7 @@ export default () => {
 		mainDiv.style.top = `${touchPos.moveTop}px`;
 	};
 	const handleClick = (e?: MouseEvent & DivTargeted) => {
-		e?.stopImmediatePropagation();
+		e?.stopPropagation();
 		if (showAddToBookMenu[0]()) return showAddToBookMenu[1](false);
 		const cardsN = app.citem()?.entries?.length ?? 0;
 		//if (cardsN === 0) return;
@@ -253,11 +251,11 @@ export default () => {
 				<div
 					class="relative grow h-0 pb-4 flex flex-col overflow-y-auto"
 					ref={mainDiv}
-					onClick={handleClick}
-					onTouchStart={handleTouchStart}
-					onTouchMove={handleTouchMove}
-					onTouchEnd={handleTouchEnd}
-					onTouchCancel={handleTouchCancel}
+					on:click={handleClick}
+					on:touchstart={handleTouchStart}
+					on:touchmove={handleTouchMove}
+					on:touchend={handleTouchEnd}
+					on:touchcancel={handleTouchCancel}
 				>
 					<div class="py-2 flex gap-2 flex-wrap justify-between">
 						<div class="text-4xl font-bold">{app.citem()?.word}</div>
