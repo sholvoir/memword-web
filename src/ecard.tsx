@@ -13,7 +13,7 @@ export default (
 	} & JSX.HTMLAttributes<HTMLDivElement>,
 ) => {
 	const [entry, setEntry] = props.entry;
-	const parseError = createSignal(false);
+	const [parseError, setParseError] = createSignal(false);
 	let player!: HTMLAudioElement;
 	const handlePlayClick = () => {
 		if (!entry().sound) app.showTips("no sound to play!");
@@ -22,10 +22,10 @@ export default (
 	const handleMeaningsChange = (e: InputEvent & TextAreaTargeted) => {
 		try {
 			const meanings = parse(e.currentTarget.value);
-			parseError[1](false);
-            setEntry(en => ({...en, meanings }))
+			setParseError(false);
+         setEntry(en => ({...en, meanings }))
 		} catch {
-			parseError[1](true);
+			setParseError(true);
 		}
 	};
 	return (
@@ -71,7 +71,7 @@ export default (
 			<textarea
 				name="meanings"
 				placeholder="meanings"
-				class={`h-32 grow font-mono ${parseError[0]() ? "text-red" : ""}`}
+				class={`h-32 grow font-mono ${parseError() ? "text-red-500" : ""}`}
 				value={stringify(entry().meanings, { lineWidth: 0 })}
 				onInput={handleMeaningsChange}
 				onFocus={props.onClick}

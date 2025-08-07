@@ -227,7 +227,7 @@ export default () => {
 						<div class="w-1 grow flex flex-col gap-2">
 							<div class="grow border overflow-y-auto">
 								<List
-									class="px-2"
+									class="px-2 max-h-48"
 									cindex={[currentIssueIndex, setCurrentIssueIndex]}
 									activeClass="bg-[var(--bg-title)]"
 									options={issues()}
