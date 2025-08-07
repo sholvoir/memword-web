@@ -1,7 +1,7 @@
 {
   "name": "memword-web",
   "private": true,
-  "version": "0.17.8",
+  "version": "0.17.9",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,8 +12,8 @@
   "dependencies": {
     "@sholvoir/generic": "npm:@jsr/sholvoir__generic",
     "@sholvoir/memword-common": "npm:@jsr/sholvoir__memword-common",
-    "solid-js": "^1.9.7",
-    "yaml": "^2.8.0"
+    "solid-js": "^1.9.8",
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.3",

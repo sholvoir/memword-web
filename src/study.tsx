@@ -89,14 +89,14 @@ export default () => {
 		}
 	};
 	const handleTouchStart = (e: TouchEvent & DivTargeted) => {
-		e.stopPropagation();
+		e.stopImmediatePropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = touchPos.startY = e.touches[0].clientY;
 		touchPos.cScrollTop = e.currentTarget.scrollTop;
 	};
 	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
-		e.stopPropagation();
+		e.stopImmediatePropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = e.touches[0].clientY;
@@ -123,7 +123,7 @@ export default () => {
 		console.log(div.scrollTop, touchPos.moveTop);
 	};
 	const handleTouchCancel = (e: TouchEvent & DivTargeted) => {
-		e.stopPropagation();
+		e.stopImmediatePropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
 		touchPos.moveTop = 0;
@@ -131,7 +131,7 @@ export default () => {
 		mainDiv.style.top = `${touchPos.moveTop}px`;
 	};
 	const handleTouchEnd = async (e: TouchEvent & DivTargeted) => {
-		e.stopPropagation();
+		e.stopImmediatePropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) {
 			touchPos.moveTop = 0;
@@ -155,7 +155,7 @@ export default () => {
 		mainDiv.style.top = `${touchPos.moveTop}px`;
 	};
 	const handleClick = (e?: MouseEvent & DivTargeted) => {
-		e?.stopPropagation();
+		e?.stopImmediatePropagation();
 		if (showAddToBookMenu[0]()) return showAddToBookMenu[1](false);
 		const cardsN = app.citem()?.entries?.length ?? 0;
 		//if (cardsN === 0) return;
