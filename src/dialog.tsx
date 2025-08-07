@@ -32,7 +32,7 @@ export default (
 						<Show when={local.onBackClick}>
 							<BButton
 								onClick={local.onBackClick}
-								class="w-full h-7 icon-[material-symbols--chevron-left]"
+								class="w-full h-7 icon-[material-symbols--chevron-left] align-bottom"
 							/>
 						</Show>
 					</Show>
@@ -43,7 +43,7 @@ export default (
 				<div class="w-7 [app-region:no-drag]">
 					<Show when={!local.rightElem} fallback="local.rightElem">
 						<Show when={false}>
-							<BButton class="w-full h-7 icon-[heroicons-solid--dots-horizontal]" />
+							<BButton class="w-full h-7 icon-[heroicons-solid--dots-horizontal] align-bottom" />
 						</Show>
 					</Show>
 				</div>

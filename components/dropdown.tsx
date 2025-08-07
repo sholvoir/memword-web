@@ -42,7 +42,7 @@ export default (
 			onClick={() => setOpen((x) => !x)}
 		>
 			<span>{local.options[cindex()]}</span>
-			<span class="icon-[mdi--chevron-down]" />
+			<span class="icon-[mdi--chevron-down] text-[150%] align-bottom" />
 			<Show when={isOpen()}>
 				<div
 					class="absolute top-[calc(100%_+_4px)] max-h-64 z-100 bg-[var(--bg-body)]

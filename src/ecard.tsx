@@ -73,7 +73,7 @@ export default (
 					onClick={handlePlayClick}
 					disabled={!entry().sound}
 				>
-					<span class="text-[150%] icon-[material-symbols--chevron-right]" />
+					<span class="text-[150%] align-bottom icon-[material-symbols--chevron-right]" />
 				</Button>
 			</div>
 			<audio ref={player} src={entry().sound} />

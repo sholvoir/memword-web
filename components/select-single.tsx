@@ -13,9 +13,9 @@ export default (props: {
     return <For each={props.options}>{
         (option, i) => <div class="flex gap-1 cursor-pointer items-center"
             onClick={[handleClick, i]}>
-            <span class={cindex() === i() ?
+            <span class={`align-bottom ${cindex() === i() ?
                 "icon-[material-symbols--check-box-outline]" :
-                "icon-[material-symbols--check-box-outline-blank]"} />
+                "icon-[material-symbols--check-box-outline-blank]"}`} />
             <span>{option}</span>
         </div>
     }</For>

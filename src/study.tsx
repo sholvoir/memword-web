@@ -89,12 +89,16 @@ export default () => {
 		}
 	};
 	const handleTouchStart = (e: TouchEvent & DivTargeted) => {
-		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer())) return;
+		e.stopPropagation();
+		e.preventDefault();
+		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = touchPos.startY = e.touches[0].clientY;
 		touchPos.cScrollTop = e.currentTarget.scrollTop;
 	};
 	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
-		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer())) return;
+		e.stopPropagation();
+		e.preventDefault();
+		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = e.touches[0].clientY;
 		const diff = touchPos.endY - touchPos.startY;
 		const div = e.currentTarget;
@@ -119,13 +123,17 @@ export default () => {
 		console.log(div.scrollTop, touchPos.moveTop);
 	};
 	const handleTouchCancel = (e: TouchEvent & DivTargeted) => {
-		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer())) return;
+		e.stopPropagation();
+		e.preventDefault();
+		if (!app.isPhaseAnswer()) return;
 		touchPos.moveTop = 0;
 		touchPos.cScrollTop = e.currentTarget.scrollTop;
 		mainDiv.style.top = `${touchPos.moveTop}px`;
 	};
 	const handleTouchEnd = async (e: TouchEvent & DivTargeted) => {
-		if ((e.stopPropagation(), e.preventDefault(), !app.isPhaseAnswer())) {
+		e.stopPropagation();
+		e.preventDefault();
+		if (!app.isPhaseAnswer()) {
 			touchPos.moveTop = 0;
 			touchPos.cScrollTop = e.currentTarget.scrollTop;
 			mainDiv.style.top = `${touchPos.moveTop}px`;
