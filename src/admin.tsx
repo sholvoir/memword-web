@@ -10,6 +10,7 @@ import List from "../components/list.tsx";
 import { version } from "../lib/common.ts";
 import * as mem from "../lib/mem.ts";
 import * as srv from "../lib/server.ts";
+import Dialog from "./dialog.tsx";
 import Ecard from "./ecard.tsx";
 
 export default () => {
@@ -130,14 +131,26 @@ export default () => {
 	});
 	return (
 		<Show when={auth()}>
-			<div
-				class={`text-center p-2 ${tips() ? "bg-(--bg-accent)" : "bg-(--bg-title)"}`}
+			<Dialog
+				title={
+					tips() || `系统管理-${currentCardIndex()}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`
+				}
+				class="flex flex-col gap-2 p-2"
 			>
-				{tips() || `系统管理-${currentCardIndex()}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`}
-			</div>
-			<div class="body grow flex flex-col gap-2 p-2">
 				<div class="h-4 grow-4 flex flex-col gap-2">
-					<div class="flex gap-2">
+					<div class="grow flex gap-2">
+						<For each={entries()}>
+							{(entry, i) => (
+								<Ecard
+									class="grow"
+									word={word()}
+									entry={entry}
+									onClick={() => setCurrentCardIndex(i())}
+								/>
+							)}
+						</For>
+					</div>
+					<div class="flex justify-between gap-2">
 						<TextInput
 							name="word"
 							placeholder="word"
@@ -153,43 +166,29 @@ export default () => {
 						>
 							Search
 						</Button>
-					</div>
-					<div class="grow flex gap-2">
-						<For each={entries()}>
-							{(entry, i) => (
-								<Ecard
-									class="grow"
-									word={word()}
-									entry={entry}
-									onClick={() => setCurrentCardIndex(i())}
-								/>
-							)}
-						</For>
-					</div>
-					<div class="flex justify-between gap-2">
 						<Button
-							class="grow button btn-normal"
+							class="button btn-normal"
 							disabled={word() !== currentWord()}
 							onClick={handleAddCardClick}
 						>
 							增卡
 						</Button>
 						<Button
-							class="grow button btn-normal"
+							class="button btn-normal"
 							disabled={word() !== currentWord() || entries().length <= 1}
 							onClick={handleDeleteCardClick}
 						>
 							删卡
 						</Button>
 						<Button
-							class="grow button btn-normal"
+							class="button btn-normal"
 							disabled={word() !== currentWord()}
 							onClick={handleDeleteClick}
 						>
 							删除
 						</Button>
 						<Button
-							class="grow button btn-normal"
+							class="button btn-normal"
 							disabled={word() !== currentWord()}
 							onClick={handleUpdateClick}
 						>
@@ -208,51 +207,49 @@ export default () => {
 					</div>
 				</div>
 				<Show when={!hide()}>
-					<div class="flex gap-2">
-						<div class="w-1 grow flex flex-col gap-2">
-							<textarea
-								class="grow"
-								value={ignoreWords()}
-								onChange={(e) => setIgnoreWords(e.currentTarget.value)}
+					<div class="flex gap-2 max-h-48">
+						<textarea
+							class="grow"
+							value={ignoreWords()}
+							onChange={(e) => setIgnoreWords(e.currentTarget.value)}
+						/>
+						<Button
+							class="button btn-normal leading-tight"
+							onClick={handleUploadIgnoreWordsClick}
+						>
+							拼写
+							<br />
+							忽略
+						</Button>
+						<div class="grow border overflow-y-auto [scrollbar-width:none]">
+							<List
+								class="px-2"
+								cindex={[currentIssueIndex, setCurrentIssueIndex]}
+								activeClass="bg-[var(--bg-title)]"
+								options={issues()}
+								func={(issue) => `${issue.reporter}: ${issue.issue}`}
+								onClick={handleIssueClick}
 							/>
-							<div class="flex justify-end">
-								<Button
-									class="button btn-normal"
-									onClick={handleUploadIgnoreWordsClick}
-								>
-									拼写忽略
-								</Button>
-							</div>
 						</div>
-						<div class="w-1 grow flex flex-col gap-2 max-h-48">
-							<div class="grow border overflow-y-auto [scrollbar-width:none]">
-								<List
-									class="px-2"
-									cindex={[currentIssueIndex, setCurrentIssueIndex]}
-									activeClass="bg-[var(--bg-title)]"
-									options={issues()}
-									func={(issue) => `${issue.reporter}: ${issue.issue}`}
-									onClick={handleIssueClick}
-								/>
-							</div>
-							<div class="flex justify-end gap-2">
-								<Button
-									class="button btn-normal"
-									onClick={handleLoadIssueClick}
-								>
-									加载问题
-								</Button>
-								<Button
-									class="button btn-normal"
-									onClick={handleProcessIssueClick}
-								>
-									处理问题
-								</Button>
-							</div>
-						</div>
+						<Button
+							class="button btn-normal leading-tight"
+							onClick={handleLoadIssueClick}
+						>
+							加载
+							<br />
+							问题
+						</Button>
+						<Button
+							class="button btn-normal leading-tight"
+							onClick={handleProcessIssueClick}
+						>
+							处理
+							<br />
+							问题
+						</Button>
 					</div>
 				</Show>
-			</div>
+			</Dialog>
 		</Show>
 	);
 };
