@@ -1,5 +1,6 @@
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import { createSignal } from "solid-js";
+import BButton from "../components/button-base.tsx";
 import RButton from "../components/button-ripple.tsx";
 import SInput from "../components/input-simple.tsx";
 import * as srv from "../lib/server.ts";
@@ -36,7 +37,16 @@ export default () => {
 		}
 	};
 	return (
-		<Dialog class="p-2 flex flex-col" title="注册" onBackClick={() => app.go()}>
+		<Dialog
+			class="p-2 flex flex-col"
+			title="注册"
+			left={
+				<BButton
+					class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+					onClick={() => app.go()}
+				/>
+			}
+		>
 			<div class="w-64 m-auto flex flex-col pb-4">
 				<label for="name">用户名</label>
 				<SInput

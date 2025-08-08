@@ -1,8 +1,18 @@
+import BButton from "../components/button-base.tsx";
 import * as app from "./app.tsx";
 import Dialog from "./dialog.tsx";
 
 export default () => (
-	<Dialog class="flex flex-col pb-4" title="帮助" onBackClick={() => app.go()}>
+	<Dialog
+		class="flex flex-col pb-4"
+		left={
+			<BButton
+				class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+				onClick={() => app.go()}
+			/>
+		}
+		title="帮助"
+	>
 		<ol class="list-decimal py-2 pr-2 pl-8 [&>li]:mx-2 overflow-y-auto">
 			<li>
 				如何使用本软件？

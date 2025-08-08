@@ -13,9 +13,16 @@ export default () => {
 	const [auth, setAuth] = createSignal("");
 	return (
 		<Dialog
+			left={
+				<Show when={app.user()}>
+					<BButton
+						class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+						onClick={() => app.go("#home")}
+					/>
+				</Show>
+			}
 			title="快乐背单词"
 			class="about flex flex-col pb-4 font-extrabold overflow-y-auto"
-			onBackClick={app.user() ? () => app.go("#home") : undefined}
 		>
 			<Show when={show()}>
 				<Input binding={[auth, setAuth]} />

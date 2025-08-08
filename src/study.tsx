@@ -6,6 +6,7 @@ import { wait } from "@sholvoir/generic/wait";
 import { type IBook, splitID } from "@sholvoir/memword-common/ibook";
 import { createResource, createSignal, For, Show } from "solid-js";
 import SButton from "../components/button-base.tsx";
+import BButton from "../components/button-base.tsx";
 import Tab from "../components/tab.tsx";
 import type { DivTargeted } from "../components/targeted.ts";
 import * as idb from "../lib/indexdb.ts";
@@ -182,7 +183,12 @@ export default () => {
 	});
 	return (
 		<Dialog
-			onBackClick={finish}
+			left={
+				<BButton
+					class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+					onClick={finish}
+				/>
+			}
 			onKeyUp={handleKeyPress}
 			tabIndex={-1}
 			class="flex flex-col p-2 outline-none"

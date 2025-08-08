@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import BButton from "../components/button-base.tsx";
 import TInput from "../components/input-text.tsx";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";
@@ -19,8 +20,13 @@ export default () => {
 	return (
 		<Dialog
 			class="flex flex-col text-lg"
+			left={
+				<BButton
+					class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+					onClick={() => app.go()}
+				/>
+			}
 			title="词典"
-			onBackClick={() => app.go()}
 		>
 			<TInput
 				autoCapitalize="none"

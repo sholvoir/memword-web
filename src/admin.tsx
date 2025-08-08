@@ -10,6 +10,7 @@ import List from "../components/list.tsx";
 import { version } from "../lib/common.ts";
 import * as mem from "../lib/mem.ts";
 import * as srv from "../lib/server.ts";
+import * as app from "./app.tsx";
 import Dialog from "./dialog.tsx";
 import Ecard from "./ecard.tsx";
 
@@ -19,10 +20,9 @@ export default () => {
 	const [auth, setAuth] = createSignal(false);
 	const [vocabulary, setVocabulary] = createSignal<Iterable<string>>([]);
 
-	const [tips, setTips] = createSignal("");
-	const hideTips = () => setTips("");
+	const hideTips = () => app.setTips("");
 	const showTips = (content: string, autohide = true) => {
-		setTips(content);
+		app.setTips(content);
 		autohide && setTimeout(hideTips, 3000);
 	};
 
@@ -132,9 +132,9 @@ export default () => {
 	return (
 		<Show when={auth()}>
 			<Dialog
-				title={
-					tips() || `系统管理-${currentCardIndex()}-${version} ˈʒɔɑɜæəɪʌʊʃˌ`
-				}
+				left={version}
+				title={<span class="font-mono">系统管理&nbsp;ˈʒɔɑɜæəɪʌʊʃˌ</span>}
+				right={`${currentCardIndex()}`}
 				class="flex flex-col gap-2 p-2"
 			>
 				<div class="h-4 grow-4 flex flex-col gap-2">
