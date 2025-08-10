@@ -59,6 +59,7 @@ export const updateDict = async (item: IItem) => {
 				const resp = await srv.getSound(entry.sound);
 				if (resp.ok) entry.sound = await blobToBase64(await resp.blob());
 			}
+	item.dictSync = now();
 	idb.putItem(itemMergeDict(item, dict));
 	return item;
 };

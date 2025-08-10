@@ -209,7 +209,7 @@ export default () => {
 				<Show when={!hide()}>
 					<div class="flex gap-2 max-h-48">
 						<textarea
-							class="grow"
+							class="w-1 grow"
 							value={ignoreWords()}
 							onChange={(e) => setIgnoreWords(e.currentTarget.value)}
 						/>
@@ -221,7 +221,7 @@ export default () => {
 							<br />
 							忽略
 						</Button>
-						<div class="grow border overflow-y-auto [scrollbar-width:none]">
+						<div class="w-1 grow border overflow-y-auto [scrollbar-width:none]">
 							<List
 								class="px-2"
 								cindex={[currentIssueIndex, setCurrentIssueIndex]}

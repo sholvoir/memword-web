@@ -140,7 +140,8 @@ export default () => {
 		}
 		const h = e.currentTarget.scrollHeight + 60;
 		const max = Math.max(globalThis.innerHeight, h);
-		if (Math.abs(touchPos.moveTop) >= globalThis.innerHeight / 6) {
+		const diff = Math.abs(touchPos.moveTop);
+		if (diff >= globalThis.innerHeight / 6) {
 			if (touchPos.moveTop > 0) {
 				await handleIKnown(0);
 				await continueMove(60, max);
@@ -149,7 +150,7 @@ export default () => {
 				await continueMove(-60, max);
 			}
 			await studyNext();
-		} else if (Math.abs(touchPos.moveTop) < 5) handleClick();
+		} else if (diff < 5 && diff < 0) handleClick();
 		touchPos.moveTop = 0;
 		mainDiv.style.top = `${touchPos.moveTop}px`;
 	};
