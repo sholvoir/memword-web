@@ -62,7 +62,7 @@ export const deleteBook = (name: string) =>
 	);
 
 export const postVocabulary = (words: string) =>
-	fetch(`${API_URL}/admin/vocabulary`, {
+	fetch(`${API_URL}/api/v2/vocabulary`, {
 		body: words,
 		method: "POST",
 		headers: authHead,
@@ -75,17 +75,17 @@ export const postSetting = (setting: ISetting) =>
 	fetch(`${API_URL}/api/v1/setting`, requestInit(setting, "POST", authHead));
 
 export const getIssues = () =>
-	getJson<Array<IIssue>>(`${API_URL}/admin/issue`, undefined, {
+	getJson<Array<IIssue>>(`${API_URL}/api/v2/issue`, undefined, {
 		method: "GET",
 		headers: authHead,
 	});
 
 export const postIssue = (issue: string) =>
-	fetch(`${API_URL}/api/v1/issue`, requestInit({ issue }, "POST", authHead));
+	fetch(`${API_URL}/api/v2/issue`, requestInit({ issue }, "POST", authHead));
 
 export const deleteIssue = (_id: string) =>
 	getJson(
-		`${API_URL}/admin/issue`,
+		`${API_URL}/api/v2/issue`,
 		{ id: _id },
 		{ method: "DELETE", headers: authHead },
 	);

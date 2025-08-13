@@ -22,9 +22,8 @@ export default () => {
 		await mem.syncTasks();
 		app.totalStats();
 	};
-	let mainDiv!: HTMLDivElement;
 	const [cindex, setCIndex] = createSignal(0);
-	const touchPos = { startY: 0, endY: 0, cScrollTop: 0, moveTop: 0, topMax: 0 };
+	const touchPos = { startY: 0, endY: 0, topMax: 0, top: 0, offset: 0, behavior: "smooth" as ScrollBehavior };
 
 	const [myBooks, setMyBooks] = createSignal<Array<IBook>>([]);
 	const showAddToBookMenu = createSignal(false);
@@ -41,15 +40,6 @@ export default () => {
 		if (!item) return finish();
 		app.setCItem(item);
 		setCIndex(0);
-	};
-	const continueMove = async (x: number) => {
-		touchPos.moveTop += x;
-		const diff = Math.abs(touchPos.moveTop);
-		mainDiv.style.top = `${touchPos.moveTop}px`;
-		if (diff < globalThis.innerHeight) {
-			await wait(30);
-			await continueMove(x);
-		}
 	};
 	const handleRefresh = async () => {
 		app.showTips("Get Server Data...", false);
@@ -95,9 +85,16 @@ export default () => {
 		if (!app.isPhaseAnswer()) return;
 		const div = e.currentTarget;
 		touchPos.endY = touchPos.startY = e.touches[0].clientY;
-		touchPos.cScrollTop = e.currentTarget.scrollTop;
-		touchPos.moveTop = 0;
+		touchPos.top = e.currentTarget.scrollTop;
+		touchPos.offset = 0;
 		touchPos.topMax = div.scrollHeight - div.clientHeight;
+	};
+	const continueMove = async (div: HTMLDivElement, x: number) => {
+		div.style.top = `${touchPos.offset += x}px`;
+		if (Math.abs(touchPos.offset) < globalThis.innerHeight) {
+			await wait(30);
+			await continueMove(div, x);
+		}
 	};
 	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
 		e.stopPropagation();
@@ -105,44 +102,43 @@ export default () => {
 		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = e.touches[0].clientY;
 		const diff = touchPos.endY - touchPos.startY;
-		const net = touchPos.cScrollTop - diff;
+		const net = touchPos.top - diff;
 		const div = e.currentTarget;
 		if (diff < 0) {
-			if (net < touchPos.topMax) div.scrollTop = net;
+			if (net < touchPos.topMax) touchPos.top = net;
 			else {
-				div.scrollTop = touchPos.topMax;
-				touchPos.moveTop = touchPos.topMax - net;
+				touchPos.top = touchPos.topMax;
+				touchPos.offset = touchPos.topMax - net;
 			}
 		} else {
-			if (net > 0) div.scrollTop = net;
+			if (net > 0) touchPos.top = net;
 			else {
-				div.scrollTop = 0;
-				touchPos.moveTop = diff - touchPos.cScrollTop;
+				touchPos.top = 0;
+				touchPos.offset = diff - touchPos.top;
 			}
 		}
-		mainDiv.style.top = `${touchPos.moveTop}px`;
+		div.scrollTo(touchPos);
+		div.style.top = `${touchPos.offset}px`;
 	};
 	const handleTouchCancel = (e: TouchEvent & DivTargeted) => {
 		e.stopPropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
-		touchPos.moveTop = 0;
-		touchPos.cScrollTop = e.currentTarget.scrollTop;
-		mainDiv.style.top = `${touchPos.moveTop}px`;
+		e.currentTarget.style.top = `${touchPos.offset = 0}`;
 	};
 	const handleTouchEnd = async (e: TouchEvent & DivTargeted) => {
 		e.stopPropagation();
 		e.preventDefault();
+		const div = e.currentTarget;
 		const diff = touchPos.endY - touchPos.startY;
-		if (!app.isPhaseAnswer() || diff < 5) handleClick();
-		else if (Math.abs(touchPos.moveTop) >= globalThis.innerHeight / 6) {
-			const down = touchPos.moveTop > 0;
+		if (!app.isPhaseAnswer() || Math.abs(diff) < 5) handleClick();
+		else if (Math.abs(touchPos.offset) >= globalThis.innerHeight / 6) {
+			const down = touchPos.offset > 0;
 			await handleIKnown(down ? 0 : undefined);
-			await continueMove(down ? 60 : -60);
+			await continueMove(div, down ? 60 : -60);
 			await studyNext();
 		}
-		touchPos.moveTop = 0;
-		mainDiv.style.top = `${touchPos.moveTop}px`;
+		div.style.top = `${touchPos.offset = 0}`;
 	};
 	const handleClick = (e?: MouseEvent & DivTargeted) => {
 		e?.stopPropagation();
@@ -247,7 +243,6 @@ export default () => {
 				</div>
 				<div
 					class="relative grow h-0 pb-4 flex flex-col overflow-y-auto"
-					ref={mainDiv}
 					on:click={handleClick}
 					on:touchstart={handleTouchStart}
 					on:touchmove={handleTouchMove}
