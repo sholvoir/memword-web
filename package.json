@@ -1,12 +1,13 @@
 {
   "name": "memword-web",
   "private": true,
-  "version": "0.18.1",
+  "version": "0.18.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "force": "vite --force",
-    "build": "tsc -b && vite build && vite build --config vite.worker.config.ts",
+    "build": "tsc -b && vite build",
+    "worker": "tsc-b && vite build --config vite.worker.config.ts",
     "preview": "vite preview"
   },
   "dependencies": {
