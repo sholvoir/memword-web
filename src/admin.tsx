@@ -226,7 +226,7 @@ export default () => {
 							class="button btn-normal"
 							onClick={srv.getEcdictAsIssue}
 						>
-							ecdict
+							EC
 						</Button>
 						<div class="w-1 grow border overflow-y-auto [scrollbar-width:none]">
 							<List
