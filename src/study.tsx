@@ -24,7 +24,7 @@ export default () => {
 	};
 	let mainDiv!: HTMLDivElement;
 	const [cindex, setCIndex] = createSignal(0);
-	const touchPos = { startY: 0, endY: 0, cScrollTop: 0, moveTop: 0 };
+	const touchPos = { startY: 0, endY: 0, cScrollTop: 0, moveTop: 0, topMax: 0 };
 
 	const [myBooks, setMyBooks] = createSignal<Array<IBook>>([]);
 	const showAddToBookMenu = createSignal(false);
@@ -42,13 +42,13 @@ export default () => {
 		app.setCItem(item);
 		setCIndex(0);
 	};
-	const continueMove = async (x: number, max: number) => {
+	const continueMove = async (x: number) => {
 		touchPos.moveTop += x;
 		const diff = Math.abs(touchPos.moveTop);
 		mainDiv.style.top = `${touchPos.moveTop}px`;
-		if (diff < max) {
+		if (diff < globalThis.innerHeight) {
 			await wait(30);
-			await continueMove(x, max);
+			await continueMove(x);
 		}
 	};
 	const handleRefresh = async () => {
@@ -93,8 +93,11 @@ export default () => {
 		e.stopPropagation();
 		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
+		const div = e.currentTarget;
 		touchPos.endY = touchPos.startY = e.touches[0].clientY;
 		touchPos.cScrollTop = e.currentTarget.scrollTop;
+		touchPos.moveTop = 0;
+		touchPos.topMax = div.scrollHeight - div.clientHeight;
 	};
 	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
 		e.stopPropagation();
@@ -102,18 +105,16 @@ export default () => {
 		if (!app.isPhaseAnswer()) return;
 		touchPos.endY = e.touches[0].clientY;
 		const diff = touchPos.endY - touchPos.startY;
+		const net = touchPos.cScrollTop - diff;
 		const div = e.currentTarget;
 		if (diff < 0) {
-			const topMax = div.scrollHeight - div.clientHeight;
-			if (touchPos.cScrollTop - diff < topMax)
-				div.scrollTop = touchPos.cScrollTop - diff;
+			if (net < touchPos.topMax) div.scrollTop = net;
 			else {
-				div.scrollTop = topMax;
-				touchPos.moveTop = topMax - (touchPos.cScrollTop - diff);
+				div.scrollTop = touchPos.topMax;
+				touchPos.moveTop = touchPos.topMax - net;
 			}
 		} else {
-			if (touchPos.cScrollTop - diff > 0)
-				div.scrollTop = touchPos.cScrollTop - diff;
+			if (net > 0) div.scrollTop = net;
 			else {
 				div.scrollTop = 0;
 				touchPos.moveTop = diff - touchPos.cScrollTop;
@@ -132,25 +133,14 @@ export default () => {
 	const handleTouchEnd = async (e: TouchEvent & DivTargeted) => {
 		e.stopPropagation();
 		e.preventDefault();
-		if (!app.isPhaseAnswer()) {
-			touchPos.moveTop = 0;
-			touchPos.cScrollTop = e.currentTarget.scrollTop;
-			mainDiv.style.top = `${touchPos.moveTop}px`;
-			return handleClick();
-		}
-		const h = e.currentTarget.scrollHeight + 60;
-		const max = Math.max(globalThis.innerHeight, h);
-		const diff = Math.abs(touchPos.moveTop);
-		if (diff >= globalThis.innerHeight / 6) {
-			if (touchPos.moveTop > 0) {
-				await handleIKnown(0);
-				await continueMove(60, max);
-			} else {
-				await handleIKnown();
-				await continueMove(-60, max);
-			}
+		const diff = touchPos.endY - touchPos.startY;
+		if (!app.isPhaseAnswer() || diff < 5) handleClick();
+		else if (Math.abs(touchPos.moveTop) >= globalThis.innerHeight / 6) {
+			const down = touchPos.moveTop > 0;
+			await handleIKnown(down ? 0 : undefined);
+			await continueMove(down ? 60 : -60);
 			await studyNext();
-		} else if (diff < 5 && diff < 0) handleClick();
+		}
 		touchPos.moveTop = 0;
 		mainDiv.style.top = `${touchPos.moveTop}px`;
 	};

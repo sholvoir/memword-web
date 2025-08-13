@@ -222,12 +222,6 @@ export default () => {
 							<br />
 							忽略
 						</Button>
-						<Button
-							class="button btn-normal"
-							onClick={srv.getEcdictAsIssue}
-						>
-							EC
-						</Button>
 						<div class="w-1 grow border overflow-y-auto [scrollbar-width:none]">
 							<List
 								class="px-2"
@@ -238,6 +232,12 @@ export default () => {
 								onClick={handleIssueClick}
 							/>
 						</div>
+						<Button
+							class="button btn-normal"
+							onClick={srv.getEcdictAsIssue}
+						>
+							EC
+						</Button>
 						<Button
 							class="button btn-normal leading-tight"
 							onClick={handleLoadIssueClick}

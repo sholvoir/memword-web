@@ -17,14 +17,14 @@ export const getDefinition = (word: string) =>
 	getJson<IEntry>(`${API_URL}/pub/definition`, { q: word });
 
 export const getDict = (word: string) =>
-	getJson<IDict>(`${API_URL}/pub/dict`, { q: word }, { cache: "reload" });
+	getJson<IDict>(`${API_URL}/api/v2/dict`, { q: word }, { cache: "reload" });
 
 export const putDict = (dict: IDict) =>
-	fetch(`${API_URL}/admin/dict`, requestInit(dict, "PUT", authHead));
+	fetch(`${API_URL}/api/v2/dict`, requestInit(dict, "PUT", authHead));
 
 export const deleteDict = (word: string) =>
 	getRes(
-		`${API_URL}/admin/dict`,
+		`${API_URL}/api/v2/dict`,
 		{ q: word },
 		{ method: "DELETE", headers: authHead },
 	);
