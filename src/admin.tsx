@@ -90,6 +90,7 @@ export default () => {
 
 	const [currentIssueIndex, setCurrentIssueIndex] = createSignal(0);
 	const [issues, setIssues] = createSignal<Array<IIssue>>([]);
+
 	const handleLoadIssueClick = async () => {
 		const issues = await srv.getIssues();
 		if (issues) {
@@ -220,6 +221,12 @@ export default () => {
 							拼写
 							<br />
 							忽略
+						</Button>
+						<Button
+							class="button btn-normal"
+							onClick={srv.getEcdictAsIssue}
+						>
+							ecdict
 						</Button>
 						<div class="w-1 grow border overflow-y-auto [scrollbar-width:none]">
 							<List

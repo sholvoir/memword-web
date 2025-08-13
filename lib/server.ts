@@ -35,8 +35,6 @@ export const postTasks = (tasks: Array<ITask>) =>
 export const deleteTask = (words: Array<string>) =>
 	fetch(`${API_URL}/api/v1/task`, requestInit(words, "DELETE", authHead));
 
-export const postIssue = (issue: string) =>
-	fetch(`${API_URL}/api/v1/issue`, requestInit({ issue }, "POST", authHead));
 
 export const getBooks = () => getJson<Array<IBook>>(`${API_URL}/pub/book`);
 
@@ -82,9 +80,14 @@ export const getIssues = () =>
 		headers: authHead,
 	});
 
+export const postIssue = (issue: string) =>
+	fetch(`${API_URL}/api/v1/issue`, requestInit({ issue }, "POST", authHead));
+
 export const deleteIssue = (_id: string) =>
 	getJson(
 		`${API_URL}/admin/issue`,
 		{ id: _id },
 		{ method: "DELETE", headers: authHead },
 	);
+
+export const getEcdictAsIssue = () => getRes(`${API_URL}/api/v2/ecdict-as-issue`);
