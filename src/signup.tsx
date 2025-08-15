@@ -43,7 +43,7 @@ export default () => {
 			left={
 				<BButton
 					class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
-					onClick={() => app.go()}
+					onClick={() => app.go("#about")}
 				/>
 			}
 		>
@@ -66,9 +66,9 @@ export default () => {
 				/>
 				<div class="text-right mb-3">
 					已经注册，请
-					<RButton class="button btn-normal mx-1" onClick={handleSignin}>
+					<BButton class="btn-anchor font-bold" onClick={handleSignin}>
 						登录
-					</RButton>
+					</BButton>
 				</div>
 				<RButton class="button btn-prime py-1" onClick={handleSignup}>
 					注册

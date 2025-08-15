@@ -1,9 +1,5 @@
 // deno-lint-ignore-file
-import {
-	// @ts-types="solid-js"
-	type Component,
-	createEffect,
-} from "solid-js";
+import { createEffect, type JSX } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import * as mem from "../lib/mem.ts";
 import About from "./about.tsx";
@@ -14,12 +10,10 @@ import Home from "./home.tsx";
 import Issue from "./issue.tsx";
 import Dict from "./search.tsx";
 import Setting from "./setting.tsx";
-import Signin from "./signin.tsx";
-import Signup from "./signup.tsx";
 import Study from "./study.tsx";
 
 export default () => {
-	const dialogs = new Map<app.TDial, Component>();
+	const dialogs = new Map<app.TDial, () => JSX.Element>();
 	dialogs.set("#home", Home);
 	dialogs.set("#help", Help);
 	dialogs.set("#about", About);
@@ -27,8 +21,6 @@ export default () => {
 	dialogs.set("#setting", Setting);
 	dialogs.set("#search", Dict);
 	dialogs.set("#study", Study);
-	dialogs.set("#signup", Signup);
-	dialogs.set("#signin", Signin);
 	dialogs.set("#book", Book);
 
 	const init = async () => {

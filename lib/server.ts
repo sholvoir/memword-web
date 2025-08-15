@@ -6,88 +6,58 @@ import type { ISetting } from "@sholvoir/memword-common/isetting";
 import type { ITask } from "@sholvoir/memword-common/itask";
 import { API_URL } from "./common.ts";
 
-export const authHead = { Authorization: "" };
-export const otp = (name: string) => getRes(`${API_URL}/pub/otp`, { name });
+export const otp = (name: string) => getRes(`${API_URL}/otp`, { name });
+
 export const signup = (phone: string, name: string) =>
-	getRes(`${API_URL}/pub/signup`, { phone, name });
+	getRes(`${API_URL}/signup`, { phone, name });
 export const signin = (name: string, code: string) =>
-	getRes(`${API_URL}/pub/signin`, { name, code });
+	getRes(`${API_URL}/signin`, { name, code });
 
 export const getDefinition = (word: string) =>
-	getJson<IEntry>(`${API_URL}/pub/definition`, { q: word });
+	getJson<IEntry>(`${API_URL}/definition`, { q: word });
 
 export const getDict = (word: string) =>
-	getJson<IDict>(`${API_URL}/api/v2/dict`, { q: word }, { cache: "reload" });
+	getJson<IDict>(`${API_URL}/dict`, { q: word }, { cache: "reload" });
 
 export const putDict = (dict: IDict) =>
-	fetch(`${API_URL}/api/v2/dict`, requestInit(dict, "PUT", authHead));
+	fetch(`${API_URL}/dict`, requestInit(dict, "PUT"));
 
 export const deleteDict = (word: string) =>
-	getRes(
-		`${API_URL}/api/v2/dict`,
-		{ q: word },
-		{ method: "DELETE", headers: authHead },
-	);
+	getRes(`${API_URL}/dict`, { q: word }, { method: "DELETE" });
 
 export const postTasks = (tasks: Array<ITask>) =>
-	fetch(`${API_URL}/api/v1/task`, requestInit(tasks, "POST", authHead));
+	fetch(`${API_URL}/task`, requestInit(tasks));
 
 export const deleteTask = (words: Array<string>) =>
-	fetch(`${API_URL}/api/v1/task`, requestInit(words, "DELETE", authHead));
+	fetch(`${API_URL}/task`, requestInit(words, "DELETE"));
 
-
-export const getBooks = () => getJson<Array<IBook>>(`${API_URL}/pub/book`);
-
-export const getBook = (bid: string) => fetch(`${API_URL}/pub/book/${bid}`);
+export const getBooks = () => getJson<Array<IBook>>(`${API_URL}/book`);
+export const getBook = (bid: string) => fetch(`${API_URL}/book/${bid}`);
 
 export const postBook = (name: string, words: string, disc?: string) =>
-	getRes(
-		`${API_URL}/api/v1/book`,
-		{ name, disc },
-		{ body: words, method: "POST", headers: authHead },
-	);
+	getRes(`${API_URL}/book`, { name, disc }, { body: words, method: "POST" });
 
 export const putBook = (name: string, words: string, disc?: string) =>
-	getRes(
-		`${API_URL}/api/v1/book`,
-		{ name, disc },
-		{ body: words, method: "PUT", headers: authHead },
-	);
+	getRes(`${API_URL}/book`, { name, disc }, { body: words, method: "PUT" });
 
 export const deleteBook = (name: string) =>
-	getRes(
-		`${API_URL}/api/v1/wordlist`,
-		{ name },
-		{ method: "DELETE", headers: authHead },
-	);
+	getRes(`${API_URL}/wordlist`, { name }, { method: "DELETE" });
 
 export const postVocabulary = (words: string) =>
-	fetch(`${API_URL}/api/v2/vocabulary`, {
-		body: words,
-		method: "POST",
-		headers: authHead,
-	});
+	fetch(`${API_URL}/vocabulary`, { body: words, method: "POST" });
 
 export const getSound = (url: string) =>
-	getRes(`${API_URL}/pub/sound`, { q: url }, { cache: "force-cache" });
+	getRes(`${API_URL}/sound`, { q: url }, { cache: "force-cache" });
 
 export const postSetting = (setting: ISetting) =>
-	fetch(`${API_URL}/api/v1/setting`, requestInit(setting, "POST", authHead));
+	fetch(`${API_URL}/setting`, requestInit(setting));
 
-export const getIssues = () =>
-	getJson<Array<IIssue>>(`${API_URL}/api/v2/issue`, undefined, {
-		method: "GET",
-		headers: authHead,
-	});
+export const getIssues = () => getJson<Array<IIssue>>(`${API_URL}/issue`);
 
 export const postIssue = (issue: string) =>
-	fetch(`${API_URL}/api/v2/issue`, requestInit({ issue }, "POST", authHead));
+	fetch(`${API_URL}/issue`, requestInit({ issue }));
 
 export const deleteIssue = (_id: string) =>
-	getJson(
-		`${API_URL}/api/v2/issue`,
-		{ id: _id },
-		{ method: "DELETE", headers: authHead },
-	);
+	getJson(`${API_URL}/issue`, { id: _id }, { method: "DELETE" });
 
-export const getEcdictAsIssue = () => getRes(`${API_URL}/api/v2/ecdict-as-issue`);
+export const getEcdictAsIssue = () => fetch(`${API_URL}/ecdict-as-issue`);

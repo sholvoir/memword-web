@@ -8,11 +8,16 @@ export default defineConfig({
 	plugins: [solid(), tailwindcss()],
 	build: {
 		target: "esnext",
-		outDir: "../memword-server/html",
+		outDir: "../memword-server/static",
 		emptyOutDir: true,
 		assetsDir: "assets",
 		rollupOptions: {
-			input: ["/index.html", "/admin.html"],
+			input: ["/index.html", "/about.html", "/admin.html"],
 		},
 	},
+	server: {
+		proxy: {
+			'/api': 'http://localhost:8000'
+		}
+	}
 });

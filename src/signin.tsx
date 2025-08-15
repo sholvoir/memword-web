@@ -1,7 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <No> */
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import { createSignal } from "solid-js";
-import AButton from "../components/button-base.tsx";
 import BButton from "../components/button-base.tsx";
 import Button from "../components/button-ripple.tsx";
 import SInput from "../components/input-simple.tsx";
@@ -75,7 +74,7 @@ export default () => {
 			left={
 				<BButton
 					class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
-					onClick={() => app.go()}
+					onClick={() => app.go("#about")}
 				/>
 			}
 		>
@@ -83,11 +82,19 @@ export default () => {
 				<label for="name">用户名</label>
 				<SInput
 					name="name"
-					class="mb-3"
 					placeholder="name"
 					autoCapitalize="none"
 					binding={[app.name, app.setName]}
 				/>
+				<div class="text-right mb-3">
+					尚未
+					<BButton
+						class="btn-anchor font-bold"
+						onClick={() => app.go("#signup")}
+					>
+						注册
+					</BButton>?
+				</div>
 				<label for="code">临时密码</label>
 				<SInput
 					name="code"
@@ -95,13 +102,13 @@ export default () => {
 					autoCapitalize="none"
 					binding={[code, setCode]}
 				/>
-				<AButton
+				<BButton
 					class="btn-anchor block text-right mb-3"
 					onClick={handleSend}
 					disabled={!canSendOTP()}
 				>
 					Send One-Time Passcode {counter() > 0 ? `(${counter()})` : ""}
-				</AButton>
+				</BButton>
 				<Button class="button btn-prime" onClick={handleClickLogin}>
 					登录
 				</Button>

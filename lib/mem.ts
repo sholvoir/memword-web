@@ -5,7 +5,11 @@ import { STATUS_CODE } from "@sholvoir/generic/http";
 import { JWT } from "@sholvoir/generic/jwt";
 import { now } from "@sholvoir/memword-common/common";
 import { type IBook, splitID } from "@sholvoir/memword-common/ibook";
-import { defaultSetting, type ISetting } from "@sholvoir/memword-common/isetting";
+import {
+	defaultSetting,
+	type ISetting,
+} from "@sholvoir/memword-common/isetting";
+import Cookies from "js-cookie";
 import { dictExpire } from "./common.ts";
 import { type IItem, item2task, itemMergeDict, newItem } from "./iitem.ts";
 import * as idb from "./indexdb.ts";
@@ -13,26 +17,21 @@ import { type IStats, statsFormat } from "./istat.ts";
 import * as srv from "./server.ts";
 
 export const getUser = async () => {
-	let auth: string;
-	if (srv.authHead.Authorization)
-		auth = srv.authHead.Authorization.split(" ")[1];
-	else {
-		auth = await idb.getMeta("_auth") as string;
-		if (auth) srv.authHead.Authorization = `Bearer ${auth}`;
-	}
-	if (auth) return JWT.decode(auth)[1]?.aud as string;
+	const auth = Cookies.get("auth");
+	if (!auth) return "";
+	return (JWT.decode(auth)[1]?.aud as string) ?? "";
 };
 
 export let setting: ISetting = defaultSetting();
 
 export const initSetting = async () => {
-	const s = await idb.getMeta("_setting") as ISetting;
+	const s = (await idb.getMeta("_setting")) as ISetting;
 	if (s) setting = s;
 };
 
 export const syncSetting = async (cSetting?: ISetting) => {
 	if (cSetting && cSetting.version > setting.version) setting = cSetting;
-	const lSetting = await idb.getMeta("_setting") as ISetting;
+	const lSetting = (await idb.getMeta("_setting")) as ISetting;
 	if (lSetting && lSetting.version > setting.version) setting = lSetting;
 	else await idb.setMeta("_setting", setting);
 	try {

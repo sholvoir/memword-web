@@ -1,7 +1,7 @@
-import * as idb from "../lib/indexdb.ts";
+import { createSignal, Show } from "solid-js";
 import * as app from "./app.tsx";
 import "./about.css";
-import { createSignal, Show } from "solid-js";
+import Cookies from "js-cookie";
 import BButton from "../components/button-base.tsx";
 import RButton from "../components/button-ripple.tsx";
 import Input from "../components/input-simple.tsx";
@@ -25,13 +25,18 @@ export default () => {
 			class="about flex flex-col pb-4 font-extrabold overflow-y-auto"
 		>
 			<Show when={show()}>
-				<Input binding={[auth, setAuth]} />
-				<BButton
-					class="button btn-normal"
-					onClick={() => idb.setMeta("_auth", auth())}
-				>
-					OK
-				</BButton>
+				<div>
+					<Input binding={[auth, setAuth]} />
+					<BButton
+						class="button bg-slate-300 text-slate-800"
+						onClick={() => {
+							Cookies.set("auth", auth(), { expires: 7 });
+							location.replace("/");
+						}}
+					>
+						Login
+					</BButton>
+				</div>
 			</Show>
 			<div>
 				<h1>快乐背单词</h1>
@@ -63,20 +68,22 @@ export default () => {
 					现代人工作学习都非常忙碌，充分利用好<b>碎片时间</b>，是成功的关键。
 				</p>
 			</div>
-			<div>
-				<h1>开始学习</h1>
-				<p>
-					使用你的手机，单击
-					<RButton
-						class="button bg-orange-300 text-slate-800"
-						title="login"
-						onClick={() => app.go("#signup")}
-					>
-						登录
-					</RButton>
-					开始免费学习吧。
-				</p>
-			</div>
+			<Show when={!app.user()}>
+				<div>
+					<h1>开始学习</h1>
+					<p>
+						使用你的手机，单击
+						<RButton
+							class="button bg-orange-300 text-slate-800"
+							title="login"
+							onClick={() => app.go("#signup")}
+						>
+							登录
+						</RButton>
+						开始免费学习吧。
+					</p>
+				</div>
+			</Show>
 			<div>
 				<h1>微信</h1>
 				<p>
