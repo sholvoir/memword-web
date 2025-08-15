@@ -91,6 +91,14 @@ export default () => {
 	const [currentIssueIndex, setCurrentIssueIndex] = createSignal(0);
 	const [issues, setIssues] = createSignal<Array<IIssue>>([]);
 
+	const handleECClick = async () => {
+		const resp = await srv.getEcdictAsIssue();
+		if (resp.ok) {
+			showTips("EC导入成功");
+			await handleLoadIssueClick();
+		} else showTips("EC导入失败");
+	};
+
 	const handleLoadIssueClick = async () => {
 		const issues = await srv.getIssues();
 		if (issues) {
@@ -232,10 +240,7 @@ export default () => {
 								onClick={handleIssueClick}
 							/>
 						</div>
-						<Button
-							class="button btn-normal"
-							onClick={srv.getEcdictAsIssue}
-						>
+						<Button class="button btn-normal" onClick={handleECClick}>
 							EC
 						</Button>
 						<Button

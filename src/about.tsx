@@ -92,8 +92,8 @@ export default () => {
 				</p>
 			</div>
 			<div>
-				<h1>桌面</h1>
-				<p>
+				<h1>安装</h1>
+				<p class="mb-3">
 					*提示二(iOS): 请使用「共享」-「添加到主屏幕」安装 <b>Web应用</b>{" "}
 					到桌面，以便下次直接
 					<BButton onClick={() => setShow(true)}>点击</BButton>进入。
