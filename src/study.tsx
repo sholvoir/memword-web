@@ -88,8 +88,6 @@ export default () => {
 	};
 	const handleTouchStart = (e: TouchEvent & DivTargeted) => {
 		if (!app.isPhaseAnswer()) return;
-		e.stopPropagation();
-		e.preventDefault();
 		const div = e.currentTarget;
 		touchPos.endY = touchPos.startY = e.touches[0].clientY;
 		touchPos.offset = 0;
@@ -98,23 +96,19 @@ export default () => {
 	};
 	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
 		if (!app.isPhaseAnswer()) return;
-		e.stopPropagation();
 		touchPos.endY = e.touches[0].clientY;
 		const diff = touchPos.endY - touchPos.startY;
 		if ((diff < 0) && (touchPos.canUp) || (diff > 0) && (touchPos.canDown)) {
 			e.currentTarget.style.top = `${touchPos.offset=diff}px`;
+			e.stopPropagation();
 			e.preventDefault();
 		}
 	};
 	const handleTouchCancel = (e: TouchEvent & DivTargeted) => {
-		e.stopPropagation();
-		e.preventDefault();
 		if (!app.isPhaseAnswer()) return;
 		e.currentTarget.style.top = `${touchPos.offset = 0}`;
 	};
 	const handleTouchEnd = async (e: TouchEvent & DivTargeted) => {
-		e.stopPropagation();
-		e.preventDefault();
 		const div = e.currentTarget;
 		const diff = touchPos.endY - touchPos.startY;
 		if (!app.isPhaseAnswer() || Math.abs(diff) < 5) handleClick();
