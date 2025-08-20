@@ -23,7 +23,7 @@ export default () => {
 		app.totalStats();
 	};
 	const [cindex, setCIndex] = createSignal(0);
-	const touchPos = { startY: 0, endY: 0, topMax: 0, top: 0, offset: 0, behavior: "smooth" as ScrollBehavior };
+	const touchPos = { startY: 0, endY: 0, offset: 0, canUp: false, canDown: false };
 
 	const [myBooks, setMyBooks] = createSignal<Array<IBook>>([]);
 	const showAddToBookMenu = createSignal(false);
@@ -79,16 +79,6 @@ export default () => {
 				break;
 		}
 	};
-	const handleTouchStart = (e: TouchEvent & DivTargeted) => {
-		e.stopPropagation();
-		e.preventDefault();
-		if (!app.isPhaseAnswer()) return;
-		const div = e.currentTarget;
-		touchPos.endY = touchPos.startY = e.touches[0].clientY;
-		touchPos.top = e.currentTarget.scrollTop;
-		touchPos.offset = 0;
-		touchPos.topMax = div.scrollHeight - div.clientHeight;
-	};
 	const continueMove = async (div: HTMLDivElement, x: number) => {
 		div.style.top = `${touchPos.offset += x}px`;
 		if (Math.abs(touchPos.offset) < globalThis.innerHeight) {
@@ -96,29 +86,25 @@ export default () => {
 			await continueMove(div, x);
 		}
 	};
-	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
+	const handleTouchStart = (e: TouchEvent & DivTargeted) => {
+		if (!app.isPhaseAnswer()) return;
 		e.stopPropagation();
 		e.preventDefault();
+		const div = e.currentTarget;
+		touchPos.endY = touchPos.startY = e.touches[0].clientY;
+		touchPos.offset = 0;
+		touchPos.canDown = e.currentTarget.scrollTop <= 3;
+		touchPos.canUp = div.scrollHeight - div.clientHeight - div.scrollTop <= 3;;
+	};
+	const handleTouchMove = (e: TouchEvent & DivTargeted) => {
 		if (!app.isPhaseAnswer()) return;
+		e.stopPropagation();
 		touchPos.endY = e.touches[0].clientY;
 		const diff = touchPos.endY - touchPos.startY;
-		const net = touchPos.top - diff;
-		const div = e.currentTarget;
-		if (diff < 0) {
-			if (net < touchPos.topMax) touchPos.top = net;
-			else {
-				touchPos.top = touchPos.topMax;
-				touchPos.offset = touchPos.topMax - net;
-			}
-		} else {
-			if (net > 0) touchPos.top = net;
-			else {
-				touchPos.top = 0;
-				touchPos.offset = diff - touchPos.top;
-			}
+		if ((diff < 0) && (touchPos.canUp) || (diff > 0) && (touchPos.canDown)) {
+			e.currentTarget.style.top = `${touchPos.offset=diff}px`;
+			e.preventDefault();
 		}
-		div.scrollTo(touchPos);
-		div.style.top = `${touchPos.offset}px`;
 	};
 	const handleTouchCancel = (e: TouchEvent & DivTargeted) => {
 		e.stopPropagation();
