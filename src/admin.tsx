@@ -143,7 +143,7 @@ export default () => {
 			<Dialog
 				left={version}
 				title={<span class="font-mono">系统管理&nbsp;ˈʒɔɑɜæəɪʌʊʃˌ</span>}
-				right={`${currentCardIndex()}`}
+				right={`${issues().length}`}
 				class="flex flex-col gap-2 p-2"
 			>
 				<div class="h-4 grow-4 flex flex-col gap-2">
@@ -187,7 +187,7 @@ export default () => {
 							disabled={word() !== currentWord() || entries().length <= 1}
 							onClick={handleDeleteCardClick}
 						>
-							删卡
+							{`删卡${currentCardIndex()}`}
 						</Button>
 						<Button
 							class="button btn-normal"
