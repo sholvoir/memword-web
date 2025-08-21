@@ -110,9 +110,7 @@ export default () => {
 	};
 	const handleTouchEnd = async (e: TouchEvent & DivTargeted) => {
 		const div = e.currentTarget;
-		const diff = touchPos.endY - touchPos.startY;
-		if (!app.isPhaseAnswer() || Math.abs(diff) < 5) handleClick();
-		else if (Math.abs(touchPos.offset) >= globalThis.innerHeight / 6) {
+		if (Math.abs(touchPos.offset) >= globalThis.innerHeight / 6) {
 			const down = touchPos.offset > 0;
 			await handleIKnown(down ? 0 : undefined);
 			await continueMove(div, down ? 60 : -60);
