@@ -87,13 +87,14 @@ export const search = async (word: string) => {
 };
 
 export const getEpisode = async (bid?: string) => {
-	let item: IItem | undefined;
+	let items: Array<IItem>;
 	if (bid) {
 		const wordSet = (await getBook(bid))?.content as Set<string>;
-		item = await idb.getEpisode((word) => wordSet.has(word));
+		items = await idb.getEpisode((word) => wordSet.has(word));
 	}
-	item = await idb.getEpisode();
-	if (item) return await itemUpdateDict(item);
+	items = await idb.getEpisode();
+	if (items[1]) itemUpdateDict(items[1]);
+	if (items[0]) return await itemUpdateDict(items[0]);
 };
 
 export const deleteItem = async (word: string) => {
