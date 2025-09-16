@@ -1,12 +1,10 @@
 import type { IEntry } from "@sholvoir/memword-common/idict";
 import { For, Show } from "solid-js";
-import * as mem from "../lib/mem.ts";
 
-
-export default (props: { entry: IEntry }) => (
+export default (props: { entry: IEntry, trans?: boolean }) => (
 	<For each={Object.entries(props.entry.meanings!)}>
 		{([pos, means]) => (
-			<Show when={mem.setting.trans || pos !== 'ecdict'}>
+			<Show when={props.trans || pos !== 'ecdict'}>
 				<Show when={pos}>
 					<p class="text-xl font-bold text-[var(--accent-color)]">{pos}</p>
 				</Show>
@@ -17,10 +15,10 @@ export default (props: { entry: IEntry }) => (
 							<Show when={item.def}>
 								<span class="text-lg">{item.def}</span>
 							</Show>
-							<Show when={mem.setting.trans && item.def && item.trans}>
+							<Show when={props.trans && item.def && item.trans}>
 								<span>&ensp;</span>
 							</Show>
-							<Show when={mem.setting.trans && item.trans}>
+							<Show when={props.trans && item.trans}>
 								<span class="text-xl font-bold">{item.trans}</span>
 							</Show>
 						</p>
