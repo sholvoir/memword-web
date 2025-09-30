@@ -22,6 +22,7 @@ export default () => {
       await mem.syncTasks();
       app.totalStats();
    };
+   const [isShowTrans, setShowTrans] = createSignal(false);
    const [cindex, setCIndex] = createSignal(0);
    const touchPos = {
       startY: 0,
@@ -32,7 +33,7 @@ export default () => {
    };
 
    const [myBooks, setMyBooks] = createSignal<Array<IBook>>([]);
-   const showAddToBookMenu = createSignal(false);
+   const [isShowAddToBookMenu, setShowAddToBookMenu] = createSignal(false);
    let player!: HTMLAudioElement;
    const handleIKnown = async (level?: number) => {
       if (app.citem()) await idb.studied(app.citem()!.word, level);
@@ -42,6 +43,7 @@ export default () => {
       app.setSprint((s) => s + 1);
       app.setCItem(undefined);
       app.setPhaseAnswer(false);
+      setShowTrans(false);
       const item = await mem.getEpisode(app.bid());
       if (!item) return finish();
       app.setCItem(item);
@@ -126,7 +128,7 @@ export default () => {
    };
    const handleClick = (e?: MouseEvent & DivTargeted) => {
       e?.stopPropagation();
-      if (showAddToBookMenu[0]()) return showAddToBookMenu[1](false);
+      if (isShowAddToBookMenu()) return setShowAddToBookMenu(false);
       const cardsN = app.citem()?.entries?.length ?? 0;
       //if (cardsN === 0) return;
       if (!app.isPhaseAnswer()) {
@@ -137,7 +139,7 @@ export default () => {
       else setCIndex(0);
    };
    const handleAddToBook = async (book: IBook) => {
-      showAddToBookMenu[1](false);
+      setShowAddToBookMenu(false);
       const word = app.citem()!.word;
       const wordSet = (await mem.getBook(book.bid))?.content as Set<string>;
       if (wordSet?.has(word)) return app.showTips("已包含");
@@ -204,12 +206,17 @@ export default () => {
                   disabled={!app.isPhaseAnswer()}
                />
                <SButton
-                  onClick={() => showAddToBookMenu[1]((s) => !s)}
+                  onClick={() => setShowTrans((s) => !s)}
+                  class="iconify icon-[icon-park-outline--chinese] text-cyan-500"
+                  disabled={!app.isPhaseAnswer()}
+               ></SButton>
+               <SButton
+                  onClick={() => setShowAddToBookMenu((s) => !s)}
                   class="iconify icon-[material-symbols--dictionary-outline] text-cyan-500"
                   disabled={!app.isPhaseAnswer()}
                ></SButton>
                <div class="text-lg">{app.citem()?.level}</div>
-               <Show when={showAddToBookMenu[0]()}>
+               <Show when={isShowAddToBookMenu()}>
                   <div class="menu absolute top-[100%] right-[36px] text-lg text-right bg-[var(--bg-body)] z-1">
                      <For each={myBooks()}>
                         {(wl) => (
@@ -248,7 +255,11 @@ export default () => {
                         <div class="grow">
                            <Scard
                               entry={app.citem()?.entries?.[0]!}
-                              trans={app.sprint() < 0}
+                              trans={
+                                 isShowTrans() ||
+                                 app.sprint() < 0 ||
+                                 mem.setting.trans
+                              }
                            />
                         </div>
                      }
@@ -260,7 +271,14 @@ export default () => {
                         <For each={app.citem()?.entries}>
                            {(card) => (
                               <div class="grow">
-                                 <Scard entry={card} trans={app.sprint() < 0} />
+                                 <Scard
+                                    entry={card}
+                                    trans={
+                                       isShowTrans() ||
+                                       app.sprint() < 0 ||
+                                       mem.setting.trans
+                                    }
+                                 />
                               </div>
                            )}
                         </For>
