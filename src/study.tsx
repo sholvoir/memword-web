@@ -207,7 +207,7 @@ export default () => {
                />
                <SButton
                   onClick={() => setShowTrans((s) => !s)}
-                  class="iconify icon-[icon-park-outline--chinese] text-cyan-500"
+                  class="iconify icon-[icon-park-outline--chinese] text-amber-500"
                   disabled={!app.isPhaseAnswer()}
                ></SButton>
                <SButton
