@@ -1,5 +1,6 @@
 import { type Accessor, For, type Signal } from "solid-js";
 import type { DivTargeted } from "./targeted.ts";
+import "./checkbox.css";
 
 export default (props: {
     cindex: Signal<number>
@@ -13,9 +14,9 @@ export default (props: {
     return <For each={props.options}>{
         (option, i) => <div class="flex gap-1 cursor-pointer items-center"
             onClick={[handleClick, i]}>
-            <span class={`align-bottom ${cindex() === i() ?
-                "icon-[material-symbols--check-box-outline]" :
-                "icon-[material-symbols--check-box-outline-blank]"}`} />
+            <span class={`align-bottom icon--material-symbols ${cindex() === i() ?
+                "icon--material-symbols--check-box-outline" :
+                "icon--material-symbols--check-box-outline-blank"}`} />
             <span>{option}</span>
         </div>
     }</For>

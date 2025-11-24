@@ -1,4 +1,4 @@
-import type { IEntry } from "@sholvoir/memword-common/idict";
+import type { IEntry, IMean } from "@sholvoir/memword-common/idict";
 import { createSignal, type JSX, type Signal } from "solid-js";
 import { parse, stringify } from "yaml";
 import Button from "../components/button-ripple.tsx";
@@ -21,7 +21,12 @@ export default (
 	};
 	const handleMeaningsChange = (e: InputEvent & TextAreaTargeted) => {
 		try {
-			const meanings = parse(e.currentTarget.value);
+			const meanings: Record<string, Array<IMean>> = parse(e.currentTarget.value);
+			for (const means of Object.values(meanings))
+				for (const mean of means) if (mean.trans) {
+					if (typeof mean.trans !== "string") throw new Error();
+					else if (mean.trans.includes('""')) throw new Error();
+				}
 			setParseError(false);
          setEntry(en => ({...en, meanings }))
 		} catch {
@@ -65,7 +70,7 @@ export default (
 					onClick={handlePlayClick}
 					disabled={!entry().sound}
 				>
-					<span class="text-[150%] align-bottom icon-[material-symbols--chevron-right]" />
+					<span class="text-[150%] align-bottom icon--material-symbols icon--material-symbols--chevron-right" />
 				</Button>
 			</div>
 			<textarea

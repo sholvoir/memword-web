@@ -34,22 +34,22 @@ export default () => (
 		 font-bold overflow-x-auto [scrollbar-width:none]"
 		>
 			<Button onClick={() => app.go("#search")}>
-				<span class="icon-[material-symbols--dictionary]"></span> 词典
+				<span class="icon--material-symbols icon--material-symbols--dictionary"></span> 词典
 			</Button>
 			<Button onClick={() => app.startStudy()}>
-				<span class="icon-[hugeicons--online-learning-01]"></span> 学习
+				<span class="icon--hugeicons icon--hugeicons--online-learning-01"></span> 学习
 			</Button>
 			<Button onClick={() => app.go("#setting")}>
-				<span class="icon-[material-symbols--settings]"></span> 设置
+				<span class="icon--material-symbols icon--material-symbols--settings"></span> 设置
 			</Button>
 			<Button onClick={() => app.go("#about")}>
-				<span class="icon-[tabler--info-octagon]"></span> 关于
+				<span class="icon--tabler icon--tabler--info-octagon"></span> 关于
 			</Button>
 			<Button onClick={() => app.go("#issue")}>
-				<span class="icon-[material-symbols--error-outline]"></span> 问题
+				<span class="icon--material-symbols icon--material-symbols--error"></span> 问题
 			</Button>
 			<Button onClick={() => app.go("#help")}>
-				<span class="icon-[material-symbols--help-outline]"></span> 帮助
+				<span class="icon--material-symbols icon--material-symbols--help-outline"></span> 帮助
 			</Button>
 		</div>
 	</Dialog>

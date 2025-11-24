@@ -7,7 +7,7 @@ export default () => (
 		class="flex flex-col pb-4"
 		left={
 			<BButton
-				class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+				class="text-[150%] icon--material-symbols icon--material-symbols--chevron-left align-bottom"
 				onClick={() => app.go()}
 			/>
 		}
@@ -46,22 +46,22 @@ export default () => (
 			<li class="[&>span]:align-[-20%]">
 				界面上的按钮是什么意思？
 				<br />
-				<span class="text-[150%] icon-[material-symbols--check-circle] iconify text-green-500"></span>
+				<span class="text-[150%] icon--material-symbols icon--material-symbols--check-circle text-green-500"></span>
 				: 我认识这个词；
 				<br />
-				<span class="text-[150%] icon-[gridicons--cross-circle] iconify text-fuchsia-500"></span>
+				<span class="text-[150%] icon--mdi icon--mdi--cross-circle text-fuchsia-500"></span>
 				: 我不认识这个词；
 				<br />
-				<span class="text-[150%] icon-[material-symbols--volume-up] iconify text-blue-500"></span>
+				<span class="text-[150%] icon--material-symbols icon--material-symbols--volume-up text-blue-500"></span>
 				: 再播一遍声音；
 				<br />
-				<span class="text-[150%] icon-[material-symbols--family-star] iconify text-yellow-500"></span>
+				<span class="text-[150%] icon--material-symbols icon--material-symbols--family-star text-yellow-500"></span>
 				: 这个词我已经掌握，直接标记为「已完成」；
 				<br />
-				<span class="text-[150%] icon-[material-symbols--error] iconify text-red-500"></span>
+				<span class="text-[150%] icon--material-symbols icon--material-symbols--error text-red-500"></span>
 				: 这个词的翻译/声音/音标，有问题/错误，请人工处理。
 				<br />
-				<span class="text-[150%] icon-[material-symbols--refresh] iconify text-purple-500"></span>
+				<span class="text-[150%] icon--material-symbols icon--material-symbols--refresh text-purple-500"></span>
 				: 忽略本地词典缓冲，从服务器重新下载这个词的翻译/声音/音标。
 			</li>
 			<li>

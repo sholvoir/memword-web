@@ -36,7 +36,7 @@ export default (
 			<div class={`body relative grow h-0 ${local.class ?? ""}`} {...others}>
 				{local.children}
 				<Show when={app.showLoading()}>
-					<div class="absolute inset-0 bg-[var(--bg-half)] flex justify-center content-center flex-wrap">
+					<div class="absolute inset-0 bg-(--bg-half) flex justify-center content-center flex-wrap">
 						<Loading class="w-16 h-16" />
 					</div>
 				</Show>

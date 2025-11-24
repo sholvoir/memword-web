@@ -9,6 +9,7 @@ import {
 } from "solid-js";
 import ButtonBase from "./button-base.tsx";
 import type { DivTargeted } from "./targeted.ts";
+import "./dropdown.css";
 
 export default (
 	props: {
@@ -42,10 +43,10 @@ export default (
 			onClick={() => setOpen((x) => !x)}
 		>
 			<span>{local.options[cindex()]}</span>
-			<span class="icon-[mdi--chevron-down] text-[150%] align-bottom" />
+			<span class="icon--mdi icon--mdi--chevron-down text-[150%] align-bottom" />
 			<Show when={isOpen()}>
 				<div
-					class="absolute top-[calc(100%_+_4px)] max-h-64 z-100 bg-[var(--bg-body)]
+					class="absolute top-[calc(100%+4px)] max-h-64 z-100 bg-(--bg-body)
                 inset-x-0 border overflow-y-auto text-left"
 				>
 					<For each={local.options}>

@@ -16,7 +16,7 @@ export default () => {
 			left={
 				<Show when={app.user()}>
 					<BButton
-						class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+						class="text-[150%] icon--material-symbols icon--material-symbols--chevron-left align-bottom"
 						onClick={() => app.go("#home")}
 					/>
 				</Show>

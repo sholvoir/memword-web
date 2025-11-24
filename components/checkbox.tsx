@@ -1,5 +1,6 @@
 import { type JSX, type Signal, splitProps } from "solid-js";
 import type { DivTargeted } from "./targeted.ts";
+import "./checkbox.css";
 
 export default (
 	props: {
@@ -34,10 +35,10 @@ export default (
 			onClick={handleClick}
 		>
 			<span
-				class={`text-[150%] align-bottom ${
+				class={`text-[150%] align-bottom icon--material-symbols ${
 					value()
-						? "icon-[material-symbols--check-box-outline]"
-						: "icon-[material-symbols--check-box-outline-blank]"
+						? "icon--material-symbols--check-box-outline"
+						: "icon--material-symbols--check-box-outline-blank"
 				}`}
 			/>
 			{local.label}

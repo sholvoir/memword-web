@@ -208,8 +208,8 @@ export default () => {
 							onClick={() => setHide((h) => !h)}
 						>
 							<span
-								class={`text-[150%] align-bottom ${
-									hide() ? "icon-[mdi--chevron-up]" : "icon-[mdi--chevron-down]"
+								class={`text-[150%] align-bottom icon--mdi ${
+									hide() ? "icon--mdi--chevron-up" : "icon--mdi--chevron-down"
 								}`}
 							/>
 						</Button>

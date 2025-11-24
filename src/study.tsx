@@ -158,7 +158,7 @@ export default () => {
       <Dialog
          left={
             <BButton
-               class="text-[150%] icon-[material-symbols--chevron-left] align-bottom"
+               class="text-[150%] icon--material-symbols icon--material-symbols--chevron-left align-bottom"
                onClick={finish}
             />
          }
@@ -172,52 +172,52 @@ export default () => {
                <SButton
                   onClick={() => handleIKnown().then(studyNext)}
                   title="X/N"
-                  class="iconify icon-[material-symbols--check-circle] text-green-500"
+                  class="icon--material-symbols icon--material-symbols--check-circle text-green-500"
                   disabled={!app.isPhaseAnswer()}
                />
                <SButton
                   onClick={() => handleIKnown(0).then(studyNext)}
                   title="Z/M"
-                  class="iconify icon-[mdi--cross-circle] text-fuchsia-500"
+                  class="icon--mdi icon--mdi--cross-circle text-fuchsia-500"
                   disabled={!app.isPhaseAnswer()}
                />
                <SButton
                   onClick={() => handleIKnown(13).then(studyNext)}
-                  class="iconify icon-[material-symbols--family-star] text-yellow-500"
+                  class="icon--material-symbols icon--material-symbols--family-star text-yellow-500"
                   disabled={!app.isPhaseAnswer()}
                />
                <SButton
                   onClick={handleDelete}
-                  class="iconify icon-[material-symbols--delete-outline] text-orange-500"
+                  class="icon--material-symbols icon--material-symbols--delete-outline text-orange-500"
                   disabled={!app.isPhaseAnswer()}
                />
                <SButton
                   onClick={() => player.play()}
-                  class="iconify icon-[material-symbols--volume-up] text-blue-500"
+                  class="icon--material-symbols icon--material-symbols--volume-up text-blue-500"
                />
                <SButton
                   onClick={handleReportIssue}
-                  class="iconify icon-[material-symbols--error] text-red-500"
+                  class="icon--material-symbols icon--material-symbols--error text-red-500"
                   disabled={!app.isPhaseAnswer()}
                />
                <SButton
                   onClick={handleRefresh}
-                  class="iconify icon-[material-symbols--refresh] text-purple-500"
+                  class="icon--material-symbols icon--material-symbols--refresh text-purple-500"
                   disabled={!app.isPhaseAnswer()}
                />
                <SButton
                   onClick={() => setShowTrans((s) => !s)}
-                  class="iconify icon-[icon-park-outline--chinese] text-amber-500"
+                  class="icon--icon-park-outline icon--icon-park-outline--chinese text-amber-500"
                   disabled={!app.isPhaseAnswer()}
                ></SButton>
                <SButton
                   onClick={() => setShowAddToBookMenu((s) => !s)}
-                  class="iconify icon-[material-symbols--dictionary-outline] text-cyan-500"
+                  class="icon--material-symbols icon--material-symbols--dictionary text-cyan-500"
                   disabled={!app.isPhaseAnswer()}
                ></SButton>
                <div class="text-lg">{app.citem()?.level}</div>
                <Show when={isShowAddToBookMenu()}>
-                  <div class="menu absolute top-[100%] right-[36px] text-lg text-right bg-[var(--bg-body)] z-1">
+                  <div class="menu absolute top-full right-[36px] text-lg text-right bg-(--bg-body) z-1">
                      <For each={myBooks()}>
                         {(wl) => (
                            <>
@@ -265,7 +265,7 @@ export default () => {
                      }
                   >
                      <Tab
-                        class="bg-[var(--bg-tab)]"
+                        class="bg-(--bg-tab)"
                         cindex={[cindex, setCIndex]}
                      >
                         <For each={app.citem()?.entries}>
