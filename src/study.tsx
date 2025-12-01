@@ -205,11 +205,13 @@ export default () => {
                   class="icon--material-symbols icon--material-symbols--refresh text-purple-500"
                   disabled={!app.isPhaseAnswer()}
                />
-               <SButton
-                  onClick={() => setShowTrans((s) => !s)}
-                  class="icon--icon-park-outline icon--icon-park-outline--chinese text-amber-500"
-                  disabled={!app.isPhaseAnswer()}
-               ></SButton>
+               <Show when={!mem.setting.trans}>
+                  <SButton
+                     onClick={() => setShowTrans((s) => !s)}
+                     class="icon--icon-park-outline icon--icon-park-outline--chinese text-amber-500"
+                     disabled={!app.isPhaseAnswer()}
+                  ></SButton>
+               </Show>
                <SButton
                   onClick={() => setShowAddToBookMenu((s) => !s)}
                   class="icon--material-symbols icon--material-symbols--dictionary text-cyan-500"
@@ -264,10 +266,7 @@ export default () => {
                         </div>
                      }
                   >
-                     <Tab
-                        class="bg-(--bg-tab)"
-                        cindex={[cindex, setCIndex]}
-                     >
+                     <Tab class="bg-(--bg-tab)" cindex={[cindex, setCIndex]}>
                         <For each={app.citem()?.entries}>
                            {(card) => (
                               <div class="grow">
