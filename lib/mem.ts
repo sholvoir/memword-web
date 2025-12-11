@@ -16,23 +16,19 @@ import * as idb from "./indexdb.ts";
 import { type IStats, statsFormat } from "./istat.ts";
 import * as srv from "./server.ts";
 
-export const getUser = async () => {
+export const user = (() => {
 	const auth = Cookies.get("auth");
 	if (!auth) return "";
 	return (JWT.decode(auth)[1]?.aud as string) ?? "";
-};
+})();
 
-export let setting: ISetting = defaultSetting();
-
-export const initSetting = async () => {
-	const s = (await idb.getMeta("_setting")) as ISetting;
-	if (s) setting = s;
-};
+export let setting: ISetting =
+   ((await idb.getMeta("_setting")) as ISetting) ?? defaultSetting();
 
 export const syncSetting = async (cSetting?: ISetting) => {
 	if (cSetting && cSetting.version > setting.version) setting = cSetting;
 	const lSetting = (await idb.getMeta("_setting")) as ISetting;
-	if (lSetting && lSetting.version > setting.version) setting = lSetting;
+   if (lSetting && lSetting.version >= setting.version) setting = lSetting;
 	else await idb.setMeta("_setting", setting);
 	try {
 		const res = await srv.postSetting(setting);

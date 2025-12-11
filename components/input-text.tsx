@@ -58,7 +58,7 @@ export default (
 				onKeyUp={handleKeyPress}
 			/>
 			<Show when={suggestions().length}>
-				<div class="absolute border bg-[var(--bg-body)] z-100 top-[calc(100%_+_4px)] inset-x-0 px-2">
+				<div class="absolute border bg-(--bg-body) z-100 top-[calc(100%+4px)] inset-x-0 px-2">
 					<For each={suggestions()}>
 						{(s) => <div onClick={suggestionClicked}>{s}</div>}
 					</For>

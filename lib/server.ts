@@ -43,8 +43,11 @@ export const putBook = (name: string, words: string, disc?: string) =>
 export const deleteBook = (name: string) =>
 	getRes(`${API_URL}/wordlist`, { name }, { method: "DELETE" });
 
+export const getVocabulary = () => getJson<Array<string>>(`${API_URL}/vocabulary`);
 export const postVocabulary = (words: string) =>
 	fetch(`${API_URL}/vocabulary`, { body: words, method: "POST" });
+export const deleteVocabulary = (words: string) =>
+	fetch(`${API_URL}/vocabulary`, { body: words, method: "DELETE"});
 
 export const getSound = (url: string) =>
 	getRes(`${API_URL}/sound`, { q: url }, { cache: "force-cache" });

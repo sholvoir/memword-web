@@ -24,20 +24,14 @@ export default () => {
 	dialogs.set("#book", Book);
 
 	const init = async () => {
-		if (app.setUser((await mem.getUser()) ?? "")) {
+		if (app.setUser(mem.user)) {
 			app.go("#home");
-			await mem.initSetting();
 			await app.totalStats();
 			(async () => {
 				await mem.getServerBooks();
-				app.setVocabulary((await mem.getVocabulary()) ?? []);
 				await mem.syncSetting();
 				await mem.syncTasks();
 				await app.totalStats();
-				// for (const item of await idb.getPredict(3600, 500)) {
-				//     await mem.itemUpdateDict(item);
-				//     await wait(300);
-				// }
 			})();
 		} else app.go("#about");
 	};
