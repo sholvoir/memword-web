@@ -29,6 +29,7 @@ export default () => {
 			await app.totalStats();
 			(async () => {
 				await mem.getServerBooks();
+				app.setVocabulary((await mem.getVocabulary()) ?? []);
 				await mem.syncSetting();
 				await mem.syncTasks();
 				await app.totalStats();
