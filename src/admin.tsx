@@ -5,7 +5,6 @@ import type { IDict, IEntry } from "@sholvoir/memword-common/idict";
 import type { IIssue } from "@sholvoir/memword-common/iissue";
 import { createResource, createSignal, For, Show, type Signal } from "solid-js";
 import Button from "../components/button-ripple.tsx";
-import Checkbox from "../components/checkbox.tsx";
 import TextInput from "../components/input-text.tsx";
 import List from "../components/list.tsx";
 import { version } from "../lib/common.ts";
@@ -28,12 +27,12 @@ export default () => {
    };
 
    const [vocabularyView, setVocabularyView] = createSignal("");
-   const [replace, setReplace] = createSignal(false);
-   const [spellCheck, setSpellCheck] = createSignal(true);
-   const handleUploadIgnoreWordsClick = async () => {
-      const result = await srv.postVocabulary(vocabularyView());
-      showTips(result ? "上传成功" : "上传失败");
-   };
+   const handleLoadVocabularyClick = () =>
+      setVocabularyView(Array.from(app.vocabulary()).sort().join("\n"));
+   const handleAddToVocabularyClick = async () => 
+      showTips((await srv.postVocabulary(vocabularyView())) ? "上传成功" : "上传失败");
+   const handleDeleteFromVocabularyClick = async () => 
+      showTips((await srv.deleteVocabulary(vocabularyView())) ? "删除成功" : "删除失败");
 
    const [word, setWord] = createSignal("");
    const [currentWord, setCurrentWord] = createSignal("_");
@@ -237,22 +236,23 @@ export default () => {
                      onChange={(e) => setVocabularyView(e.currentTarget.value)}
                   />
                   <div class="flex flex-col gap-1">
-                     <Checkbox binding={[replace, setReplace]} label="替换" />
-                     <Checkbox
-                        binding={[spellCheck, setSpellCheck]}
-                        label="拼写检查"
-                     />
                      <Button
                         class="button btn-normal"
-                        onClick={handleUploadIgnoreWordsClick}
+                        onClick={handleLoadVocabularyClick}
                      >
-                        下载
+                        加载
                      </Button>
                      <Button
                         class="button btn-normal"
-                        onClick={handleUploadIgnoreWordsClick}
+                        onClick={handleAddToVocabularyClick}
                      >
                         上传
+                     </Button>
+                     <Button
+                        class="button btn-normal"
+                        onClick={handleDeleteFromVocabularyClick}
+                     >
+                        删除
                      </Button>
                   </div>
                   <div class="w-1 grow border overflow-y-auto [scrollbar-width:none]">

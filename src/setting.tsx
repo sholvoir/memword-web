@@ -53,7 +53,7 @@ export default () => {
       await mem.syncSetting({
          format: settingFormat,
          version: now(),
-			trans: showTrans(),
+         trans: showTrans(),
          books: subBooks().map((wl) => wl.bid),
       });
       await app.totalStats();
@@ -63,6 +63,16 @@ export default () => {
       app.setUser("");
       app.go("#about");
       idb.clear();
+   };
+   const toggleShrink = (
+      e: MouseEvent & {
+         currentTarget: HTMLLegendElement;
+         target: Element;
+      },
+   ) => {
+      const p = e.currentTarget.parentElement!;
+      if (p.classList.contains("shrink-0")) p.classList.remove("shrink-0");
+      else p.classList.add("shrink-0");
    };
    createResource(bookFilter, async (filter) => {
       const regex = new RegExp(filter);
@@ -91,8 +101,8 @@ export default () => {
             binding={[showTrans, setShowTrans]}
             label="Always Show Trans"
          />
-         <fieldset class="border rounded shrink-0 overflow-y-auto px-2">
-            <legend>我的词书</legend>
+         <fieldset class="border rounded grow overflow-y-auto px-2">
+            <legend on:click={toggleShrink}>我的词书</legend>
             <List
                cindex={[myIndex, setMyIndex]}
                options={myBooks()}
@@ -134,8 +144,8 @@ export default () => {
                binding={[bookFilter, setBookFilter]}
             />
          </div>
-         <fieldset class="border rounded max-h-[70%] grow shrink overflow-y-auto px-2">
-            <legend>可用的词书</legend>
+         <fieldset class="border rounded grow overflow-y-auto px-2">
+            <legend on:click={toggleShrink}>可用的词书</legend>
             <List
                class="px-2"
                cindex={[cindex, setCIndex]}
@@ -155,8 +165,8 @@ export default () => {
                删除订阅
             </Button>
          </div>
-         <fieldset class="border rounded shrink-0 overflow-y-auto px-2">
-            <legend>我订阅的词书</legend>
+         <fieldset class="border rounded grow overflow-y-auto px-2">
+            <legend on:click={toggleShrink}>我订阅的词书</legend>
             <List
                class="px-2"
                cindex={[subIndex, setSubIndex]}
