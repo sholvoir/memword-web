@@ -16,23 +16,15 @@ import Ecard from "./ecard.tsx";
 
 export default () => {
    const [hide, setHide] = createSignal(false);
-
    const [auth, setAuth] = createSignal(false);
-   const [vocabulary, setVocabulary] = createSignal<Iterable<string>>([]);
-
-   const hideTips = () => app.setTips("");
-   const showTips = (content: string, autohide = true) => {
-      app.setTips(content);
-      autohide && setTimeout(hideTips, 3000);
-   };
 
    const [vocabularyView, setVocabularyView] = createSignal("");
    const handleLoadVocabularyClick = () =>
       setVocabularyView(Array.from(app.vocabulary()).sort().join("\n"));
    const handleAddToVocabularyClick = async () => 
-      showTips((await srv.postVocabulary(vocabularyView())) ? "上传成功" : "上传失败");
+      app.showTips((await srv.postVocabulary(vocabularyView())) ? "上传成功" : "上传失败");
    const handleDeleteFromVocabularyClick = async () => 
-      showTips((await srv.deleteVocabulary(vocabularyView())) ? "删除成功" : "删除失败");
+      app.showTips((await srv.deleteVocabulary(vocabularyView())) ? "删除成功" : "删除失败");
 
    const [word, setWord] = createSignal("");
    const [currentWord, setCurrentWord] = createSignal("_");
@@ -49,7 +41,7 @@ export default () => {
          "oxfordlearnersdictionaries",
       );
       const dict = await srv.getDict(word());
-      if (!dict) return showTips("Not Found");
+      if (!dict) return app.showTips("Not Found");
       setCurrentWord(dict.word);
       setCurrentCardIndex(0);
       if (dict.entries)
@@ -81,14 +73,14 @@ export default () => {
          word: word(),
          entries: entries().map((e) => e[0]()),
       };
-      showTips(
+      app.showTips(
          (await srv.putDict(dict))
             ? `success update word "${word()}"!`
             : "Error",
       );
    };
    const handleDeleteClick = async () => {
-      showTips(
+      app.showTips(
          (await srv.deleteDict(word()))
             ? `success delete word "${word()}"!`
             : "Error",
@@ -101,9 +93,9 @@ export default () => {
    const handleECClick = async () => {
       const resp = await srv.getEcdictAsIssue();
       if (resp.ok) {
-         showTips("EC导入成功");
+         app.showTips("EC导入成功");
          await handleLoadIssueClick();
-      } else showTips("EC导入失败");
+      } else app.showTips("EC导入失败");
    };
 
    const handleLoadIssueClick = async () => {
@@ -138,12 +130,12 @@ export default () => {
             setCurrentCardIndex(0);
             handleLoadIssueClick();
          }
-         showTips("处理成功!");
-      } else showTips("处理失败");
+         app.showTips("处理成功!");
+      } else app.showTips("处理失败");
    };
    createResource(async () => {
       if (setAuth("hua" === mem.user)) {
-         setVocabulary((await mem.getVocabulary()) ?? []);
+         app.setVocabulary((await mem.getVocabulary()) ?? []);
          await handleLoadIssueClick();
       }
    });
@@ -174,7 +166,7 @@ export default () => {
                      placeholder="word"
                      class="grow"
                      binding={[word, setWord]}
-                     options={vocabulary()}
+                     options={app.vocabulary()}
                      onChange={handleSearchClick}
                   />
                   <Button
