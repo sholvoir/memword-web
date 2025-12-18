@@ -95,7 +95,7 @@ export const getEpisode = async (bid?: string) => {
 
 export const deleteItem = async (word: string) => {
 	try {
-		const resp = await srv.deleteTask([word]);
+		const resp = await srv.deleteTasks([word]);
 		if (!resp.ok) return console.error("Fail for delete task");
 		await idb.deleteItem(word);
 		return true;

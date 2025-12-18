@@ -11,6 +11,7 @@ import Tab from "../components/tab.tsx";
 import type { DivTargeted } from "../components/targeted.ts";
 import * as idb from "../lib/indexdb.ts";
 import * as mem from "../lib/mem.ts";
+import * as srv from "../lib/server.ts";
 import * as app from "./app.tsx";
 import Dialog from "./dialog.tsx";
 import Scard from "./scard.tsx";
@@ -19,7 +20,7 @@ export default () => {
    const finish = async () => {
       app.go(app.sprint() < 0 ? "#search" : undefined);
       await app.totalStats();
-      await mem.syncTasks();
+      //await mem.syncTasks();
       app.totalStats();
    };
    const [isShowTrans, setShowTrans] = createSignal(false);
@@ -36,7 +37,7 @@ export default () => {
    const [isShowAddToBookMenu, setShowAddToBookMenu] = createSignal(false);
    let player!: HTMLAudioElement;
    const handleIKnown = async (level?: number) => {
-      if (app.citem()) await idb.studied(app.citem()!.word, level);
+      if (app.citem()) srv.putTask(await idb.studied(app.citem()!.word, level));
    };
    const studyNext = async () => {
       if (app.sprint() < 0) return finish();

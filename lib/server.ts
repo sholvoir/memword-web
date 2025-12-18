@@ -28,8 +28,10 @@ export const deleteDict = (word: string) =>
 export const postTasks = (tasks: Array<ITask>) =>
 	fetch(`${API_URL}/task`, requestInit(tasks));
 
-export const deleteTask = (words: Array<string>) =>
+export const deleteTasks = (words: Array<string>) =>
 	fetch(`${API_URL}/task`, requestInit(words, "DELETE"));
+export const putTask = (task: ITask) =>
+	fetch(`${API_URL}/task`, requestInit(task, "PUT"));
 
 export const getBooks = () => getJson<Array<IBook>>(`${API_URL}/book`);
 export const getBook = (bid: string) => fetch(`${API_URL}/book/${bid}`);
