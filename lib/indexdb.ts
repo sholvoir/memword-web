@@ -325,7 +325,7 @@ export const studied = (word: string, level?: number) =>
       } else
          iStore.get(word).onsuccess = (e2) => {
             const item1 = (e2.target as IDBRequest<IItem>).result;
-            if (item) {
+            if (item1) {
                item = studyTask(item1, level);
                iStore.put(item);
             }
