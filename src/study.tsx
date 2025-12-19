@@ -9,6 +9,7 @@ import SButton from "../components/button-base.tsx";
 import BButton from "../components/button-base.tsx";
 import Tab from "../components/tab.tsx";
 import type { DivTargeted } from "../components/targeted.ts";
+import { item2task } from "../lib/iitem.ts";
 import * as idb from "../lib/indexdb.ts";
 import * as mem from "../lib/mem.ts";
 import * as srv from "../lib/server.ts";
@@ -37,7 +38,8 @@ export default () => {
    const [isShowAddToBookMenu, setShowAddToBookMenu] = createSignal(false);
    let player!: HTMLAudioElement;
    const handleIKnown = async (level?: number) => {
-      if (app.citem()) srv.putTask(await idb.studied(app.citem()!.word, level));
+      if (app.citem())
+         srv.putTask(item2task(await idb.studied(app.citem()!.word, level)));
    };
    const studyNext = async () => {
       if (app.sprint() < 0) return finish();

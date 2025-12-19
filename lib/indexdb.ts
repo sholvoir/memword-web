@@ -312,22 +312,22 @@ export const getStats = (books: Array<IBook>) =>
    });
 
 export const studied = (word: string, level?: number) =>
-   new Promise<ITask>((resolve, reject) => {
-      let task: ITask;
+   new Promise<IItem>((resolve, reject) => {
+      let item: IItem;
       const transaction = db.transaction("item", "readwrite");
       transaction.onerror = reject;
-      transaction.oncomplete = () => resolve(task);
+      transaction.oncomplete = () => resolve(item);
       const iStore = transaction.objectStore("item");
       if (tempItems.has(word)) {
-         task = studyTask(tempItems.get(word)!, level)
-         iStore.put(task);
+         item = studyTask(tempItems.get(word)!, level)
+         iStore.put(item);
          tempItems.delete(word);
       } else
          iStore.get(word).onsuccess = (e2) => {
-            const item = (e2.target as IDBRequest<IItem>).result;
+            const item1 = (e2.target as IDBRequest<IItem>).result;
             if (item) {
-               task = studyTask(item, level);
-               iStore.put(task);
+               item = studyTask(item1, level);
+               iStore.put(item);
             }
          };
    });

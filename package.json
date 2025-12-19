@@ -1,7 +1,7 @@
 {
   "name": "memword-web",
   "private": true,
-  "version": "0.19.17",
+  "version": "0.19.18",
   "type": "module",
   "scripts": {
     "icon": "bun icons.js",
@@ -13,8 +13,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@sholvoir/generic": "npm:@jsr/sholvoir__generic",
-    "@sholvoir/memword-common": "npm:@jsr/sholvoir__memword-common",
+    "@sholvoir/generic": "npm:@jsr/sholvoir__generic@0.2.7",
+    "@sholvoir/memword-common": "npm:@jsr/sholvoir__memword-common@0.0.8",
     "js-cookie": "^3.0.5",
     "solid-js": "^1.9.10",
     "yaml": "^2.8.2"
