@@ -23,12 +23,12 @@ export const user = (() => {
 })();
 
 export let setting: ISetting =
-   ((await idb.getMeta("_setting")) as ISetting) ?? defaultSetting();
+	((await idb.getMeta("_setting")) as ISetting) ?? defaultSetting();
 
 export const syncSetting = async (cSetting?: ISetting) => {
 	if (cSetting && cSetting.version > setting.version) setting = cSetting;
 	const lSetting = (await idb.getMeta("_setting")) as ISetting;
-   if (lSetting && lSetting.version >= setting.version) setting = lSetting;
+	if (lSetting && lSetting.version >= setting.version) setting = lSetting;
 	else await idb.setMeta("_setting", setting);
 	try {
 		const res = await srv.postSetting(setting);
@@ -36,7 +36,7 @@ export const syncSetting = async (cSetting?: ISetting) => {
 		const sSetting: ISetting = await res.json();
 		if (sSetting.version > setting.version)
 			await idb.setMeta("_setting", (setting = sSetting));
-	} catch {}
+	} catch { }
 };
 
 export const updateDict = async (item: IItem) => {
@@ -87,8 +87,7 @@ export const getEpisode = async (bid?: string) => {
 	if (bid) {
 		const wordSet = (await getBook(bid))?.content as Set<string>;
 		items = await idb.getEpisode((word) => wordSet.has(word));
-	}
-	items = await idb.getEpisode();
+	} else items = await idb.getEpisode();
 	if (items[1]) itemUpdateDict(items[1]);
 	if (items[0]) return await itemUpdateDict(items[0]);
 };
