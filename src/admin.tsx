@@ -21,10 +21,19 @@ export default () => {
    const [vocabularyView, setVocabularyView] = createSignal("");
    const handleLoadVocabularyClick = () =>
       setVocabularyView(Array.from(app.vocabulary()).sort().join("\n"));
-   const handleAddToVocabularyClick = async () => 
-      app.showTips((await srv.postVocabulary(vocabularyView())) ? "上传成功" : "上传失败");
-   const handleDeleteFromVocabularyClick = async () => 
-      app.showTips((await srv.deleteVocabulary(vocabularyView())) ? "删除成功" : "删除失败");
+   const handleAddToVocabularyClick = async () =>
+      app.showTips(
+         (await srv.postVocabulary(vocabularyView())) ? "上传成功" : "上传失败",
+      );
+   const handleDeleteFromVocabularyClick = async () => {
+      const res = await srv.deleteVocabulary(vocabularyView());
+      if (res.ok) {
+         const words = vocabularyView().split("\n");
+         const vocab = app.vocabulary() as Set<string>;
+         for (const word of words) vocab.delete(word);
+         app.showTips("删除成功")
+      } else app.showTips("删除失败");
+   }
 
    const [word, setWord] = createSignal("");
    const [currentWord, setCurrentWord] = createSignal("_");
