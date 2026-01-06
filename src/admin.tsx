@@ -31,9 +31,9 @@ export default () => {
          const words = vocabularyView().split("\n");
          const vocab = app.vocabulary() as Set<string>;
          for (const word of words) vocab.delete(word);
-         app.showTips("删除成功")
+         app.showTips("删除成功");
       } else app.showTips("删除失败");
-   }
+   };
 
    const [word, setWord] = createSignal("");
    const [currentWord, setCurrentWord] = createSignal("_");
@@ -58,7 +58,9 @@ export default () => {
             if (entry.meanings)
                for (const means of Object.values(entry.meanings))
                   if (means)
-                     for (const mean of means) if (!mean.trans) mean.trans = "";
+                     for (const mean of means)
+                        if (entry.meanings.ecdict && mean.trans === undefined)
+                           mean.trans = "";
       setEntries((dict.entries ?? []).map((e) => createSignal(e)));
       window.focus();
    };
