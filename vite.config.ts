@@ -8,7 +8,7 @@ export default defineConfig({
 	plugins: [solid(), tailwindcss()],
 	build: {
 		target: "esnext",
-		outDir: "../memword-server/static",
+		outDir: "docs",
 		emptyOutDir: true,
 		assetsDir: "assets",
 		rollupOptions: {

@@ -1,15 +1,15 @@
 {
-  "name": "memword-web",
+  "name": "memword",
   "private": true,
-  "version": "0.19.25",
+  "version": "0.20.0",
   "type": "module",
   "scripts": {
     "icon": "bun icons.js",
     "tsc": "vite build",
     "dev": "vite",
     "force": "vite --force",
-    "build": "tsc -b && vite build && mv ../memword-server/static/*.html ../memword-server/html/",
-    "worker": "tsc-b && vite build --config vite.worker.config.ts",
+    "build": "tsc -b && vite build",
+    "worker": "tsc -b && vite build --config vite.worker.config.ts",
     "preview": "vite preview"
   },
   "dependencies": {
