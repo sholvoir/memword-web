@@ -16,7 +16,7 @@ import { type IStats, statsFormat } from "./istat.ts";
 import * as srv from "./server.ts";
 
 export const user = await (async () => {
-   const auth = await idb.getMeta("_auth") as string;
+   const auth = (await idb.getMeta("_auth")) as string;
    if (!auth) return "";
    return (JWT.decode(auth)[1]?.aud as string) ?? "";
 })();
@@ -185,26 +185,27 @@ export const getBook = async (bid: string) => {
 };
 
 export const getVocabulary = async () => {
-   const [vocab, checksum] =
-      (await idb.getMeta("_vocabulary") as [Set<string>, string]) ??
-      ([new Set<string>(), ""]);
-	(async () => {
-		const res = await srv.getVocabularyChecksum();
-		if (res.ok) {
-			const sChecksum = res.headers.get("Check-Sum");
-			if (sChecksum && sChecksum !== checksum) {
-				const res2 = await srv.getVocabulary();
-				if (res2.ok) {
-					const sCheckSum2 = res2.headers.get("Check-Sum");
-					const text = await res2.text();
-					const nvocab = new Set<string>();
-					for (let word of text.split("\n"))
-						if ((word = word.trim())) nvocab.add(word);
-					await idb.setMeta("_vocabulary", [nvocab, sCheckSum2]);
-				}
-			}
-		}
-	})();
+   const [vocab, checksum] = ((await idb.getMeta("_vocabulary")) as [
+      Set<string>,
+      string,
+   ]) ?? [new Set<string>(), ""];
+   (async () => {
+      const res = await srv.getVocabularyChecksum();
+      if (res.ok) {
+         const sChecksum = res.headers.get("check-sum");
+         if (sChecksum && sChecksum !== checksum) {
+            const res2 = await srv.getVocabulary();
+            if (res2.ok) {
+               const sCheckSum2 = res2.headers.get("check-sum");
+               const text = await res2.text();
+               const nvocab = new Set<string>();
+               for (let word of text.split("\n"))
+                  if ((word = word.trim())) nvocab.add(word);
+               await idb.setMeta("_vocabulary", [nvocab, sCheckSum2]);
+            }
+         }
+      }
+   })();
    return vocab;
 };
 
