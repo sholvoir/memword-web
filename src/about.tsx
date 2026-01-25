@@ -31,7 +31,7 @@ export default () => {
                   class="button bg-slate-300 text-slate-800"
                   onClick={async () => {
                      await idb.setMeta("_auth", auth());
-                     location.replace("/");
+                     location.replace("/memword/");
                   }}
                >
                   Login
