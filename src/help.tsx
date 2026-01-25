@@ -1,4 +1,4 @@
-import BButton from "../components/button-base.tsx";
+import BButton from "@sholvoir/solid-components/button-base";
 import * as app from "./app.tsx";
 import Dialog from "./dialog.tsx";
 

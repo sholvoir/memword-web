@@ -1,11 +1,11 @@
 import { now } from "@sholvoir/memword-common/common";
 import { compareWL, type IBook } from "@sholvoir/memword-common/ibook";
 import { settingFormat } from "@sholvoir/memword-common/isetting";
+import Button from "@sholvoir/solid-components/button-ripple";
+import Checkbox from "@sholvoir/solid-components/checkbox";
+import Input from "@sholvoir/solid-components/input-simple";
+import List from "@sholvoir/solid-components/list";
 import { createResource, createSignal } from "solid-js";
-import Button from "../components/button-ripple.tsx";
-import Checkbox from "../components/checkbox.tsx";
-import Input from "../components/input-simple.tsx";
-import List from "../components/list.tsx";
 import * as idb from "../lib/indexdb.ts";
 import * as mem from "../lib/mem.ts";
 import * as app from "./app.tsx";

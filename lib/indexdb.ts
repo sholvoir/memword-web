@@ -1,6 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
-/** biome-ignore-all lint/suspicious/noExplicitAny: <No> */
-
 import { now } from "@sholvoir/memword-common/common";
 import type { IBook } from "@sholvoir/memword-common/ibook";
 import type { IDict } from "@sholvoir/memword-common/idict";
@@ -15,7 +12,7 @@ import {
 import { addTaskToStat, type IStat, initStat } from "./istat.ts";
 
 export const tempItems = new Map<string, IItem>();
-type kvKey = "_sync-time" | "_setting" | "_auth";
+type kvKey = "_sync-time" | "_setting" | "_auth" | "_vocabulary";
 
 const db: IDBDatabase = await new Promise((resolve, reject) => {
    const request = indexedDB.open("memword", 1);
@@ -97,11 +94,7 @@ export const getBook = (bid: string) =>
          .objectStore("book")
          .get(bid);
       request.onerror = reject;
-      request.onsuccess = () => {
-         const book = request.result as IBook;
-         if (!book) return resolve(undefined);
-         resolve(book);
-      };
+      request.onsuccess = () => resolve(request.result);
    });
 
 export const putBook = (book: IBook) =>
@@ -157,7 +150,7 @@ export const syncBooks = (books: Array<IBook>) =>
          const cbook = cursor.value as IBook;
          if (bookMap.has(cbook.bid)) {
             const sbook = bookMap.get(cbook.bid)!;
-            if (sbook.version > cbook.version) cursor.update(sbook);
+            if (sbook.checksum !== cbook.checksum) cursor.update(sbook);
             bookMap.delete(cbook.bid);
          } else {
             deleted.add(cbook.bid);
@@ -239,8 +232,7 @@ export const mergeTasks = (tasks: Iterable<ITask>) =>
          const item = cursor.value as IItem;
          if (taskMap.has(item.word)) {
             const task = taskMap.get(item.word)!;
-            if (task.last > item.last)
-               cursor.update(itemMergeTask(item, task));
+            if (task.last > item.last) cursor.update(itemMergeTask(item, task));
             taskMap.delete(item.word);
          } else cursor.delete();
          cursor.continue();
@@ -271,16 +263,14 @@ export const getEpisode = (filter?: (word: string) => boolean) =>
       transaction
          .objectStore("item")
          .index("next")
-         .openCursor(IDBKeyRange.upperBound(now()), "prev").onsuccess = (
-            e,
-         ) => {
-            const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
-            if (!cursor) return;
-            const item = cursor.value as IItem;
-            if (!filter || filter(item.word)) result.push(item);
-            if (result.length > 1) return;
-            cursor.continue();
-         };
+         .openCursor(IDBKeyRange.upperBound(now()), "prev").onsuccess = (e) => {
+         const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
+         if (!cursor) return;
+         const item = cursor.value as IItem;
+         if (!filter || filter(item.word)) result.push(item);
+         if (result.length > 1) return;
+         cursor.continue();
+      };
    });
 
 export const getStats = (books: Array<IBook>) =>
@@ -319,7 +309,7 @@ export const studied = (word: string, level?: number) =>
       transaction.oncomplete = () => resolve(item);
       const iStore = transaction.objectStore("item");
       if (tempItems.has(word)) {
-         item = studyTask(tempItems.get(word)!, level)
+         item = studyTask(tempItems.get(word)!, level);
          iStore.put(item);
          tempItems.delete(word);
       } else

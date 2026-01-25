@@ -3,10 +3,10 @@
 
 import type { IDict, IEntry } from "@sholvoir/memword-common/idict";
 import type { IIssue } from "@sholvoir/memword-common/iissue";
+import Button from "@sholvoir/solid-components/button-ripple";
+import TextInput from "@sholvoir/solid-components/input-text";
+import List from "@sholvoir/solid-components/list";
 import { createResource, createSignal, For, Show, type Signal } from "solid-js";
-import Button from "../components/button-ripple.tsx";
-import TextInput from "../components/input-text.tsx";
-import List from "../components/list.tsx";
 import { version } from "../lib/common.ts";
 import * as mem from "../lib/mem.ts";
 import * as srv from "../lib/server.ts";
@@ -31,7 +31,7 @@ export default () => {
          app.showTips("上传成功");
          app.setVocabulary(vocab);
       } else app.showTips("上传失败");
-   }
+   };
    const handleDeleteFromVocabularyClick = async () => {
       const res = await srv.deleteVocabulary(vocabularyView());
       if (res.ok) {

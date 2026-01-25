@@ -4,11 +4,11 @@
 import { STATUS_CODE } from "@sholvoir/generic/http";
 import { wait } from "@sholvoir/generic/wait";
 import { type IBook, splitID } from "@sholvoir/memword-common/ibook";
+import SButton from "@sholvoir/solid-components/button-base";
+import BButton from "@sholvoir/solid-components/button-base";
+import Tab from "@sholvoir/solid-components/tab";
+import type { DivTargeted } from "@sholvoir/solid-components/targeted";
 import { createResource, createSignal, For, Show } from "solid-js";
-import SButton from "../components/button-base.tsx";
-import BButton from "../components/button-base.tsx";
-import Tab from "../components/tab.tsx";
-import type { DivTargeted } from "../components/targeted.ts";
 import { item2task } from "../lib/iitem.ts";
 import * as idb from "../lib/indexdb.ts";
 import * as mem from "../lib/mem.ts";
