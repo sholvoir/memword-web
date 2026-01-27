@@ -83,7 +83,11 @@ export const getBooks = () =>
    getJson<Array<IBook>>(`${API_URL}/book`, { headers: authHeader });
 
 export const getBook = (bid: string) =>
-   fetch(`${API_URL}/book/${bid}`, { headers: authHeader, redirect: "follow" });
+   fetch(`${API_URL}/book/${bid}`, {
+      headers: authHeader,
+      redirect: "follow",
+      mode: "cors",
+   });
 
 export const postBook = (name: string, words: string, disc?: string) =>
    fetch(url(`${API_URL}/book`, { name, disc }), {
