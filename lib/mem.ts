@@ -154,7 +154,7 @@ export const totalStats = async () => {
 
 export const getServerBooks = async () => {
    const books = await srv.getBooks();
-   if (books) {
+   if (books.length) {
       const time = now();
       const deleted = await idb.syncBooks(books);
       const setting = (await idb.getMeta("_setting")) as ISetting;
@@ -173,9 +173,8 @@ export const getBook = async (bid: string) => {
    const book = await idb.getBook(bid);
    if (!book) return undefined;
    if (book.content) return book;
-   const res = await srv.getBook(bid);
-   if (!res.ok) return book;
-   const text = await res.text();
+   const text = await srv.getBook(bid);
+   if (!text) return undefined;
    const content = new Set<string>();
    for (let word of text.split("\n"))
       if ((word = word.trim())) content.add(word);

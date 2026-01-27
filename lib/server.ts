@@ -1,9 +1,9 @@
-import type { IBook } from "@sholvoir/memword-common/ibook";
+import { type IBook, splitID } from "@sholvoir/memword-common/ibook";
 import type { IDict, IEntry } from "@sholvoir/memword-common/idict";
 import type { IIssue } from "@sholvoir/memword-common/iissue";
 import type { ISetting } from "@sholvoir/memword-common/isetting";
 import type { ITask } from "@sholvoir/memword-common/itask";
-import { API_URL } from "./common.ts";
+import { API_URL, COMMON_BOOK_BASE_URL } from "./common.ts";
 import * as idb from "./indexdb.ts";
 
 const token = await idb.getMeta("_auth");
@@ -79,15 +79,39 @@ export const putTask = (task: ITask) =>
       method: "PUT",
    });
 
-export const getBooks = () =>
-   getJson<Array<IBook>>(`${API_URL}/book`, { headers: authHeader });
+export const getBooks = async () => {
+   const books =
+      (await getJson<Array<IBook>>(`${API_URL}/book`, {
+         headers: authHeader,
+      })) ?? [];
+   const res = await fetch(`${COMMON_BOOK_BASE_URL}/checksum.json`);
+   if (!res.ok) return books;
+   const checksums: Record<string, { disc: string; checksum: string }> =
+      await res.json();
+   for (const [bname, { disc, checksum }] of Object.entries(checksums))
+      books.push({
+         bid: `common/${bname}`,
+         disc,
+         checksum,
+         public: true,
+      });
+   return books;
+};
 
-export const getBook = (bid: string) =>
-   fetch(`${API_URL}/book/${bid}`, {
-      headers: authHeader,
-      redirect: "follow",
-      mode: "cors",
-   });
+export const getBook = async (bid: string) => {
+   const [username, bname] = splitID(bid);
+   if (username === "common") {
+      const res = await fetch(`${COMMON_BOOK_BASE_URL}/${bname}`);
+      if (!res.ok) return undefined;
+      return await res.text();
+   } else {
+      const res = await fetch(`${API_URL}/book/${bid}`, {
+         headers: authHeader,
+      });
+      if (!res.ok) return undefined;
+      return await res.text();
+   }
+};
 
 export const postBook = (name: string, words: string, disc?: string) =>
    fetch(url(`${API_URL}/book`, { name, disc }), {
