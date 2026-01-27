@@ -105,7 +105,7 @@ export const getBook = async (bid: string) => {
       if (!res.ok) return undefined;
       return await res.text();
    } else {
-      const res = await fetch(`${API_URL}/book/${bid}`, {
+      const res = await fetch(`${API_URL}/book/${bid}.txt`, {
          headers: authHeader,
       });
       if (!res.ok) return undefined;
