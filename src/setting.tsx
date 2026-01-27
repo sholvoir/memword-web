@@ -179,14 +179,14 @@ export default () => {
             <Button class="button btn-normal grow" onClick={handleAddTaskClick}>
                添加任务
             </Button>
-            <Button class="button btn-normal grow" onClick={() => app.go()}>
-               取消
+            <Button class="button btn-normal grow" onClick={handleSignoutClick}>
+               登出
             </Button>
             <Button class="button btn-prime grow" onClick={handleOKClick}>
                保存
             </Button>
-            <Button class="button btn-normal grow" onClick={handleSignoutClick}>
-               登出
+            <Button class="button btn-normal grow" onClick={() => app.go()}>
+               取消
             </Button>
          </div>
       </Dialog>

@@ -101,11 +101,11 @@ export const getBooks = async () => {
 export const getBook = async (bid: string) => {
    const [username, bname] = splitID(bid);
    if (username === "common") {
-      const res = await fetch(`${COMMON_BOOK_BASE_URL}/${bname}`);
+      const res = await fetch(`${COMMON_BOOK_BASE_URL}/${bname}.txt`);
       if (!res.ok) return undefined;
       return await res.text();
    } else {
-      const res = await fetch(`${API_URL}/book/${bid}.txt`, {
+      const res = await fetch(`${API_URL}/book/${bid}`, {
          headers: authHeader,
       });
       if (!res.ok) return undefined;
