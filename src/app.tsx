@@ -32,12 +32,16 @@ export const [showLoading, setShowLoading] = createSignal(false);
 export const [loca, setLoca] = createSignal<TDial>("");
 export const [vocabulary, setVocabulary] = createSignal<Iterable<string>>([]);
 
+let timeout: NodeJS.Timeout | undefined;
 export const totalStats = async () => setStats(await mem.totalStats());
 export const hideTips = () => setTips("");
 export const go = (d?: TDial) => setLoca(d ?? (user() ? "#home" : "#about"));
 export const showTips = (content: string, autohide = true) => {
 	setTips(content);
-	autohide && setTimeout(hideTips, 3000);
+	if (autohide) {
+		if (timeout) clearTimeout(timeout);
+		timeout = setTimeout(hideTips, 3000);
+	}
 };
 
 export const startStudy = async (wl?: string) => {
