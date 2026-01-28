@@ -192,7 +192,7 @@ export const getVocabulary = async () => {
       const res = await srv.getVocabularyChecksum();
       if (res.ok) {
          const sChecksum = res.headers.get("check-sum");
-         if (sChecksum && sChecksum !== checksum) {
+         if ((sChecksum && sChecksum !== checksum) || !vocab.size) {
             const res2 = await srv.getVocabulary();
             if (res2.ok) {
                const sCheckSum2 = res2.headers.get("check-sum");
