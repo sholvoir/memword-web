@@ -155,7 +155,9 @@ export default () => {
    };
    createResource(async () => {
       if (setAuth("hua" === mem.user)) {
-         app.setVocabulary((await mem.getVocabulary()) ?? []);
+         const [vocab, updatedVocab] = await mem.getVocabulary();
+         vocab.size && app.setVocabulary(vocab);
+         updatedVocab().then((nvocab) => nvocab && app.setVocabulary(nvocab));
          await handleLoadIssueClick();
       }
    });

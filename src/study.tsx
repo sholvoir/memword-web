@@ -150,7 +150,7 @@ export default () => {
       const [status] = await mem.uploadBook(bookName, word);
       app.showTips(status === STATUS_CODE.OK ? "添加成功" : "添加失败");
       wordSet?.add(word);
-      ((await mem.getVocabulary()) as Set<string>).add(word);
+      app.vocabulary().add(word);
    };
    createResource(async () => {
       setMyBooks(

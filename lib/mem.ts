@@ -183,29 +183,29 @@ export const getBook = async (bid: string) => {
    return book;
 };
 
-export const getVocabulary = async () => {
+export const getVocabulary = async (): Promise<
+   [Set<string>, () => Promise<Set<string> | undefined>]
+> => {
    const [vocab, checksum] = ((await idb.getMeta("_vocabulary")) as [
       Set<string>,
       string,
    ]) ?? [new Set<string>(), ""];
-   (async () => {
-      const res = await srv.getVocabularyChecksum();
-      if (res.ok) {
-         const sChecksum = res.headers.get("check-sum");
-         if ((sChecksum && sChecksum !== checksum) || !vocab.size) {
-            const res2 = await srv.getVocabulary();
-            if (res2.ok) {
-               const sCheckSum2 = res2.headers.get("check-sum");
-               const text = await res2.text();
-               const nvocab = new Set<string>();
-               for (let word of text.split("\n"))
-                  if ((word = word.trim())) nvocab.add(word);
-               await idb.setMeta("_vocabulary", [nvocab, sCheckSum2]);
-            }
-         }
-      }
-   })();
-   return vocab;
+   return [
+      vocab,
+      async () => {
+         const resChecksum = await srv.getVocabularyChecksum();
+         if (!resChecksum) return;
+         const sChecksum = resChecksum.checksum;
+         if (!sChecksum || sChecksum === checksum) return;
+         const resVocabulary = await srv.getVocabulary();
+         if (!resVocabulary) return;
+         const { words, checksum: sCheckSum2 } = resVocabulary;
+         const nvocab = new Set<string>();
+         for (let word of words) if ((word = word.trim())) nvocab.add(word);
+         await idb.setMeta("_vocabulary", [nvocab, sCheckSum2]);
+         return nvocab;
+      },
+   ];
 };
 
 export const uploadBook = async (

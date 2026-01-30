@@ -134,8 +134,9 @@ export const deleteBook = (name: string) =>
    });
 
 export const getVocabularyChecksum = () =>
-   fetch(`${API_URL}/vocabulary/checksum`);
-export const getVocabulary = () => fetch(`${API_URL}/vocabulary`);
+   getJson<{ checksum: string }>(`${API_URL}/vocabulary/checksum`);
+export const getVocabulary = () =>
+   getJson<{ words: Array<string>; checksum: string }>(`${API_URL}/vocabulary`);
 export const postVocabulary = (words: string) =>
    fetch(`${API_URL}/vocabulary`, {
       body: words,
